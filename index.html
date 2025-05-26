@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="preload" href="hong.jpg" as="image">
+    <link rel="preload" href="xiao.jpg" as="image">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>红姐私房联系信息</title>
@@ -192,6 +194,20 @@
             from { opacity: 0; transform: translateX(-50%) translateY(-5px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
+
+        /* 新增群聊徽章样式 */
+        .group-badge {
+            position: absolute;
+            top: -16px;
+            right: 25px;
+            background: linear-gradient(45deg, #4CAF50 0%, #81C784 100%);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(76,175,80,0.2);
+        }
     </style>
 </head>
 <body>
@@ -249,6 +265,22 @@
             </svg>
             guofu30
         </div>
+    </div>
+
+    <!-- 新增微信群入口 -->
+    <div class="contact-box" style="margin-top: 30px;">
+        <div class="group-badge">新群开放</div>
+        <h2>微信加群通道</h2>
+        <div class="decorative-line"></div>
+        <img src="https://xiao305.github.io/qun2 25-06-02.jpg" 
+             alt="红姐私房美食2群二维码"
+             class="qr-code">
+        <p class="qr-tip">
+            <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
+                <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
+            </svg>
+            长按二维码直接加群
+        </p>
     </div>
 
     <!-- 广告区块 -->
