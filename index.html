@@ -13,7 +13,6 @@
             --secondary: #FFF0F0;
             --accent: #FFD700;
         }
-
         body {
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
@@ -23,7 +22,6 @@
             max-width: 500px;
             margin: 0 auto;
         }
-
         /* 卡片交互优化 */
         .contact-box {
             background: rgba(255,255,255,0.95);
@@ -33,15 +31,13 @@
             box-shadow: 0 6px 20px rgba(228, 57, 60, 0.08);
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
-            overflow: hidden;
+            overflow: visible; /* 修改：避免徽章内容被裁剪 */
             border: 1px solid rgba(228, 57, 60, 0.1);
         }
-
         .contact-box:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 24px rgba(228, 57, 60, 0.12);
         }
-
         /* 标题装饰线 */
         h2 {
             color: var(--primary);
@@ -50,7 +46,6 @@
             padding-left: 30px;
             position: relative;
         }
-
         h2::before {
             content: "";
             position: absolute;
@@ -61,11 +56,13 @@
             height: 24px;
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
         }
-
         /* 二维码视觉升级 */
         .qr-code {
             width: 180px;
-            height: 180px;
+            height: auto;
+            max-width: 100%;
+            aspect-ratio: 1 / 1; /* 强制正方形比例 */
+            object-fit: contain;
             margin: 20px auto;
             border: 3px solid var(--primary);
             border-radius: 16px;
@@ -75,12 +72,10 @@
             transition: all 0.3s ease;
             position: relative;
         }
-
         .qr-code:hover {
             transform: scale(1.03);
             border-color: var(--accent);
         }
-
         /* 微信号展示优化 */
         .wechat-id {
             background: var(--secondary);
@@ -95,7 +90,6 @@
             align-items: center;
             gap: 10px;
         }
-
         /* 提示信息优化 */
         .shipping-notice {
             background: #FFF8E0;
@@ -110,7 +104,6 @@
             position: relative;
             cursor: pointer;
         }
-
         /* 广告区重构 */
         .ad-section {
             margin: 40px 0;
@@ -120,7 +113,6 @@
             border: 2px dashed var(--primary);
             position: relative;
         }
-
         .ad-badge {
             position: absolute;
             top: -16px;
@@ -133,7 +125,6 @@
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(228, 57, 60, 0.2);
         }
-
         .ad-qrcode {
             width: 200px;
             border: 3px solid var(--primary);
@@ -143,11 +134,9 @@
             margin: 15px auto;
             transition: transform 0.3s;
         }
-
         .ad-qrcode:hover {
             transform: rotate(-2deg);
         }
-
         /* 装饰元素 */
         .decorative-line {
             height: 2px;
@@ -158,7 +147,6 @@
             );
             margin: 25px 0;
         }
-
         /* 新增长按识别提示样式 */
         .qr-tip {
             color: #666;
@@ -170,7 +158,6 @@
             justify-content: center;
             gap: 5px;
         }
-
         /* 新增提示框样式 */
         .info-tooltip {
             position: absolute;
@@ -189,12 +176,10 @@
             left: 50%;
             transform: translateX(-50%);
         }
-        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateX(-50%) translateY(-5px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
-
         /* 新增群聊徽章样式 */
         .group-badge {
             position: absolute;
@@ -216,7 +201,7 @@
         <h2>本地订单微信（红姐）</h2>
         <p>🏍️ 孝义市内上门配送/自提订单请添加该微信</p>
         <div class="decorative-line"></div>
-        <img src="https://xiao305.github.io/hong.jpg" 
+        <img src="https://xiao305.github.io/hong.jpg " 
              alt="本地配送微信二维码"
              class="qr-code">
         <p class="qr-tip">
@@ -232,7 +217,6 @@
             rr66tt8
         </div>
     </div>
-
     <!-- 快递订单 -->
     <div class="contact-box">
         <h2>快递订单微信</h2>
@@ -241,7 +225,7 @@
             【添加请备注"辣条订购" 优先处理】
         </p>
         <div class="decorative-line"></div>
-        <img src="https://xiao305.github.io/xiao.jpg" 
+        <img src="https://xiao305.github.io/xiao.jpg " 
              alt="快递服务微信二维码"
              class="qr-code">
         <p class="qr-tip">
@@ -266,13 +250,12 @@
             guofu30
         </div>
     </div>
-
     <!-- 新增微信群入口 -->
     <div class="contact-box" style="margin-top: 30px;">
         <div class="group-badge">新群开放</div>
         <h2>微信加群通道</h2>
         <div class="decorative-line"></div>
-        <img src="https://xiao305.github.io/qun2 25-06-02.jpg" 
+        <img src="https://xiao305.github.io/qun2  25-06-02.jpg" 
              alt="红姐私房美食2群二维码"
              class="qr-code">
         <p class="qr-tip">
@@ -282,7 +265,6 @@
             长按二维码直接加群
         </p>
     </div>
-
     <!-- 广告区块 -->
     <div class="ad-section">
         <div class="ad-badge">推荐加入</div>
@@ -292,7 +274,7 @@
             ✅ 每日精选好物<br>
             ✅ 人工审核保障
         </p>
-        <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg" 
+        <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg " 
              alt="闲鱼官方群二维码"
              class="ad-qrcode">
         <p class="qr-tip" style="margin-top:15px;">
@@ -302,22 +284,17 @@
             长按识别立即加入社群
         </p>
     </div>
-
     <p class="notice" style="text-align:center; color:#999; margin:30px 0; padding-top:20px; border-top:1px solid #eee;">
         ⚠️ 温馨提示：扫码遇到问题请直接添加对应微信号
     </p>
-
     <script>
         document.getElementById('shipping-notice').addEventListener('click', function(e) {
             const tooltip = this.querySelector('.info-tooltip');
             const isVisible = tooltip.style.display === 'block';
-            
             // 隐藏所有提示
             document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
-            
             // 切换当前提示
             tooltip.style.display = isVisible ? 'none' : 'block';
-            
             // 点击其他地方关闭
             if(!isVisible) {
                 setTimeout(() => {
@@ -327,10 +304,8 @@
                     }, {once: true});
                 }, 100);
             }
-            
             e.stopPropagation();
         });
-
         // 确保提示框随页面滚动
         window.addEventListener('scroll', () => {
             document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
