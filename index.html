@@ -13,32 +13,57 @@
             --secondary: #FFF0F0;
             --accent: #FFD700;
         }
+
         body {
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
             margin: 0;
             padding: 20px 15px;
             min-height: 100vh;
-            max-width: 500px;
+            max-width: 1200px;
             margin: 0 auto;
         }
+
+        /* 新增容器用于控制布局 */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                justify-content: space-between;
+            }
+            .contact-box {
+                width: calc(50% - 10px); /* 两列 + gap */
+            }
+        }
+
+        @media (max-width: 767px) {
+            .contact-box {
+                width: 100%;
+            }
+        }
+
         /* 卡片交互优化 */
         .contact-box {
             background: rgba(255,255,255,0.95);
             border-radius: 18px;
-            margin: 20px 0;
             padding: 25px;
             box-shadow: 0 6px 20px rgba(228, 57, 60, 0.08);
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
-            overflow: visible; /* 修改：避免徽章内容被裁剪 */
+            overflow: visible;
             border: 1px solid rgba(228, 57, 60, 0.1);
         }
+
         .contact-box:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 24px rgba(228, 57, 60, 0.12);
         }
-        /* 标题装饰线 */
+
         h2 {
             color: var(--primary);
             font-size: 1.4rem;
@@ -46,6 +71,7 @@
             padding-left: 30px;
             position: relative;
         }
+
         h2::before {
             content: "";
             position: absolute;
@@ -56,12 +82,13 @@
             height: 24px;
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
         }
+
         /* 二维码视觉升级 */
         .qr-code {
             width: 180px;
             height: auto;
             max-width: 100%;
-            aspect-ratio: 1 / 1; /* 强制正方形比例 */
+            aspect-ratio: 1 / 1;
             object-fit: contain;
             margin: 20px auto;
             border: 3px solid var(--primary);
@@ -72,10 +99,12 @@
             transition: all 0.3s ease;
             position: relative;
         }
+
         .qr-code:hover {
             transform: scale(1.03);
             border-color: var(--accent);
         }
+
         /* 微信号展示优化 */
         .wechat-id {
             background: var(--secondary);
@@ -90,6 +119,7 @@
             align-items: center;
             gap: 10px;
         }
+
         /* 提示信息优化 */
         .shipping-notice {
             background: #FFF8E0;
@@ -104,6 +134,7 @@
             position: relative;
             cursor: pointer;
         }
+
         /* 广告区重构 */
         .ad-section {
             margin: 40px 0;
@@ -113,6 +144,7 @@
             border: 2px dashed var(--primary);
             position: relative;
         }
+
         .ad-badge {
             position: absolute;
             top: -16px;
@@ -125,6 +157,7 @@
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(228, 57, 60, 0.2);
         }
+
         .ad-qrcode {
             width: 200px;
             border: 3px solid var(--primary);
@@ -134,9 +167,11 @@
             margin: 15px auto;
             transition: transform 0.3s;
         }
+
         .ad-qrcode:hover {
             transform: rotate(-2deg);
         }
+
         /* 装饰元素 */
         .decorative-line {
             height: 2px;
@@ -147,6 +182,7 @@
             );
             margin: 25px 0;
         }
+
         /* 新增长按识别提示样式 */
         .qr-tip {
             color: #666;
@@ -158,6 +194,7 @@
             justify-content: center;
             gap: 5px;
         }
+
         /* 新增提示框样式 */
         .info-tooltip {
             position: absolute;
@@ -176,10 +213,12 @@
             left: 50%;
             transform: translateX(-50%);
         }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateX(-50%) translateY(-5px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
+
         /* 新增群聊徽章样式 */
         .group-badge {
             position: absolute;
@@ -196,6 +235,8 @@
     </style>
 </head>
 <body>
+
+<div class="container">
     <!-- 本地订单 -->
     <div class="contact-box">
         <h2>本地订单微信（红姐）</h2>
@@ -217,6 +258,7 @@
             rr66tt8
         </div>
     </div>
+
     <!-- 快递订单 -->
     <div class="contact-box">
         <h2>快递订单微信</h2>
@@ -250,6 +292,7 @@
             guofu30
         </div>
     </div>
+
     <!-- 新增微信群入口 -->
     <div class="contact-box" style="margin-top: 30px;">
         <div class="group-badge">新群开放</div>
@@ -265,51 +308,56 @@
             长按二维码直接加群
         </p>
     </div>
-    <!-- 广告区块 -->
-    <div class="ad-section">
-        <div class="ad-badge">推荐加入</div>
-        <h3 class="ad-title">【闲鱼闲置交流群】</h3>
-        <p class="ad-subtitle" style="font-size:14px; color:#666; line-height:1.8;">
-            ✅ 同城优先交易<br>
-            ✅ 每日精选好物<br>
-            ✅ 人工审核保障
-        </p>
-        <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg " 
-             alt="闲鱼官方群二维码"
-             class="ad-qrcode">
-        <p class="qr-tip" style="margin-top:15px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
-                <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
-            </svg>
-            长按识别立即加入社群
-        </p>
-    </div>
-    <p class="notice" style="text-align:center; color:#999; margin:30px 0; padding-top:20px; border-top:1px solid #eee;">
-        ⚠️ 温馨提示：扫码遇到问题请直接添加对应微信号
+</div>
+
+<!-- 广告区块 -->
+<div class="ad-section">
+    <div class="ad-badge">推荐加入</div>
+    <h3 class="ad-title">【闲鱼闲置交流群】</h3>
+    <p class="ad-subtitle" style="font-size:14px; color:#666; line-height:1.8;">
+        ✅ 同城优先交易<br>
+        ✅ 每日精选好物<br>
+        ✅ 人工审核保障
     </p>
-    <script>
-        document.getElementById('shipping-notice').addEventListener('click', function(e) {
-            const tooltip = this.querySelector('.info-tooltip');
-            const isVisible = tooltip.style.display === 'block';
-            // 隐藏所有提示
-            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
-            // 切换当前提示
-            tooltip.style.display = isVisible ? 'none' : 'block';
-            // 点击其他地方关闭
-            if(!isVisible) {
-                setTimeout(() => {
-                    document.addEventListener('click', function closeTooltip() {
-                        tooltip.style.display = 'none';
-                        document.removeEventListener('click', closeTooltip);
-                    }, {once: true});
-                }, 100);
-            }
-            e.stopPropagation();
-        });
-        // 确保提示框随页面滚动
-        window.addEventListener('scroll', () => {
-            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
-        });
-    </script>
+    <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg " 
+         alt="闲鱼官方群二维码"
+         class="ad-qrcode">
+    <p class="qr-tip" style="margin-top:15px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
+            <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
+        </svg>
+        长按识别立即加入社群
+    </p>
+</div>
+
+<p class="notice" style="text-align:center; color:#999; margin:30px 0; padding-top:20px; border-top:1px solid #eee;">
+    ⚠️ 温馨提示：扫码遇到问题请直接添加对应微信号
+</p>
+
+<script>
+    document.getElementById('shipping-notice').addEventListener('click', function(e) {
+        const tooltip = this.querySelector('.info-tooltip');
+        const isVisible = tooltip.style.display === 'block';
+        // 隐藏所有提示
+        document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+        // 切换当前提示
+        tooltip.style.display = isVisible ? 'none' : 'block';
+        // 点击其他地方关闭
+        if(!isVisible) {
+            setTimeout(() => {
+                document.addEventListener('click', function closeTooltip() {
+                    tooltip.style.display = 'none';
+                    document.removeEventListener('click', closeTooltip);
+                }, {once: true});
+            }, 100);
+        }
+        e.stopPropagation();
+    });
+    // 确保提示框随页面滚动
+    window.addEventListener('scroll', () => {
+        document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+    });
+</script>
+
 </body>
 </html>
