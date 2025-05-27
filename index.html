@@ -13,18 +13,17 @@
             --secondary: #FFF0F0;
             --accent: #FFD700;
         }
-
         body {
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
             margin: 0;
             padding: 20px 15px;
             min-height: 100vh;
-            max-width: 1200px; /* 调整最大宽度以适应更宽的屏幕 */
+            max-width: 1200px; /* 移除原 500px 限制 */
             margin: 0 auto;
         }
 
-        /* 新增容器用于控制布局 */
+        /* 新增容器用于双列布局 */
         .container {
             display: flex;
             flex-wrap: wrap;
@@ -37,7 +36,7 @@
                 justify-content: space-between;
             }
             .contact-box {
-                width: calc(50% - 10px); /* 两列 + gap */
+                width: calc(50% - 10px); /* 双列布局 */
             }
         }
 
@@ -55,7 +54,7 @@
             box-shadow: 0 6px 20px rgba(228, 57, 60, 0.08);
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
-            overflow: visible; /* 确保徽章不被截断 */
+            overflow: visible; /* 修复徽章被截断 */
             border: 1px solid rgba(228, 57, 60, 0.1);
         }
 
