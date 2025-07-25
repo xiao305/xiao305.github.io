@@ -1,65 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <link rel="preload" href="hong.jpg" as="image">
-    <link rel="preload" href="xiao.jpg" as="image">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>红姐私房联系信息</title>
+    <title>红姐私房 - 美食与特产</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
             --secondary: #FFF0F0;
             --accent: #FFD700;
+            --dark: #333;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
             margin: 0;
-            padding: 20px 15px;
+            padding: 0;
             min-height: 100vh;
-            max-width: 1200px; /* 移除原 500px 限制 */
-            margin: 0 auto;
-        }
-
-        /* 新增容器用于双列布局 */
-        .container {
+            color: var(--dark);
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
+            flex-direction: column;
         }
-
-        @media (min-width: 768px) {
-            .container {
-                justify-content: space-between;
-            }
-            .contact-box {
-                width: calc(50% - 10px); /* 双列布局 */
-            }
+        
+        /* 导航栏样式 */
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--secondary);
         }
-
-        @media (max-width: 767px) {
-            .contact-box {
-                width: 100%;
-            }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
         }
-
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        /* 内容容器 */
+        .content-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+        
+        /* 页面标题样式 */
+        .page-header {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .page-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 20px auto;
+            line-height: 1.6;
+        }
+        
         /* 卡片交互优化 */
         .contact-box {
             background: rgba(255,255,255,0.95);
             border-radius: 18px;
             padding: 25px;
-            box-shadow: 0 6px 20px rgba(228, 57, 60, 0.08);
+            box-shadow: var(--shadow);
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: visible; /* 修复徽章被截断 */
             border: 1px solid rgba(228, 57, 60, 0.1);
+            margin-bottom: 30px;
         }
 
         .contact-box:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
             box-shadow: 0 12px 24px rgba(228, 57, 60, 0.12);
         }
 
@@ -97,6 +203,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             position: relative;
+            display: block;
         }
 
         .qr-code:hover {
@@ -165,6 +272,7 @@
             background: white;
             margin: 15px auto;
             transition: transform 0.3s;
+            display: block;
         }
 
         .ad-qrcode:hover {
@@ -231,135 +339,539 @@
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(76,175,80,0.2);
         }
+        
+        /* 页脚样式 */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        /* 子页面内容样式 */
+        .subpage-content {
+            padding: 30px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            margin: 30px 0;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .product-img {
+            height: 200px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .product-price {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: #c62a2d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(228, 57, 60, 0.3);
+        }
+        
+        .btn i {
+            margin-right: 5px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 页面切换效果 */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
-
-<!-- 包裹所有卡片 -->
-<div class="container">
-
-    <!-- 本地订单 -->
-    <div class="contact-box">
-        <h2>本地订单微信（红姐）</h2>
-        <p>🏍️ 孝义市内上门配送/自提订单请添加该微信</p>
-        <div class="decorative-line"></div>
-        <img src="https://xiao305.github.io/hong.jpg " 
-             alt="本地配送微信二维码"
-             class="qr-code">
-        <p class="qr-tip">
-            <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
-                <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
-            </svg>
-            长按二维码可直接识别
-        </p>
-        <div class="wechat-id">
-            <svg width="20" height="20" viewBox="0 0 24 24" style="fill: #e4393c">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-            </svg>
-            rr66tt8
-        </div>
-    </div>
-
-    <!-- 快递订单 -->
-    <div class="contact-box">
-        <h2>快递订单微信</h2>
-        <p>📦 需要快递邮寄购买请添加该微信</p>
-        <p style="background:#FFF3F3; padding:10px; border-radius:8px; color:#666;">
-            【添加请备注"辣条订购" 优先处理】
-        </p>
-        <div class="decorative-line"></div>
-        <img src="https://xiao305.github.io/xiao.jpg " 
-             alt="快递服务微信二维码"
-             class="qr-code">
-        <p class="qr-tip">
-            <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
-                <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
-            </svg>
-            长按二维码可直接识别
-        </p>
-        <div class="shipping-notice" id="shipping-notice">
-            <svg width="18" height="18" viewBox="0 0 24 24" style="fill: #856404">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-            </svg>
-            <span>目前快递邮寄仅支持辣条产品</span>
-            <div class="info-tooltip" style="display: none;">
-                ⚠️ 温馨提示：因长途运输条件限制，目前仅支持密封包装的辣条产品。其他生鲜/冷冻食品易出现融化、变质等问题，暂不提供邮寄服务。
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <span>红姐私房</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-page="home"><i class="fas fa-home"></i> 首页</a>
+                <a href="#" class="nav-link" data-page="products"><i class="fas fa-store"></i> 特产商城</a>
+                <a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a>
+                <a href="#" class="nav-link" data-page="contact"><i class="fas fa-phone-alt"></i> 联系方式</a>
             </div>
         </div>
-        <div class="wechat-id">
-            <svg width="20" height="20" viewBox="0 0 24 24" style="fill: #e4393c">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-            </svg>
-            guofu30
+    </nav>
+
+    <!-- 内容容器 -->
+    <div class="content-container">
+        <!-- 首页内容 -->
+        <div id="home" class="page active">
+            <div class="page-header">
+                <h1>欢迎光临红姐私房</h1>
+                <p>我们提供孝义本地特色美食和特产，用心制作每一道美食，让您品尝到最地道的家乡味道</p>
+            </div>
+            
+            <div class="contact-box">
+                <h2>本地订单微信（红姐）</h2>
+                <p>🏍️ 孝义市内上门配送/自提订单请添加该微信</p>
+                <div class="decorative-line"></div>
+                <img src="https://xiao305.github.io/hong.jpg" 
+                     alt="本地配送微信二维码"
+                     class="qr-code">
+                <p class="qr-tip">
+                    <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
+                        <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
+                    </svg>
+                    长按二维码可直接识别
+                </p>
+                <div class="wechat-id">
+                    <svg width="20" height="20" viewBox="0 0 24 24" style="fill: #e4393c">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                    </svg>
+                    rr66tt8
+                </div>
+            </div>
+
+            <div class="contact-box">
+                <h2>快递订单微信</h2>
+                <p>📦 需要快递邮寄购买请添加该微信</p>
+                <p style="background:#FFF3F3; padding:10px; border-radius:8px; color:#666;">
+                    【添加请备注"辣条订购" 优先处理】
+                </p>
+                <div class="decorative-line"></div>
+                <img src="https://xiao305.github.io/xiao.jpg" 
+                     alt="快递服务微信二维码"
+                     class="qr-code">
+                <p class="qr-tip">
+                    <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
+                        <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
+                    </svg>
+                    长按二维码可直接识别
+                </p>
+                <div class="shipping-notice" id="shipping-notice">
+                    <svg width="18" height="18" viewBox="0 0 24 24" style="fill: #856404">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    <span>目前快递邮寄仅支持辣条产品</span>
+                    <div class="info-tooltip" style="display: none;">
+                        ⚠️ 温馨提示：因长途运输条件限制，目前仅支持密封包装的辣条产品。其他生鲜/冷冻食品易出现融化、变质等问题，暂不提供邮寄服务。
+                    </div>
+                </div>
+                <div class="wechat-id">
+                    <svg width="20" height="20" viewBox="0 0 24 24" style="fill: #e4393c">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                    </svg>
+                    guofu30
+                </div>
+            </div>
+
+            <div class="contact-box">
+                <div class="group-badge">新群开放</div>
+                <h2>微信加群通道</h2>
+                <div class="decorative-line"></div>
+                <img src="https://xiao305.github.io/qun2%2025-06-02.jpg" 
+                     alt="红姐私房美食2群二维码"
+                     class="qr-code">
+                <p class="qr-tip">
+                    <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
+                        <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
+                    </svg>
+                    长按二维码直接加群
+                </p>
+            </div>
+
+            <div class="ad-section">
+                <div class="ad-badge">推荐加入</div>
+                <h3 class="ad-title">【闲鱼闲置交流群】</h3>
+                <p class="ad-subtitle" style="font-size:14px; color:#666; line-height:1.8;">
+                    ✅ 同城优先交易<br>
+                    ✅ 每日精选好物<br>
+                    ✅ 人工审核保障
+                </p>
+                <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg" 
+                     alt="闲鱼官方群二维码"
+                     class="ad-qrcode">
+                <p class="qr-tip" style="margin-top:15px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
+                        <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
+                    </svg>
+                    长按识别立即加入社群
+                </p>
+            </div>
+        </div>
+
+        <!-- 特产商城页面 -->
+        <div id="products" class="page">
+            <div class="page-header">
+                <h1>孝义特色美食</h1>
+                <p>精选孝义本地特色美食和特产，纯手工制作，保留传统风味</p>
+            </div>
+            
+            <div class="subpage-content">
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-img">辣条产品图片</div>
+                        <div class="product-info">
+                            <h3 class="product-title">秘制手工辣条</h3>
+                            <p>选用优质面粉和天然香料，传统工艺制作，香辣可口</p>
+                            <div class="product-price">¥25.8/袋</div>
+                            <a href="#" class="btn"><i class="fas fa-shopping-cart"></i> 立即购买</a>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="product-img">酱牛肉图片</div>
+                        <div class="product-info">
+                            <h3 class="product-title">红姐秘制酱牛肉</h3>
+                            <p>选用优质牛肉，传统配方慢火熬制，肉质鲜嫩，酱香浓郁</p>
+                            <div class="product-price">¥68/斤</div>
+                            <a href="#" class="btn"><i class="fas fa-shopping-cart"></i> 立即购买</a>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="product-img">点心图片</div>
+                        <div class="product-info">
+                            <h3 class="product-title">孝义传统点心</h3>
+                            <p>传统工艺制作，多种口味可选，松软香甜，老少皆宜</p>
+                            <div class="product-price">¥35/盒</div>
+                            <a href="#" class="btn"><i class="fas fa-shopping-cart"></i> 立即购买</a>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="product-img">卤味图片</div>
+                        <div class="product-info">
+                            <h3 class="product-title">秘制卤味系列</h3>
+                            <p>鸭脖、鸭翅、豆干等多样选择，香辣入味，回味无穷</p>
+                            <div class="product-price">¥28-45/份</div>
+                            <a href="#" class="btn"><i class="fas fa-shopping-cart"></i> 立即购买</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关于我们页面 -->
+        <div id="about" class="page">
+            <div class="page-header">
+                <h1>关于红姐私房</h1>
+                <p>用心制作美食，传递家乡味道</p>
+            </div>
+            
+            <div class="subpage-content">
+                <h2>我们的故事</h2>
+                <p>红姐私房创立于2018年，由红姐（李红）女士在山西孝义创办。从小热爱烹饪的红姐，一直梦想着将家乡的传统美食分享给更多人。</p>
+                
+                <p>起初，红姐只是在自家厨房制作一些特色小吃送给亲朋好友。由于味道地道、用料实在，很快就在当地小有名气。在家人和朋友的鼓励下，红姐决定创办"红姐私房"，专门制作和销售孝义特色美食。</p>
+                
+                <h2>我们的理念</h2>
+                <ul>
+                    <li>坚持使用新鲜、优质的原料</li>
+                    <li>保留传统制作工艺，拒绝添加剂</li>
+                    <li>每一道产品都经过精心制作</li>
+                    <li>让顾客品尝到最地道的家乡味道</li>
+                </ul>
+                
+                <h2>产品特色</h2>
+                <p>红姐私房的产品以孝义传统美食为基础，结合现代人口味进行改良。我们的招牌产品包括：</p>
+                
+                <div style="background: var(--secondary); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                    <h3>秘制手工辣条</h3>
+                    <p>不同于市面上的工业化辣条，我们的辣条采用传统工艺手工制作，使用优质面粉和非转基因植物油，香辣可口，回味无穷。</p>
+                    
+                    <h3>传统酱牛肉</h3>
+                    <p>选用优质牛腱肉，配以二十余种香料，经过12小时慢火熬制，肉质鲜嫩，酱香浓郁。</p>
+                    
+                    <h3>孝义特色点心</h3>
+                    <p>传承三代的点心配方，纯手工制作，口感松软，甜而不腻。</p>
+                </div>
+                
+                <h2>加入我们</h2>
+                <p>我们正在寻找热爱美食、有志于传承传统美食文化的合作伙伴。如果您对我们的产品感兴趣，欢迎加入我们的团队！</p>
+                <a href="#" class="btn" style="margin-top: 20px;"><i class="fas fa-handshake"></i> 成为合作伙伴</a>
+            </div>
+        </div>
+
+        <!-- 联系方式页面 -->
+        <div id="contact" class="page">
+            <div class="page-header">
+                <h1>联系我们</h1>
+                <p>有任何问题或建议，欢迎随时联系我们</p>
+            </div>
+            
+            <div class="subpage-content">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                    <div class="contact-box">
+                        <h2><i class="fas fa-map-marker-alt"></i> 实体店地址</h2>
+                        <p>山西省孝义市府前街128号</p>
+                        <p>营业时间：9:00-21:00（全年无休）</p>
+                        <div style="height: 200px; background: #f5f5f5; border-radius: 12px; margin: 20px 0; display: flex; align-items: center; justify-content: center; color: var(--gray);">
+                            地图位置
+                        </div>
+                    </div>
+                    
+                    <div class="contact-box">
+                        <h2><i class="fas fa-phone-alt"></i> 联系电话</h2>
+                        <p>客服热线：0358-7623456</p>
+                        <p>红姐手机：138****5678</p>
+                        <div style="margin: 30px 0;">
+                            <h3>微信客服</h3>
+                            <img src="https://xiao305.github.io/hong.jpg" 
+                                 alt="客服微信二维码"
+                                 class="qr-code" style="width: 150px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-box" style="margin-top: 30px;">
+                    <h2><i class="fas fa-comment-dots"></i> 在线留言</h2>
+                    <form style="margin-top: 20px;">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">您的姓名</label>
+                            <input type="text" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">联系电话</label>
+                            <input type="tel" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">留言内容</label>
+                            <textarea rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i> 提交留言
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- 新增微信群入口 -->
-    <div class="contact-box" style="margin-top: 30px;">
-        <div class="group-badge">新群开放</div>
-        <h2>微信加群通道</h2>
-        <div class="decorative-line"></div>
-        <img src="https://xiao305.github.io/qun2%2025-06-02.jpg " 
-             alt="红姐私房美食2群二维码"
-             class="qr-code">
-        <p class="qr-tip">
-            <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
-                <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
-            </svg>
-            长按二维码直接加群
-        </p>
-    </div>
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <p>红姐私房致力于传承和推广孝义传统美食，用心制作每一道产品，让顾客品尝到最地道的家乡味道。</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>快速链接</h3>
+                <ul class="footer-links">
+                    <li><a href="#" data-page="home"><i class="fas fa-chevron-right"></i> 首页</a></li>
+                    <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
+                    <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
+                    <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 山西省孝义市府前街128号</a></li>
+                    <li><a href="tel:03587623456"><i class="fas fa-phone-alt"></i> 0358-7623456</a></li>
+                    <li><a href="#"><i class="fab fa-weixin"></i> 微信客服: rr66tt8</a></li>
+                    <li><a href="mailto:hongjiesf@example.com"><i class="fas fa-envelope"></i> hongjiesf@example.com</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 红姐私房 版权所有 | 晋ICP备12345678号-1</p>
+        </div>
+    </footer>
 
-</div>
-
-<!-- 广告区块 -->
-<div class="ad-section">
-    <div class="ad-badge">推荐加入</div>
-    <h3 class="ad-title">【闲鱼闲置交流群】</h3>
-    <p class="ad-subtitle" style="font-size:14px; color:#666; line-height:1.8;">
-        ✅ 同城优先交易<br>
-        ✅ 每日精选好物<br>
-        ✅ 人工审核保障
-    </p>
-    <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg " 
-         alt="闲鱼官方群二维码"
-         class="ad-qrcode">
-    <p class="qr-tip" style="margin-top:15px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
-            <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
-        </svg>
-        长按识别立即加入社群
-    </p>
-</div>
-
-<p class="notice" style="text-align:center; color:#999; margin:30px 0; padding-top:20px; border-top:1px solid #eee;">
-    ⚠️ 温馨提示：扫码遇到问题请直接添加对应微信号
-</p>
-
-<script>
-    document.getElementById('shipping-notice').addEventListener('click', function(e) {
-        const tooltip = this.querySelector('.info-tooltip');
-        const isVisible = tooltip.style.display === 'block';
-        // 隐藏所有提示
-        document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
-        // 切换当前提示
-        tooltip.style.display = isVisible ? 'none' : 'block';
-        // 点击其他地方关闭
-        if(!isVisible) {
-            setTimeout(() => {
-                document.addEventListener('click', function closeTooltip() {
-                    tooltip.style.display = 'none';
-                    document.removeEventListener('click', closeTooltip);
-                }, {once: true});
-            }, 100);
-        }
-        e.stopPropagation();
-    });
-    // 确保提示框随页面滚动
-    window.addEventListener('scroll', () => {
-        document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
-    });
-</script>
-
+    <script>
+        // 页面导航功能
+        document.querySelectorAll('.nav-link, .footer-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 移除所有active类
+                document.querySelectorAll('.nav-link').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // 添加当前active类
+                this.classList.add('active');
+                const pageId = this.getAttribute('data-page');
+                document.getElementById(pageId).classList.add('active');
+                
+                // 滚动到顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        
+        // 提示框功能
+        document.getElementById('shipping-notice').addEventListener('click', function(e) {
+            const tooltip = this.querySelector('.info-tooltip');
+            const isVisible = tooltip.style.display === 'block';
+            
+            // 隐藏所有提示
+            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+            
+            // 切换当前提示
+            tooltip.style.display = isVisible ? 'none' : 'block';
+            
+            // 点击其他地方关闭
+            if(!isVisible) {
+                setTimeout(() => {
+                    document.addEventListener('click', function closeTooltip() {
+                        tooltip.style.display = 'none';
+                        document.removeEventListener('click', closeTooltip);
+                    }, {once: true});
+                }, 100);
+            }
+            e.stopPropagation();
+        });
+        
+        // 确保提示框随页面滚动
+        window.addEventListener('scroll', () => {
+            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+        });
+    </script>
 </body>
 </html>
