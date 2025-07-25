@@ -736,21 +736,6 @@
                 </div>
             </div>
 
-            <div class="contact-box">
-                <div class="group-badge">新群开放</div>
-                <h2>微信加群通道</h2>
-                <div class="decorative-line"></div>
-                <img src="https://xiao305.github.io/qun2%2025-06-02.jpg" 
-                     alt="红姐私房美食2群二维码"
-                     class="qr-code">
-                <p class="qr-tip">
-                    <svg width="16" height="16" viewBox="0 0 24 24" style="fill:#666">
-                        <path d="M9.5 3A6.5 6.5 0 0 0 3 9.5v5A6.5 6.5 0 0 0 9.5 21h5a6.5 6.5 0 0 0 6.5-6.5V9.5A6.5 6.5 0 0 0 14.5 3H9.5m0 2h5A4.5 4.5 0 0 1 19 9.5v5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 5 14.5v-5A4.5 4.5 0 0 1 9.5 5Z"/>
-                    </svg>
-                    长按二维码直接加群
-                </p>
-            </div>
-
             <div class="ad-section">
                 <div class="ad-badge">推荐加入</div>
                 <h3 class="ad-title">【闲鱼闲置交流群】</h3>
@@ -973,6 +958,7 @@
                     <li>商品信息、价格等数据为示例数据</li>
                     <li>不提供实际购买和交易功能</li>
                     <li>网站未备案，不涉及商业运营</li>
+                    <li>所有实际交易请通过首页微信联系</li>
                 </ul>
             </div>
         </div>
@@ -983,6 +969,10 @@
     </footer>
 
     <script>
+        // 全局变量
+        let countdownInterval = null;
+        let targetPageId = null;
+        
         // 页面导航功能
         document.querySelectorAll('.nav-link, .footer-links a').forEach(link => {
             link.addEventListener('click', function(e) {
@@ -1021,18 +1011,30 @@
         
         // 显示警告弹窗
         function showWarningModal(pageId) {
+            // 清除之前的倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
             const modal = document.getElementById('warningModal');
             modal.style.display = 'flex';
+            
+            // 存储目标页面ID
+            targetPageId = pageId;
             
             let seconds = 10;
             const countdownEl = document.getElementById('countdown');
             const timerEl = document.getElementById('timer');
             const continueBtn = document.getElementById('continueBtn');
             
+            // 重置按钮状态
+            continueBtn.disabled = true;
+            continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>)';
+            
             countdownEl.textContent = seconds;
             timerEl.textContent = seconds;
             
-            const countdownInterval = setInterval(() => {
+            countdownInterval = setInterval(() => {
                 seconds--;
                 countdownEl.textContent = seconds;
                 timerEl.textContent = seconds;
@@ -1043,19 +1045,35 @@
                     continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
                 }
             }, 1000);
-            
-            // 返回首页按钮
-            document.getElementById('backToHome').addEventListener('click', function() {
-                modal.style.display = 'none';
-                switchPage('home');
-            });
-            
-            // 继续查看按钮
-            continueBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-                switchPage(pageId);
-            });
         }
+        
+        // 返回首页按钮
+        document.getElementById('backToHome').addEventListener('click', function() {
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'none';
+            
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            switchPage('home');
+        });
+        
+        // 继续查看按钮
+        document.getElementById('continueBtn').addEventListener('click', function() {
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'none';
+            
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            if (targetPageId) {
+                switchPage(targetPageId);
+            }
+        });
         
         // 提示框功能
         document.getElementById('shipping-notice').addEventListener('click', function(e) {
@@ -1088,6 +1106,7 @@
         // 移动端导航栏隐藏功能
         let lastScrollTop = 0;
         const navbar = document.getElementById('navbar');
+        const threshold = 50; // 滚动阈值
         
         window.addEventListener('scroll', function() {
             // 只在移动端生效
@@ -1095,11 +1114,11 @@
             
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
+            if (scrollTop > lastScrollTop && scrollTop > threshold) {
                 // 向下滚动 - 隐藏导航栏
                 navbar.classList.add('hide-nav');
-            } else {
-                // 向上滚动 - 显示导航栏
+            } else if (scrollTop <= threshold) {
+                // 滚动到顶部附近 - 显示导航栏
                 navbar.classList.remove('hide-nav');
             }
             
