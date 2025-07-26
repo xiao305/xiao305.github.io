@@ -728,13 +728,6 @@
         // 当前登录的管理员用户名
         let currentAdminUser = null;
 
-        // --- GitHub 配置 (用于写入) ---
-        const GITHUB_OWNER = "xiao305";
-        const GITHUB_REPO = "xiao305.github.io";
-        const CONFIG_ISSUE_NUMBER = 3;
-        // 警告：Personal Access Token 硬编码在前端，存在安全风险！
-        const GITHUB_TOKEN = "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";
-
         // 页面加载完成后初始化设置面板
         document.addEventListener('DOMContentLoaded', function() {
             initializeSettingsPanel();
@@ -785,32 +778,7 @@
             }
         }
 
-        // --- 新增：将配置同步到 GitHub Issue 的函数 ---
-        async function syncConfigToGitHub(configData) {
-            const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${CONFIG_ISSUE_NUMBER}/comments`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    body: "```json\n" + JSON.stringify(configData, null, 2) + "\n```" // 用代码块包裹 JSON，方便阅读
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log("GitHub Comment Created:", data);
-            return data; // 返回创建的评论信息
-        }
-
-        // 应用页面状态设置 (修改版 - 添加 GitHub 同步)
+        // 应用页面状态设置
         function applyPageStatus(pageId) {
             const statusSelect = document.getElementById(`${pageId}Status`);
             const durationInput = document.getElementById(`${pageId}Duration`);
@@ -831,38 +799,18 @@
             };
             pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
 
-            // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
+            // 保存到 localStorage
             localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
             localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
 
-            // 2. 准备要写入 GitHub Issue 的数据结构
-            const configToSync = {
-                pageStatusConfig: pageStatusConfig,
-                pagePasswords: pagePasswords,
-                // 可以添加时间戳
-                timestamp: new Date().toISOString()
-            };
+            // 更新UI显示
+            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
 
-            // 3. 保存到 GitHub Issue (实现跨设备同步)
-            syncConfigToGitHub(configToSync)
-                .then(() => {
-                    console.log('GitHub Sync: 页面状态配置已同步');
-                    // 更新UI显示
-                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-                    // 记录操作日志
-                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步到 GitHub`);
-                    alert(`页面 "${pageId}" 的状态已更新并同步。`);
-                })
-                .catch((error) => {
-                    console.error('GitHub Sync: 同步配置失败:', error);
-                    // 更新UI显示
-                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-                    // 即使同步失败，本地设置已生效，可以提示用户
-                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步失败: ${error.message})`);
-                    alert(`页面 "${pageId}" 的状态已更新(本地)，但同步到 GitHub 时出错: ${error.message}`);
-                });
+            // 记录操作日志
+            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''}`);
+
+            alert(`页面 "${pageId}" 的状态已更新。`);
         }
-
 
         // 管理员登录 - 修复：确保始终阻止默认提交
         document.getElementById('adminLogin').addEventListener('submit', function(e) {
