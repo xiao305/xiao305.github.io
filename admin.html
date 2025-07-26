@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理员页面 - 红姐私房美食</title>
-    <base href="https://hongjsf.cyou/"> <!-- 添加 base 标签 -->
+    <!-- 移除了 <base href="https://hongjsf.cyou/"> 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
        /* 优化后的样式系统 */
@@ -501,7 +501,10 @@
                 <span>红姐私房 - 管理员面板</span>
             </div>
             <div class="nav-links">
-                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a> <!-- 修改为指向 index.html -->
+                <!-- 确保返回首页的链接是绝对路径或相对于当前 admin.html 的路径 -->
+                <a href="./index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a>
+                <!-- 或者如果 index.html 在根目录，也可以用绝对路径 -->
+                <!-- <a href="/index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a> -->
             </div>
         </div>
     </nav>
@@ -815,11 +818,14 @@
         // 管理员登录 - 修复：确保始终阻止默认提交
         document.getElementById('adminLogin').addEventListener('submit', function(e) {
             e.preventDefault(); // 关键：绝对阻止表单默认提交和页面刷新
+            console.log("登录表单提交事件被触发"); // 添加调试日志
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             // 简单的管理员验证 (使用哈希比较)
             const storedHash = adminAccounts[username];
+            console.log(`输入的用户名: ${username}, 存储的哈希: ${storedHash}, 输入的密码Base64: ${btoa(password)}`); // 添加调试日志
             if(storedHash && storedHash === btoa(password)) { // 使用 Base64 解码比较
+                console.log("登录验证成功"); // 添加调试日志
                 isAdminLoggedIn = true;
                 currentAdminUser = username; // 记录当前用户
                 document.getElementById('adminLoginForm').style.display = 'none';
@@ -835,6 +841,7 @@
                 // 初始化设置面板
                 initializeSettingsPanel();
             } else {
+                console.log("登录验证失败"); // 添加调试日志
                 alert('管理员账号或密码错误！');
             }
         });
