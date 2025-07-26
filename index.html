@@ -1444,5 +1444,30 @@
 
         // 注意：管理员登录逻辑已移至 admin.html
     </script>
+        // --- 新增：测试从阿里云 OSS 读取配置 ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // 替换为您的实际 OSS 文件公网访问 URL
+        const OSS_CONFIG_URL = "https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json";
+
+        console.log("开始尝试从 OSS 读取配置...");
+        fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("✅ 成功从 OSS 读取到配置:", data);
+                // 这里可以处理读取到的 data
+                if (data.pageStatusConfig) {
+                     console.log("🔍 找到了 pageStatusConfig:", data.pageStatusConfig);
+                }
+            })
+            .catch(error => {
+                console.error("❌ 从 OSS 读取配置失败:", error);
+            });
+    });
+    // --- 结束新增 ---
 </body>
 </html>
