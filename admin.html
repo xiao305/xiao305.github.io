@@ -812,9 +812,9 @@
             alert(`页面 "${pageId}" 的状态已更新。`);
         }
 
-        // 管理员登录
+        // 管理员登录 - 修复：确保始终阻止默认提交
         document.getElementById('adminLogin').addEventListener('submit', function(e) {
-            e.preventDefault(); // 阻止表单默认提交刷新页面
+            e.preventDefault(); // 关键：绝对阻止表单默认提交和页面刷新
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             // 简单的管理员验证 (使用哈希比较)
