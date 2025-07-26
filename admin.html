@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员页面 - 红姐私房美食</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 优化后的样式系统 */
+        :root {
+            --primary: #e4393c;
+            --secondary: #FFF0F0;
+            --accent: #FFD700;
+            --dark: #333;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--secondary);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        /* 内容容器 */
+        .content-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+        
+        /* 页面标题样式 */
+        .page-header {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .page-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 20px auto;
+            line-height: 1.6;
+        }
+        
+        /* 管理员登录表单 */
+        .login-form {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        /* 留言表格 */
+        .message-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .message-table th,
+        .message-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .message-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .message-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .message-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        /* 管理员面板 */
+        .admin-panel {
+            padding: 30px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: #c62a2d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(228, 57, 60, 0.3);
+        }
+        
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <span>红姐私房 - 管理员面板</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 内容容器 -->
+    <div class="content-container">
+        <!-- 管理员页面 -->
+        <div id="admin">
+            <div class="page-header">
+                <h1>管理员登录</h1>
+                <p>请使用管理员账号登录以查看留言数据</p>
+            </div>
+            
+            <div class="login-form">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="username">管理员账号</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">管理员密码</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </button>
+                </form>
+            </div>
+            
+            <div id="adminPanel" class="admin-panel" style="display: none;">
+                <div class="admin-header">
+                    <h2>留言管理</h2>
+                    <button id="logoutBtn" class="btn-outline">
+                        <i class="fas fa-sign-out-alt"></i> 退出登录
+                    </button>
+                </div>
+                
+                <table class="message-table">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>电话</th>
+                            <th>留言内容</th>
+                            <th>提交时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messageTableBody">
+                        <!-- 留言数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let messages = JSON.parse(localStorage.getItem('messages')) || [];
+        let isAdminLoggedIn = false;
+        
+        // 管理员登录
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 简单的管理员验证
+            if(username === 'admin' && password === 'hongjie123') {
+                isAdminLoggedIn = true;
+                document.getElementById('adminLoginForm').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                
+                // 加载留言数据
+                loadMessages();
+            } else {
+                alert('管理员账号或密码错误！');
+            }
+        });
+        
+        // 加载留言数据
+        function loadMessages() {
+            const tableBody = document.getElementById('messageTableBody');
+            tableBody.innerHTML = '';
+            
+            if(messages.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">暂无留言数据</td></tr>';
+                return;
+            }
+            
+            // 按时间倒序排列
+            const sortedMessages = [...messages].reverse();
+            
+            sortedMessages.forEach(msg => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${msg.name}</td>
+                    <td>${msg.phone}</td>
+                    <td>${msg.message}</td>
+                    <td>${msg.timestamp}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            isAdminLoggedIn = false;
+            document.getElementById('adminLoginForm').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        });
+    </script>
+</body>
+</html>
