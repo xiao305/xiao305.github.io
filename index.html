@@ -1185,7 +1185,31 @@
                         console.log("✅ 成功从 OSS 读取到配置:", data);
                         // 这里可以处理读取到的 data
                         if (data.pageStatusConfig) {
-                             console.log("🔍 找到了 pageStatusConfig:", data.pageStatusConfig);
+                             // --- 新增：使用从 OSS 读取到的配置更新全局变量 ---
+if (data && data.pageStatusConfig) {
+    console.log("🔍 找到了 pageStatusConfig:", data.pageStatusConfig);
+    // 更新全局的 pageStatusConfig 和 pagePasswords 变量
+    // 这样后续的 handlePageAccess 函数就会使用最新的配置
+    window.pageStatusConfig = data.pageStatusConfig;
+    window.pagePasswords = data.pagePasswords || {};
+    console.log("🔄 已更新全局配置变量");
+} else {
+    console.log("OSS: 远程配置中未找到 pageStatusConfig 或为空");
+    // 如果 OSS 配置无效，则回退到使用 localStorage 中的本地配置
+    // (这部分逻辑已经在您原有的代码中实现了)
+    window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+        products: { status: 'limit', duration: 10 },
+        about: { status: 'limit', duration: 10 },
+        contact: { status: 'limit', duration: 10 }
+    };
+    window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+        products: '',
+        about: '',
+        contact: ''
+    };
+    console.log("🔙 回退到使用本地 localStorage 配置");
+}
+// --- 结束新增 ---
                              // 可以在这里更新全局的 pageStatusConfig 和 pagePasswords 变量
                              // window.pageStatusConfig = data.pageStatusConfig;
                              // window.pagePasswords = data.pagePasswords || {};
