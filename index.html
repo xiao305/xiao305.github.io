@@ -560,6 +560,13 @@
             color: var(--primary);
             font-size: 1.8rem;
             margin-bottom: 20px;
+            /* 移除标题前的图标 */
+            padding-left: 0 !important;
+        }
+        
+        .modal-title::before {
+            /* 移除标题前的图标 */
+            display: none !important;
         }
         
         .modal-icon {
@@ -694,6 +701,12 @@
             box-shadow: var(--shadow);
             text-align: center;
             border-top: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         
         .stat-value {
@@ -749,6 +762,108 @@
         .export-btn {
             color: #28a745;
             border-color: #28a745;
+        }
+        
+        /* 访问日志样式 */
+        .logs-container {
+            margin-top: 40px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .log-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .log-item:last-child {
+            border-bottom: none;
+        }
+        
+        .log-time {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        
+        .log-action {
+            font-weight: 500;
+        }
+        
+        .log-details {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+        
+        .tag-info {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        
+        .tag-warning {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .tag-success {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .tag-danger {
+            background: #fff2f0;
+            color: #f5222d;
+        }
+        
+        /* 流量图容器 */
+        .traffic-chart {
+            height: 200px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 15px;
+        }
+        
+        .traffic-bar {
+            width: 30px;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+        
+        .traffic-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .traffic-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--primary);
         }
     </style>
 </head>
@@ -1078,7 +1193,7 @@
             
             <div id="adminPanel" class="admin-panel" style="display: none;">
                 <div class="admin-header">
-                    <h2>留言管理系统</h2>
+                    <h2>网站管理系统</h2>
                     <button id="logoutBtn" class="btn-outline">
                         <i class="fas fa-sign-out-alt"></i> 退出登录
                     </button>
@@ -1098,12 +1213,25 @@
                         <div class="stat-value" id="unreadMessages">0</div>
                         <div class="stat-label">未读留言</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalVisits">0</div>
+                        <div class="stat-label">总访问量</div>
+                    </div>
+                </div>
+                
+                <!-- 流量统计图表 -->
+                <h3>最近7天访问趋势</h3>
+                <div class="traffic-chart" id="trafficChart">
+                    <!-- 流量柱状图将通过JS生成 -->
                 </div>
                 
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="搜索留言内容...">
                     <button class="btn" id="searchBtn">
                         <i class="fas fa-search"></i> 搜索
+                    </button>
+                    <button class="btn" id="exportBtn">
+                        <i class="fas fa-download"></i> 导出数据
                     </button>
                 </div>
                 
@@ -1114,6 +1242,7 @@
                             <th>电话</th>
                             <th>留言内容</th>
                             <th>提交时间</th>
+                            <th>状态</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -1121,6 +1250,14 @@
                         <!-- 留言数据将通过JavaScript动态填充 -->
                     </tbody>
                 </table>
+                
+                <!-- 操作日志 -->
+                <div class="logs-container">
+                    <h3>操作日志 <span class="tag tag-info">最近30条</span></h3>
+                    <div id="logsList">
+                        <!-- 日志将通过JS动态填充 -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1178,6 +1315,21 @@
         let targetPageId = null;
         let messages = JSON.parse(localStorage.getItem('messages')) || [];
         let isAdminLoggedIn = false;
+        let logs = JSON.parse(localStorage.getItem('adminLogs')) || [];
+        let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
+        
+        // 页面加载时初始化访问统计
+        document.addEventListener('DOMContentLoaded', function() {
+            // 更新总访问量
+            visits.total = (visits.total || 0) + 1;
+            
+            // 更新每日访问量
+            const today = new Date().toLocaleDateString();
+            visits.daily[today] = (visits.daily[today] || 0) + 1;
+            
+            // 保存到localStorage
+            localStorage.setItem('siteVisits', JSON.stringify(visits));
+        });
         
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -1276,6 +1428,7 @@
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
                 seconds = Math.max(0, 10 - elapsed);
                 
+                // 同时更新两个地方的倒计时显示
                 countdownEl.textContent = seconds;
                 timerEl.textContent = seconds;
                 
@@ -1409,8 +1562,17 @@
                 document.getElementById('adminLoginForm').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
+                // 记录登录日志
+                addLog('管理员登录', `管理员 ${username} 登录系统`);
+                
                 // 加载留言数据
                 loadMessages();
+                
+                // 加载访问统计
+                loadVisits();
+                
+                // 加载操作日志
+                loadLogs();
             } else {
                 alert('管理员账号或密码错误！');
             }
@@ -1425,7 +1587,7 @@
             updateMessageStats();
             
             if(messages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">暂无留言数据</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">暂无留言数据</td></tr>';
                 return;
             }
             
@@ -1443,6 +1605,7 @@
                     <td>${msg.phone}</td>
                     <td>${msg.message}</td>
                     <td>${msg.timestamp}</td>
+                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="action-btn delete-btn" data-index="${index}">
@@ -1460,18 +1623,41 @@
                 if(!msg.read) {
                     messages[messages.length - 1 - index].read = true;
                     localStorage.setItem('messages', JSON.stringify(messages));
+                    updateMessageStats();
                 }
-            });
-            
-            // 添加删除功能
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                
+                // 添加删除功能
+                row.querySelector('.delete-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     if(confirm('确定要删除这条留言吗？')) {
+                        // 记录删除日志
+                        addLog('删除留言', `删除了 ${messages[index].name} 的留言`);
+                        
                         messages.splice(index, 1);
                         localStorage.setItem('messages', JSON.stringify(messages));
                         loadMessages();
                     }
+                });
+                
+                // 添加导出功能
+                row.querySelector('.export-btn').addEventListener('click', function() {
+                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
+                    const message = messages[index];
+                    const content = `姓名: ${message.name}\n电话: ${message.phone}\n留言: ${message.message}\n时间: ${message.timestamp}`;
+                    
+                    // 记录导出日志
+                    addLog('导出留言', `导出了 ${message.name} 的留言`);
+                    
+                    // 创建下载链接
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `留言_${message.name}_${message.timestamp.replace(/[/:\\]/g, '-')}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
                 });
             });
         }
@@ -1495,8 +1681,99 @@
             document.getElementById('unreadMessages').textContent = unreadMessages;
         }
         
+        // 加载访问统计
+        function loadVisits() {
+            // 更新总访问量
+            document.getElementById('totalVisits').textContent = visits.total;
+            
+            // 生成最近7天访问数据
+            const dates = [];
+            const values = [];
+            const now = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(now.getDate() - i);
+                const dateStr = date.toLocaleDateString();
+                dates.push(dateStr);
+                values.push(visits.daily[dateStr] || 0);
+            }
+            
+            // 创建流量图表
+            const maxValue = Math.max(...values, 10); // 确保有最小高度
+            const chart = document.getElementById('trafficChart');
+            chart.innerHTML = '';
+            
+            dates.forEach((date, index) => {
+                const value = values[index];
+                const height = (value / maxValue) * 150; // 最大高度150px
+                
+                const bar = document.createElement('div');
+                bar.className = 'traffic-bar';
+                bar.style.height = `${height}px`;
+                
+                const label = document.createElement('div');
+                label.className = 'traffic-bar-label';
+                label.textContent = date.split('/').slice(1).join('/'); // 简化为月/日
+                
+                const valueLabel = document.createElement('div');
+                valueLabel.className = 'traffic-value';
+                valueLabel.textContent = value;
+                
+                bar.appendChild(valueLabel);
+                bar.appendChild(label);
+                chart.appendChild(bar);
+            });
+        }
+        
+        // 加载操作日志
+        function loadLogs() {
+            const logsList = document.getElementById('logsList');
+            logsList.innerHTML = '';
+            
+            // 按时间倒序排列，只显示最近30条
+            const recentLogs = [...logs].reverse().slice(0, 30);
+            
+            if (recentLogs.length === 0) {
+                logsList.innerHTML = '<div class="log-item">暂无操作记录</div>';
+                return;
+            }
+            
+            recentLogs.forEach(log => {
+                const logItem = document.createElement('div');
+                logItem.className = 'log-item';
+                
+                logItem.innerHTML = `
+                    <div>
+                        <span class="log-action">${log.action}</span>
+                        <span class="log-details">${log.details}</span>
+                    </div>
+                    <div class="log-time">${log.timestamp}</div>
+                `;
+                
+                logsList.appendChild(logItem);
+            });
+        }
+        
+        // 添加操作日志
+        function addLog(action, details) {
+            const timestamp = new Date().toLocaleString();
+            logs.push({ action, details, timestamp });
+            
+            // 只保留最近100条日志
+            if (logs.length > 100) {
+                logs.shift();
+            }
+            
+            localStorage.setItem('adminLogs', JSON.stringify(logs));
+            loadLogs();
+        }
+        
         // 退出登录
         document.getElementById('logoutBtn').addEventListener('click', function() {
+            // 记录退出日志
+            addLog('管理员退出', '管理员退出系统');
+            
             isAdminLoggedIn = false;
             document.getElementById('adminLoginForm').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
@@ -1515,11 +1792,14 @@
                 msg.message.toLowerCase().includes(searchTerm)
             );
             
+            // 记录搜索日志
+            addLog('搜索留言', `搜索关键词: ${searchTerm}`);
+            
             const tableBody = document.getElementById('messageTableBody');
             tableBody.innerHTML = '';
             
             if(filteredMessages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">未找到匹配的留言</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">未找到匹配的留言</td></tr>';
                 return;
             }
             
@@ -1537,6 +1817,7 @@
                     <td>${msg.phone}</td>
                     <td>${msg.message}</td>
                     <td>${msg.timestamp}</td>
+                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="action-btn delete-btn" data-index="${index}">
@@ -1549,7 +1830,65 @@
                     </td>
                 `;
                 tableBody.appendChild(row);
+                
+                // 添加删除功能
+                row.querySelector('.delete-btn').addEventListener('click', function() {
+                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
+                    if(confirm('确定要删除这条留言吗？')) {
+                        // 记录删除日志
+                        addLog('删除留言', `删除了 ${messages[index].name} 的留言`);
+                        
+                        messages.splice(index, 1);
+                        localStorage.setItem('messages', JSON.stringify(messages));
+                        loadMessages();
+                    }
+                });
+                
+                // 添加导出功能
+                row.querySelector('.export-btn').addEventListener('click', function() {
+                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
+                    const message = messages[index];
+                    const content = `姓名: ${message.name}\n电话: ${message.phone}\n留言: ${message.message}\n时间: ${message.timestamp}`;
+                    
+                    // 记录导出日志
+                    addLog('导出留言', `导出了 ${message.name} 的留言`);
+                    
+                    // 创建下载链接
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `留言_${message.name}_${message.timestamp.replace(/[/:\\]/g, '-')}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
             });
+        });
+        
+        // 导出所有数据
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            // 记录导出日志
+            addLog('导出数据', '导出了所有留言数据');
+            
+            // 创建CSV内容
+            let csvContent = "姓名,电话,留言内容,提交时间\n";
+            
+            messages.forEach(msg => {
+                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`;
+            });
+            
+            // 创建下载链接
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `红姐私房留言数据_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 </body>
