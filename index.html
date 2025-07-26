@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>红姐私房美食官网</title>
+    <base href="https://hongjsf.cyou/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* 优化后的样式系统 */
@@ -167,7 +168,7 @@
             transform: translateY(-50%);
             width: 24px;
             height: 24px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
+            background: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
         }
         /* 二维码视觉升级 */
         .qr-code {
@@ -255,9 +256,9 @@
         /* 装饰元素 */
         .decorative-line {
             height: 2px;
-            background: linear-gradient(90deg, 
-                rgba(228, 57, 60, 0.1) 0%, 
-                rgba(228, 57, 60, 0.3) 50%, 
+            background: linear-gradient(90deg,
+                rgba(228, 57, 60, 0.1) 0%,
+                rgba(228, 57, 60, 0.3) 50%,
                 rgba(228, 57, 60, 0.1) 100%
             );
             margin: 25px 0;
@@ -753,10 +754,59 @@
             font-weight: bold;
             color: var(--primary);
         }
+        /* 新增：页面状态密码输入弹窗 */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2001; /* 确保在警告弹窗之上 */
+            padding: 20px;
+        }
+        .password-modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .password-modal-title {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .password-modal-text {
+            margin-bottom: 20px;
+            color: #444;
+        }
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .password-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .password-modal-buttons .btn {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
-    <!-- 警告弹窗 -->
+    <!-- 警告弹窗 (限制状态) -->
     <div id="warningModal" class="warning-modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-icon">
@@ -779,11 +829,25 @@
                     <i class="fas fa-home"></i> 返回首页
                 </button>
                 <button id="continueBtn" class="btn-outline" disabled>
-                    <i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>)
+                    <i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>) <!-- 初始HTML保留 -->
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- 密码输入弹窗 (关闭状态) -->
+    <div id="passwordModal" class="password-modal" style="display: none;">
+        <div class="password-modal-content">
+            <h3 class="password-modal-title">页面已关闭</h3>
+            <p class="password-modal-text" id="passwordModalText">该页面已被管理员关闭。如需访问，请输入密码。</p>
+            <input type="password" id="pagePasswordInput" class="password-input" placeholder="请输入页面密码">
+            <div class="password-modal-buttons">
+                <button id="cancelPasswordBtn" class="btn-outline">取消</button>
+                <button id="confirmPasswordBtn" class="btn">确认</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 导航栏 -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -796,7 +860,7 @@
                 <a href="#" class="nav-link" data-page="products"><i class="fas fa-store"></i> 特产商城</a>
                 <a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a>
                 <a href="#" class="nav-link" data-page="contact"><i class="fas fa-phone-alt"></i> 联系方式</a>
-                <a href="#" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a>
+                <a href="admin.html" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a> <!-- 修改为指向 admin.html -->
             </div>
         </div>
     </nav>
@@ -812,7 +876,7 @@
                 <h2>本地订单微信（红姐）</h2>
                 <p>🏍️ 孝义市内上门配送/自提订单请添加该微信</p>
                 <div class="decorative-line"></div>
-                <img src="https://xiao305.github.io/hong.jpg" 
+                <img src="https://xiao305.github.io/hong.jpg"
                      alt="本地配送微信二维码"
                      class="qr-code">
                 <p class="qr-tip">
@@ -835,7 +899,7 @@
                     【添加请备注"辣条订购" 优先处理】
                 </p>
                 <div class="decorative-line"></div>
-                <img src="https://xiao305.github.io/xiao.jpg" 
+                <img src="https://xiao305.github.io/xiao.jpg"
                      alt="快递服务微信二维码"
                      class="qr-code">
                 <p class="qr-tip">
@@ -868,7 +932,7 @@
                     ✅ 每日精选好物<br>
                     ✅ 人工审核保障
                 </p>
-                <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg" 
+                <img src="https://img12.360buyimg.com/ddimg/jfs/t1/303904/22/4824/54351/6832049eF71f89bbd/1cd2d99d8f61485e.jpg"
                      alt="闲鱼官方群二维码"
                      class="ad-qrcode">
                 <p class="qr-tip" style="margin-top:15px;">
@@ -988,7 +1052,7 @@
                         <p>红姐手机：131****7346</p>
                         <div style="margin: 30px 0;">
                             <h3>微信联系方式</h3>
-                            <img src="https://xiao305.github.io/hong.jpg" 
+                            <img src="https://xiao305.github.io/hong.jpg"
                                  alt="客服微信二维码"
                                  class="qr-code" style="width: 150px;">
                         </div>
@@ -1020,91 +1084,6 @@
                 </div>
             </div>
         </div>
-        <!-- 管理员页面 -->
-        <div id="admin" class="page">
-            <div class="page-header">
-                <h1>管理员面板</h1>
-                <p>管理网站数据和用户留言</p>
-            </div>
-            <div class="login-form" id="adminLoginForm">
-                <form id="adminLogin">
-                    <div class="form-group">
-                        <label for="username">管理员账号</label>
-                        <input type="text" id="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">管理员密码</label>
-                        <input type="password" id="password" required>
-                    </div>
-                    <button type="submit" class="btn" style="width: 100%;">
-                        <i class="fas fa-sign-in-alt"></i> 登录
-                    </button>
-                </form>
-            </div>
-            <div id="adminPanel" class="admin-panel" style="display: none;">
-                <div class="admin-header">
-                    <h2>网站管理系统</h2>
-                    <button id="logoutBtn" class="btn-outline">
-                        <i class="fas fa-sign-out-alt"></i> 退出登录
-                    </button>
-                </div>
-                <!-- 管理员功能增强 -->
-                <div class="admin-stats">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalMessages">0</div>
-                        <div class="stat-label">留言总数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="todayMessages">0</div>
-                        <div class="stat-label">今日留言</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="unreadMessages">0</div>
-                        <div class="stat-label">未读留言</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalVisits">0</div>
-                        <div class="stat-label">总访问量</div>
-                    </div>
-                </div>
-                <!-- 流量统计图表 -->
-                <h3>最近7天访问趋势</h3>
-                <div class="traffic-chart" id="trafficChart">
-                    <!-- 流量柱状图将通过JS生成 -->
-                </div>
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="搜索留言内容...">
-                    <button class="btn" id="searchBtn">
-                        <i class="fas fa-search"></i> 搜索
-                    </button>
-                    <button class="btn" id="exportBtn">
-                        <i class="fas fa-download"></i> 导出数据
-                    </button>
-                </div>
-                <table class="message-table">
-                    <thead>
-                        <tr>
-                            <th>姓名</th>
-                            <th>电话</th>
-                            <th>留言内容</th>
-                            <th>提交时间</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="messageTableBody">
-                        <!-- 留言数据将通过JavaScript动态填充 -->
-                    </tbody>
-                </table>
-                <!-- 操作日志 -->
-                <div class="logs-container">
-                    <h3>操作日志 <span class="tag tag-info">最近30条</span></h3>
-                    <div id="logsList">
-                        <!-- 日志将通过JS动态填充 -->
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <!-- 页脚 -->
     <footer class="footer">
@@ -1120,7 +1099,7 @@
                     <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
                     <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
                     <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
-                    <li><a href="#" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li>
+                    <li><a href="admin.html" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 修改为指向 admin.html -->
                 </ul>
             </div>
             <div class="footer-section">
@@ -1156,6 +1135,19 @@
         let isAdminLoggedIn = false;
         let logs = JSON.parse(localStorage.getItem('adminLogs')) || [];
         let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
+        // 从 localStorage 获取页面状态配置
+        let pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+            products: { status: 'limit', duration: 10 },
+            about: { status: 'limit', duration: 10 },
+            contact: { status: 'limit', duration: 10 }
+        };
+        // 从 localStorage 获取页面密码 (关闭状态时需要)
+        let pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+            products: '',
+            about: '',
+            contact: ''
+        };
+
         // 页面加载时初始化访问统计
         document.addEventListener('DOMContentLoaded', function() {
             // 更新总访问量
@@ -1166,40 +1158,64 @@
             // 保存到localStorage
             localStorage.setItem('siteVisits', JSON.stringify(visits));
         });
+
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const pageId = this.getAttribute('data-page');
-                // 如果点击的是非首页链接
+                // 如果点击的是非首页链接 (且不是管理员页)
                 if(pageId !== 'home' && pageId !== 'admin') {
-                    showWarningModal(pageId);
+                    handlePageAccess(pageId);
                     return;
                 }
                 // 切换页面
                 switchPage(pageId);
             });
         });
-        // 页脚链接点击处理 - 添加警告
+
+        // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
         document.querySelectorAll('.footer-links a').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const pageId = this.getAttribute('data-page');
-                
-                // 修复：检查pageId是否存在，不存在则直接返回（不触发警告）
-                if (!pageId) {
+                // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
+                if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
+                    handlePageAccess(pageId);
                     return;
                 }
-                
-                // 如果点击的是非首页链接
-                if(pageId !== 'home' && pageId !== 'admin') {
-                    showWarningModal(pageId);
-                    return;
+                // 如果是首页或管理员页，则直接切换页面
+                if(pageId === 'home') {
+                    switchPage(pageId);
+                } else if (pageId === 'admin') {
+                     // 管理员页跳转到独立页面
+                     window.location.href = 'admin.html';
                 }
-                // 切换页面
-                switchPage(pageId);
+                // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
             });
         });
+
+        // 处理页面访问逻辑 (根据状态决定是否弹窗)
+        function handlePageAccess(pageId) {
+            const config = pageStatusConfig[pageId];
+            if (!config) {
+                // 默认行为：如果配置不存在，则限制访问
+                showWarningModal(pageId);
+                return;
+            }
+
+            if (config.status === 'open') {
+                // 开启状态：直接访问
+                switchPage(pageId);
+            } else if (config.status === 'limit') {
+                // 限制状态：显示警告弹窗
+                showWarningModal(pageId, config.duration || 10); // 传递强制时长，默认10秒
+            } else if (config.status === 'closed') {
+                // 关闭状态：显示密码输入弹窗
+                showPasswordModal(pageId);
+            }
+        }
+
         // 切换页面函数
         function switchPage(pageId) {
             // 移除所有active类
@@ -1209,18 +1225,25 @@
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
-            // 添加当前active类
-            document.querySelector(`.nav-link[data-page="${pageId}"]`).classList.add('active');
-            document.getElementById(pageId).classList.add('active');
+            // 添加当前active类 (注意：页脚链接点击时，导航栏链接的active状态可能不会自动更新，因为页脚点击不一定会触发导航栏点击)
+            // 为了保持一致，我们尝试找到对应的导航链接并激活它
+            const navLinkToActivate = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+            if (navLinkToActivate) {
+                 navLinkToActivate.classList.add('active');
+            }
+            const pageElement = document.getElementById(pageId);
+            if (pageElement) {
+                pageElement.classList.add('active');
+            }
             // 滚动到顶部
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        // 显示警告弹窗
-        function showWarningModal(pageId) {
-            // 修复：确保清除之前的倒计时
+
+        // 显示警告弹窗 (限制状态)
+        function showWarningModal(pageId, duration = 10) { // 接收时长参数
+            // 清除之前的倒计时
             if (countdownInterval) {
                 clearInterval(countdownInterval);
-                countdownInterval = null;
             }
             const modal = document.getElementById('warningModal');
             modal.style.display = 'flex';
@@ -1233,58 +1256,120 @@
                 'contact': '联系方式'
             };
             const pageName = pageNames[pageId] || '该版块';
-            document.getElementById('warningMessage').textContent = 
+            document.getElementById('warningMessage').textContent =
                 `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
-            let seconds = 10;
+            let seconds = duration; // 使用传入的时长
             const countdownEl = document.getElementById('countdown');
-            const timerEl = document.getElementById('timer');
+            // const timerEl = document.getElementById('timer'); // 不再在开始时获取，而是在循环中重新获取
             const continueBtn = document.getElementById('continueBtn');
             // 重置按钮状态
             continueBtn.disabled = true;
-            // 修复：不再重置整个innerHTML，只更新文本内容
+            continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (<span id="timer">${seconds}</span>)`; // 使用传入的时长初始化
             countdownEl.textContent = seconds;
-            timerEl.textContent = seconds;
-            
+            // timerEl.textContent = seconds; // 不再单独设置timerEl，因为按钮HTML已重置
+
             // 使用高性能计时器
             const startTime = Date.now();
             countdownInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                seconds = Math.max(0, 10 - elapsed);
+                seconds = Math.max(0, duration - elapsed); // 使用传入的时长计算剩余时间
                 // 同时更新两个地方的倒计时显示
                 countdownEl.textContent = seconds;
-                timerEl.textContent = seconds;
+                // 修复倒计时显示问题：每次更新时重新获取并设置按钮内的 span#timer 元素文本
+                const timerSpan = continueBtn.querySelector('#timer');
+                if (timerSpan) {
+                   timerSpan.textContent = seconds;
+                }
+
                 if(seconds <= 0) {
                     clearInterval(countdownInterval);
-                    countdownInterval = null; // 确保重置
                     continueBtn.disabled = false;
+                    // 重置按钮文字，移除 (10)
                     continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
                 }
             }, 200); // 每200毫秒更新一次
         }
-        // 返回首页按钮
+
+        // 显示密码输入弹窗 (关闭状态)
+        function showPasswordModal(pageId) {
+            const modal = document.getElementById('passwordModal');
+            const textElement = document.getElementById('passwordModalText');
+            const inputElement = document.getElementById('pagePasswordInput');
+
+            // 设置提示文本
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            textElement.textContent = `页面 "${pageName}" 已被管理员关闭。如需访问，请输入密码。`;
+
+            // 清空输入框
+            inputElement.value = '';
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+
+            // 为确认按钮添加一次性事件监听器
+            const handleConfirm = function() {
+                const enteredPassword = inputElement.value.trim();
+                const requiredPassword = pagePasswords[pageId];
+
+                if (enteredPassword === requiredPassword && requiredPassword !== '') {
+                    // 密码正确，关闭弹窗并切换页面
+                    modal.style.display = 'none';
+                    switchPage(pageId);
+                } else {
+                    // 密码错误或未设置
+                    alert('密码错误或页面未设置密码，请联系管理员。');
+                }
+            };
+
+            // 为取消按钮添加一次性事件监听器
+            const handleCancel = function() {
+                modal.style.display = 'none';
+            };
+
+            // 添加事件监听器
+            document.getElementById('confirmPasswordBtn').addEventListener('click', handleConfirm, { once: true });
+            document.getElementById('cancelPasswordBtn').addEventListener('click', handleCancel, { once: true });
+
+            // 允许按回车键确认
+            const handleEnterKey = function(event) {
+                if (event.key === 'Enter') {
+                    handleConfirm();
+                    inputElement.removeEventListener('keydown', handleEnterKey); // 移除监听器
+                }
+            };
+            inputElement.addEventListener('keydown', handleEnterKey);
+        }
+
+
+        // 返回首页按钮 (警告弹窗)
         document.getElementById('backToHome').addEventListener('click', function() {
             const modal = document.getElementById('warningModal');
             modal.style.display = 'none';
             // 清除倒计时
             if (countdownInterval) {
                 clearInterval(countdownInterval);
-                countdownInterval = null;
             }
             switchPage('home');
         });
-        // 继续查看按钮
+
+        // 继续查看按钮 (警告弹窗)
         document.getElementById('continueBtn').addEventListener('click', function() {
             const modal = document.getElementById('warningModal');
             modal.style.display = 'none';
             // 清除倒计时
             if (countdownInterval) {
                 clearInterval(countdownInterval);
-                countdownInterval = null;
             }
             if (targetPageId) {
                 switchPage(targetPageId);
             }
         });
+
         // 提示框功能
         document.getElementById('shipping-notice').addEventListener('click', function(e) {
             const tooltip = this.querySelector('.info-tooltip');
@@ -1304,10 +1389,12 @@
             }
             e.stopPropagation();
         });
+
         // 确保提示框随页面滚动
         window.addEventListener('scroll', () => {
             document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
         });
+
         // 移动端导航栏隐藏功能
         let lastScrollTop = 0;
         const navbar = document.getElementById('navbar');
@@ -1325,6 +1412,7 @@
             }
             lastScrollTop = scrollTop;
         });
+
         // 留言表单提交
         document.getElementById('messageForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1349,294 +1437,8 @@
             // 显示成功提示
             alert('留言提交成功！');
         });
-        // 管理员登录
-        document.getElementById('adminLogin').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            // 简单的管理员验证
-            if(username === 'admin' && password === 'hongjie123') {
-                isAdminLoggedIn = true;
-                document.getElementById('adminLoginForm').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
-                // 记录登录日志
-                addLog('管理员登录', `管理员 ${username} 登录系统`);
-                // 加载留言数据
-                loadMessages();
-                // 加载访问统计
-                loadVisits();
-                // 加载操作日志
-                loadLogs();
-            } else {
-                alert('管理员账号或密码错误！');
-            }
-        });
-        // 加载留言数据
-        function loadMessages() {
-            const tableBody = document.getElementById('messageTableBody');
-            tableBody.innerHTML = '';
-            // 更新统计信息
-            updateMessageStats();
-            if(messages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">暂无留言数据</td></tr>';
-                return;
-            }
-            // 按时间倒序排列
-            const sortedMessages = [...messages].reverse();
-            sortedMessages.forEach((msg, index) => {
-                const row = document.createElement('tr');
-                if(!msg.read) {
-                    row.style.backgroundColor = '#fff9e6';
-                }
-                row.innerHTML = `
-                    <td>${msg.name}</td>
-                    <td>${msg.phone}</td>
-                    <td>${msg.message}</td>
-                    <td>${msg.timestamp}</td>
-                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn delete-btn" data-index="${index}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <button class="action-btn export-btn" data-index="${index}">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-                // 标记为已读
-                if(!msg.read) {
-                    messages[messages.length - 1 - index].read = true;
-                    localStorage.setItem('messages', JSON.stringify(messages));
-                    updateMessageStats();
-                }
-                // 添加删除功能
-                row.querySelector('.delete-btn').addEventListener('click', function() {
-                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
-                    if(confirm('确定要删除这条留言吗？')) {
-                        // 记录删除日志
-                        addLog('删除留言', `删除了 ${messages[index].name} 的留言`);
-                        messages.splice(index, 1);
-                        localStorage.setItem('messages', JSON.stringify(messages));
-                        loadMessages();
-                    }
-                });
-                // 添加导出功能
-                row.querySelector('.export-btn').addEventListener('click', function() {
-                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
-                    const message = messages[index];
-                    const content = `姓名: ${message.name}
-电话: ${message.phone}
-留言: ${message.message}
-时间: ${message.timestamp}`;
-                    // 记录导出日志
-                    addLog('导出留言', `导出了 ${message.name} 的留言`);
-                    // 创建下载链接
-                    const blob = new Blob([content], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `留言_${message.name}_${message.timestamp.replace(/[/:\\]/g, '-')}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                });
-            });
-        }
-        // 更新留言统计信息
-        function updateMessageStats() {
-            const today = new Date().toLocaleDateString();
-            // 计算今日留言
-            const todayMessages = messages.filter(msg => {
-                const msgDate = new Date(msg.timestamp).toLocaleDateString();
-                return msgDate === today;
-            }).length;
-            // 计算未读留言
-            const unreadMessages = messages.filter(msg => !msg.read).length;
-            // 更新统计信息
-            document.getElementById('totalMessages').textContent = messages.length;
-            document.getElementById('todayMessages').textContent = todayMessages;
-            document.getElementById('unreadMessages').textContent = unreadMessages;
-        }
-        // 加载访问统计
-        function loadVisits() {
-            // 更新总访问量
-            document.getElementById('totalVisits').textContent = visits.total;
-            // 生成最近7天访问数据
-            const dates = [];
-            const values = [];
-            const now = new Date();
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(now.getDate() - i);
-                const dateStr = date.toLocaleDateString();
-                dates.push(dateStr);
-                values.push(visits.daily[dateStr] || 0);
-            }
-            // 创建流量图表
-            const maxValue = Math.max(...values, 10); // 确保有最小高度
-            const chart = document.getElementById('trafficChart');
-            chart.innerHTML = '';
-            dates.forEach((date, index) => {
-                const value = values[index];
-                const height = (value / maxValue) * 150; // 最大高度150px
-                const bar = document.createElement('div');
-                bar.className = 'traffic-bar';
-                bar.style.height = `${height}px`;
-                const label = document.createElement('div');
-                label.className = 'traffic-bar-label';
-                label.textContent = date.split('/').slice(1).join('/'); // 简化为月/日
-                const valueLabel = document.createElement('div');
-                valueLabel.className = 'traffic-value';
-                valueLabel.textContent = value;
-                bar.appendChild(valueLabel);
-                bar.appendChild(label);
-                chart.appendChild(bar);
-            });
-        }
-        // 加载操作日志
-        function loadLogs() {
-            const logsList = document.getElementById('logsList');
-            logsList.innerHTML = '';
-            // 按时间倒序排列，只显示最近30条
-            const recentLogs = [...logs].reverse().slice(0, 30);
-            if (recentLogs.length === 0) {
-                logsList.innerHTML = '<div class="log-item">暂无操作记录</div>';
-                return;
-            }
-            recentLogs.forEach(log => {
-                const logItem = document.createElement('div');
-                logItem.className = 'log-item';
-                logItem.innerHTML = `
-                    <div>
-                        <span class="log-action">${log.action}</span>
-                        <span class="log-details">${log.details}</span>
-                    </div>
-                    <div class="log-time">${log.timestamp}</div>
-                `;
-                logsList.appendChild(logItem);
-            });
-        }
-        // 添加操作日志
-        function addLog(action, details) {
-            const timestamp = new Date().toLocaleString();
-            logs.push({ action, details, timestamp });
-            // 只保留最近100条日志
-            if (logs.length > 100) {
-                logs.shift();
-            }
-            localStorage.setItem('adminLogs', JSON.stringify(logs));
-            loadLogs();
-        }
-        // 退出登录
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            // 记录退出日志
-            addLog('管理员退出', '管理员退出系统');
-            isAdminLoggedIn = false;
-            document.getElementById('adminLoginForm').style.display = 'block';
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        });
-        // 搜索功能
-        document.getElementById('searchBtn').addEventListener('click', function() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            if(!searchTerm) return;
-            const filteredMessages = messages.filter(msg => 
-                msg.name.toLowerCase().includes(searchTerm) || 
-                msg.phone.toLowerCase().includes(searchTerm) || 
-                msg.message.toLowerCase().includes(searchTerm)
-            );
-            // 记录搜索日志
-            addLog('搜索留言', `搜索关键词: ${searchTerm}`);
-            const tableBody = document.getElementById('messageTableBody');
-            tableBody.innerHTML = '';
-            if(filteredMessages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">未找到匹配的留言</td></tr>';
-                return;
-            }
-            // 按时间倒序排列
-            const sortedMessages = [...filteredMessages].reverse();
-            sortedMessages.forEach((msg, index) => {
-                const row = document.createElement('tr');
-                if(!msg.read) {
-                    row.style.backgroundColor = '#fff9e6';
-                }
-                row.innerHTML = `
-                    <td>${msg.name}</td>
-                    <td>${msg.phone}</td>
-                    <td>${msg.message}</td>
-                    <td>${msg.timestamp}</td>
-                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn delete-btn" data-index="${index}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <button class="action-btn export-btn" data-index="${index}">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-                // 添加删除功能
-                row.querySelector('.delete-btn').addEventListener('click', function() {
-                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
-                    if(confirm('确定要删除这条留言吗？')) {
-                        // 记录删除日志
-                        addLog('删除留言', `删除了 ${messages[index].name} 的留言`);
-                        messages.splice(index, 1);
-                        localStorage.setItem('messages', JSON.stringify(messages));
-                        loadMessages();
-                    }
-                });
-                // 添加导出功能
-                row.querySelector('.export-btn').addEventListener('click', function() {
-                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
-                    const message = messages[index];
-                    const content = `姓名: ${message.name}
-电话: ${message.phone}
-留言: ${message.message}
-时间: ${message.timestamp}`;
-                    // 记录导出日志
-                    addLog('导出留言', `导出了 ${message.name} 的留言`);
-                    // 创建下载链接
-                    const blob = new Blob([content], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `留言_${message.name}_${message.timestamp.replace(/[/:\\]/g, '-')}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                });
-            });
-        });
-        // 导出所有数据
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            // 记录导出日志
-            addLog('导出数据', '导出了所有留言数据');
-            // 创建CSV内容
-            let csvContent = "姓名,电话,留言内容,提交时间\n";
-            messages.forEach(msg => {
-                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`;
-            });
-            // 创建下载链接
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `红姐私房留言数据_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
+
+        // 注意：管理员登录逻辑已移至 admin.html
     </script>
 </body>
 </html>
