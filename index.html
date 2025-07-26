@@ -895,7 +895,7 @@
                     <i class="fas fa-home"></i> 返回首页
                 </button>
                 <button id="continueBtn" class="btn-outline" disabled>
-                    <i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>)
+                    <i class="fas fa-eye"></i> 继续查看
                 </button>
             </div>
         </div>
@@ -1284,10 +1284,10 @@
             <div class="footer-section">
                 <h3>联系我们</h3>
                 <ul class="footer-links">
-                    <li><a href="#" class="footer-link"><i class="fas fa-map-marker-alt"></i> 山西省孝义市崇文街532号</a></li>
-                    <li><a href="#" class="footer-link"><i class="fas fa-phone-alt"></i> 无</a></li>
-                    <li><a href="#" class="footer-link"><i class="fab fa-weixin"></i> 微信: rr66tt8</a></li>
-                    <li><a href="#" class="footer-link"><i class="fas fa-envelope"></i> 暂不设置</a></li>
+                    <li><a href="javascript:void(0)" class="footer-link"><i class="fas fa-map-marker-alt"></i> 山西省孝义市崇文街532号</a></li>
+                    <li><a href="javascript:void(0)" class="footer-link"><i class="fas fa-phone-alt"></i> 无</a></li>
+                    <li><a href="javascript:void(0)" class="footer-link"><i class="fab fa-weixin"></i> 微信: rr66tt8</a></li>
+                    <li><a href="javascript:void(0)" class="footer-link"><i class="fas fa-envelope"></i> 暂不设置</a></li>
                 </ul>
             </div>
             
@@ -1349,8 +1349,8 @@
             });
         });
         
-        // 页脚链接点击处理 - 添加警告
-        document.querySelectorAll('.footer-links a').forEach(link => {
+        // 页脚链接点击处理 - 只对导航链接添加事件
+        document.querySelectorAll('.footer-links a[data-page]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 
@@ -1411,15 +1411,13 @@
             
             let seconds = 10;
             const countdownEl = document.getElementById('countdown');
-            const timerEl = document.getElementById('timer');
             const continueBtn = document.getElementById('continueBtn');
             
             // 重置按钮状态
             continueBtn.disabled = true;
-            continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>)';
+            continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
             
             countdownEl.textContent = seconds;
-            timerEl.textContent = seconds;
             
             // 使用高性能计时器
             const startTime = Date.now();
@@ -1428,14 +1426,12 @@
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
                 seconds = Math.max(0, 10 - elapsed);
                 
-                // 同时更新两个地方的倒计时显示
+                // 更新倒计时显示
                 countdownEl.textContent = seconds;
-                timerEl.textContent = seconds;
                 
                 if(seconds <= 0) {
                     clearInterval(countdownInterval);
                     continueBtn.disabled = false;
-                    continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
                 }
             }, 200); // 每200毫秒更新一次
         }
@@ -1865,7 +1861,7 @@
                     URL.revokeObjectURL(url);
                 });
             });
-        });
+        }
         
         // 导出所有数据
         document.getElementById('exportBtn').addEventListener('click', function() {
