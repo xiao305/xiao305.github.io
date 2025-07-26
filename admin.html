@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理员页面 - 红姐私房美食</title>
-    <!-- 移除了 <base href="https://hongjsf.cyou/"> 标签 -->
+    <base href="https://hongjsf.cyou/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
        /* 优化后的样式系统 */
@@ -501,10 +501,7 @@
                 <span>红姐私房 - 管理员面板</span>
             </div>
             <div class="nav-links">
-                <!-- 确保返回首页的链接是绝对路径或相对于当前 admin.html 的路径 -->
-                <a href="./index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a>
-                <!-- 或者如果 index.html 在根目录，也可以用绝对路径 -->
-                <!-- <a href="/index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a> -->
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a> <!-- 修改为指向 index.html -->
             </div>
         </div>
     </nav>
@@ -818,14 +815,11 @@
         // 管理员登录 - 修复：确保始终阻止默认提交
         document.getElementById('adminLogin').addEventListener('submit', function(e) {
             e.preventDefault(); // 关键：绝对阻止表单默认提交和页面刷新
-            console.log("登录表单提交事件被触发"); // 添加调试日志
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             // 简单的管理员验证 (使用哈希比较)
             const storedHash = adminAccounts[username];
-            console.log(`输入的用户名: ${username}, 存储的哈希: ${storedHash}, 输入的密码Base64: ${btoa(password)}`); // 添加调试日志
             if(storedHash && storedHash === btoa(password)) { // 使用 Base64 解码比较
-                console.log("登录验证成功"); // 添加调试日志
                 isAdminLoggedIn = true;
                 currentAdminUser = username; // 记录当前用户
                 document.getElementById('adminLoginForm').style.display = 'none';
@@ -841,7 +835,6 @@
                 // 初始化设置面板
                 initializeSettingsPanel();
             } else {
-                console.log("登录验证失败"); // 添加调试日志
                 alert('管理员账号或密码错误！');
             }
         });
@@ -977,10 +970,7 @@
                 row.querySelector('.export-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     const message = messages[index];
-                    const content = `姓名: ${message.name}
-电话: ${message.phone}
-留言: ${message.message}
-时间: ${message.timestamp}`;
+                    const content = `姓名: ${message.name}\n电话: ${message.phone}\n留言: ${message.message}\n时间: ${message.timestamp}`; // 修复：使用 \n
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1160,10 +1150,7 @@
                 row.querySelector('.export-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     const message = messages[index];
-                    const content = `姓名: ${message.name}
-电话: ${message.phone}
-留言: ${message.message}
-时间: ${message.timestamp}`;
+                    const content = `姓名: ${message.name}\n电话: ${message.phone}\n留言: ${message.message}\n时间: ${message.timestamp}`; // 修复：使用 \n
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1180,16 +1167,14 @@
             });
         });
 
-        // 导出所有数据
+        // 导出所有数据 - 修复：使用 \n 转义序列
         document.getElementById('exportBtn').addEventListener('click', function() {
             // 记录导出日志
             addLog('导出数据', '导出了所有留言数据');
-            // 创建CSV内容
-            let csvContent = "姓名,电话,留言内容,提交时间
-";
+            // 创建CSV内容 - 修复：使用 \n 转义序列
+            let csvContent = "姓名,电话,留言内容,提交时间\n"; // 修复：使用 \n
             messages.forEach(msg => {
-                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"
-`;
+                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // 修复：使用 \n
             });
             // 创建下载链接
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
