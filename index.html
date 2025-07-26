@@ -7,7 +7,7 @@
     <base href="https://hongjsf.cyou/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 优化后的样式系统 */
+       /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
             --secondary: #FFF0F0;
@@ -754,6 +754,9 @@
             font-weight: bold;
             color: var(--primary);
         }
+        .btn i {
+            margin-right: 5px;
+        }
         /* 新增：页面状态密码输入弹窗 */
         .password-modal {
             position: fixed;
@@ -860,8 +863,7 @@
                 <a href="#" class="nav-link" data-page="products"><i class="fas fa-store"></i> 特产商城</a>
                 <a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a>
                 <a href="#" class="nav-link" data-page="contact"><i class="fas fa-phone-alt"></i> 联系方式</a>
-                <!-- 修复：顶部导航栏管理员链接直接跳转到 admin.html -->
-                <a href="admin.html" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a>
+                <a href="admin.html" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a> <!-- 修改为指向 admin.html -->
             </div>
         </div>
     </nav>
@@ -1100,7 +1102,7 @@
                     <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
                     <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
                     <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
-                    <li><a href="admin.html" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 页脚管理员链接保持不变 -->
+                    <li><a href="admin.html" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 修改为指向 admin.html -->
                 </ul>
             </div>
             <div class="footer-section">
@@ -1158,45 +1160,80 @@
             visits.daily[today] = (visits.daily[today] || 0) + 1;
             // 保存到localStorage
             localStorage.setItem('siteVisits', JSON.stringify(visits));
+
+            // --- 新增：测试从阿里云 OSS 读取配置 ---
+            // 替换为您的实际 OSS Bucket 名称和地域
+            const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
+            const REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域，例如 "oss-cn-hangzhou"
+            const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/config.json`;
+
+            console.log("开始尝试从 OSS 读取配置...");
+            fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
+                .then(response => {
+                    console.log("Fetch 响应对象:", response); // 调试日志
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                             console.log("OSS: 配置文件未找到");
+                             return null; // 文件不存在
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) {
+                        console.log("✅ 成功从 OSS 读取到配置:", data);
+                        // 这里可以处理读取到的 data
+                        if (data.pageStatusConfig) {
+                             console.log("🔍 找到了 pageStatusConfig:", data.pageStatusConfig);
+                             // 可以在这里更新全局的 pageStatusConfig 和 pagePasswords 变量
+                             // window.pageStatusConfig = data.pageStatusConfig;
+                             // window.pagePasswords = data.pagePasswords || {};
+                        }
+                    } else {
+                         console.log("OSS: 远程配置为空");
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ 从 OSS 读取配置失败:", error);
+                });
+            // --- 结束新增 ---
         });
 
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
-            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
-            if (link.getAttribute('data-page') !== 'admin') {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const pageId = this.getAttribute('data-page');
-                    // 如果点击的是非首页链接 (且不是管理员页)
-                    if(pageId !== 'home') {
-                        handlePageAccess(pageId);
-                        return;
-                    }
-                    // 切换页面
-                    switchPage(pageId);
-                });
-            }
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                // 如果点击的是非首页链接 (且不是管理员页)
+                if(pageId !== 'home' && pageId !== 'admin') {
+                    handlePageAccess(pageId);
+                    return;
+                }
+                // 切换页面
+                switchPage(pageId);
+            });
         });
 
         // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
         document.querySelectorAll('.footer-links a').forEach(link => {
-            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
-            if (link.getAttribute('data-page') !== 'admin') {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const pageId = this.getAttribute('data-page');
-                    // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
-                    if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
-                        handlePageAccess(pageId);
-                        return;
-                    }
-                    // 如果是首页，则直接切换页面
-                    if(pageId === 'home') {
-                        switchPage(pageId);
-                    }
-                    // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
-                });
-            }
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
+                if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
+                    handlePageAccess(pageId);
+                    return;
+                }
+                // 如果是首页或管理员页，则直接切换页面
+                if(pageId === 'home') {
+                    switchPage(pageId);
+                } else if (pageId === 'admin') {
+                     // 管理员页跳转到独立页面
+                     window.location.href = 'admin.html';
+                }
+                // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
+            });
         });
 
         // 处理页面访问逻辑 (根据状态决定是否弹窗)
@@ -1444,30 +1481,5 @@
 
         // 注意：管理员登录逻辑已移至 admin.html
     </script>
-        // --- 新增：测试从阿里云 OSS 读取配置 ---
-    document.addEventListener('DOMContentLoaded', function() {
-        // 替换为您的实际 OSS 文件公网访问 URL
-        const OSS_CONFIG_URL = "https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json";
-
-        console.log("开始尝试从 OSS 读取配置...");
-        fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("✅ 成功从 OSS 读取到配置:", data);
-                // 这里可以处理读取到的 data
-                if (data.pageStatusConfig) {
-                     console.log("🔍 找到了 pageStatusConfig:", data.pageStatusConfig);
-                }
-            })
-            .catch(error => {
-                console.error("❌ 从 OSS 读取配置失败:", error);
-            });
-    });
-    // --- 结束新增 ---
 </body>
 </html>
