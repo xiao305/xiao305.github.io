@@ -865,47 +865,6 @@
             font-weight: bold;
             color: var(--primary);
         }
-        
-        /* 新增设置面板样式 */
-        .settings-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            margin-top: 30px;
-        }
-        
-        .settings-tabs {
-            display: flex;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-        
-        .settings-tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .settings-tab.active {
-            border-bottom-color: var(--primary);
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .settings-content {
-            display: none;
-        }
-        
-        .settings-content.active {
-            display: block;
-        }
-        
-        .settings-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
     </style>
 </head>
 <body>
@@ -1299,69 +1258,6 @@
                         <!-- 日志将通过JS动态填充 -->
                     </div>
                 </div>
-                
-                <!-- 系统设置面板 -->
-                <div class="settings-panel">
-                    <h3>系统设置</h3>
-                    <div class="settings-tabs">
-                        <div class="settings-tab active" data-tab="password">密码管理</div>
-                        <div class="settings-tab" data-tab="users">管理员账号</div>
-                    </div>
-                    
-                    <div class="settings-content active" id="passwordSettings">
-                        <form id="changePasswordForm" class="settings-form">
-                            <div class="form-group">
-                                <label for="oldPassword">旧密码</label>
-                                <input type="password" id="oldPassword" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newPassword">新密码</label>
-                                <input type="password" id="newPassword" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="confirmPassword">确认新密码</label>
-                                <input type="password" id="confirmPassword" required>
-                            </div>
-                            
-                            <button type="submit" class="btn">
-                                <i class="fas fa-key"></i> 更改密码
-                            </button>
-                        </form>
-                    </div>
-                    
-                    <div class="settings-content" id="usersSettings">
-                        <div class="settings-form">
-                            <div class="form-group">
-                                <label for="newUsername">新管理员账号</label>
-                                <input type="text" id="newUsername" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newUserPassword">密码</label>
-                                <input type="password" id="newUserPassword" required>
-                            </div>
-                            
-                            <button id="addAdminBtn" class="btn">
-                                <i class="fas fa-user-plus"></i> 添加管理员
-                            </button>
-                            
-                            <h4 style="margin-top: 20px;">管理员列表</h4>
-                            <table class="message-table" style="margin-top: 10px;">
-                                <thead>
-                                    <tr>
-                                        <th>账号</th>
-                                        <th>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="adminList">
-                                    <!-- 管理员列表将通过JS动态填充 -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1421,12 +1317,6 @@
         let isAdminLoggedIn = false;
         let logs = JSON.parse(localStorage.getItem('adminLogs')) || [];
         let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
-        let currentAdmin = null;
-        
-        // 管理员账号
-        const adminUsers = JSON.parse(localStorage.getItem('adminUsers')) || [
-            { username: "admin", password: "hongjie123" }
-        ];
         
         // 页面加载时初始化访问统计
         document.addEventListener('DOMContentLoaded', function() {
@@ -1439,122 +1329,7 @@
             
             // 保存到localStorage
             localStorage.setItem('siteVisits', JSON.stringify(visits));
-            
-            // 初始化设置面板
-            initSettings();
         });
-        
-        // 初始化设置面板
-        function initSettings() {
-            // 设置标签页切换
-            document.querySelectorAll('.settings-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.settings-content').forEach(c => c.classList.remove('active'));
-                    
-                    this.classList.add('active');
-                    document.getElementById(this.getAttribute('data-tab') + 'Settings').classList.add('active');
-                });
-            });
-            
-            // 密码修改表单
-            document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const oldPassword = document.getElementById('oldPassword').value;
-                const newPassword = document.getElementById('newPassword').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                
-                if (newPassword !== confirmPassword) {
-                    alert('新密码和确认密码不一致！');
-                    return;
-                }
-                
-                // 找到当前管理员
-                const adminIndex = adminUsers.findIndex(u => u.username === currentAdmin);
-                if (adminIndex === -1 || adminUsers[adminIndex].password !== oldPassword) {
-                    alert('旧密码不正确！');
-                    return;
-                }
-                
-                // 更新密码
-                adminUsers[adminIndex].password = newPassword;
-                localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
-                
-                // 记录日志
-                addLog('修改密码', `管理员 ${currentAdmin} 修改了密码`);
-                
-                alert('密码修改成功！');
-                this.reset();
-            });
-            
-            // 添加管理员
-            document.getElementById('addAdminBtn').addEventListener('click', function() {
-                const newUsername = document.getElementById('newUsername').value;
-                const newUserPassword = document.getElementById('newUserPassword').value;
-                
-                if (!newUsername || !newUserPassword) {
-                    alert('请填写完整的账号和密码！');
-                    return;
-                }
-                
-                if (adminUsers.some(u => u.username === newUsername)) {
-                    alert('该管理员账号已存在！');
-                    return;
-                }
-                
-                adminUsers.push({ username: newUsername, password: newUserPassword });
-                localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
-                
-                // 记录日志
-                addLog('添加管理员', `添加了新管理员: ${newUsername}`);
-                
-                alert('管理员添加成功！');
-                document.getElementById('newUsername').value = '';
-                document.getElementById('newUserPassword').value = '';
-                
-                // 刷新管理员列表
-                loadAdminList();
-            });
-        }
-        
-        // 加载管理员列表
-        function loadAdminList() {
-            const adminList = document.getElementById('adminList');
-            adminList.innerHTML = '';
-            
-            adminUsers.forEach((admin, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${admin.username}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn delete-btn" data-index="${index}">
-                                <i class="fas fa-trash"></i> 删除
-                            </button>
-                        </div>
-                    </td>
-                `;
-                adminList.appendChild(row);
-                
-                // 添加删除功能（不能删除自己）
-                row.querySelector('.delete-btn').addEventListener('click', function() {
-                    if (admin.username === currentAdmin) {
-                        alert('不能删除当前登录的管理员！');
-                        return;
-                    }
-                    
-                    if (confirm(`确定要删除管理员 ${admin.username} 吗？`)) {
-                        adminUsers.splice(index, 1);
-                        localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
-                        loadAdminList();
-                        
-                        // 记录日志
-                        addLog('删除管理员', `删除了管理员: ${admin.username}`);
-                    }
-                });
-            });
-        }
         
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -1781,12 +1556,9 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // 验证管理员
-            const validAdmin = adminUsers.find(u => u.username === username && u.password === password);
-            
-            if(validAdmin) {
+            // 简单的管理员验证
+            if(username === 'admin' && password === 'hongjie123') {
                 isAdminLoggedIn = true;
-                currentAdmin = username;
                 document.getElementById('adminLoginForm').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
@@ -1801,9 +1573,6 @@
                 
                 // 加载操作日志
                 loadLogs();
-                
-                // 加载管理员列表
-                loadAdminList();
             } else {
                 alert('管理员账号或密码错误！');
             }
@@ -2006,7 +1775,6 @@
             addLog('管理员退出', '管理员退出系统');
             
             isAdminLoggedIn = false;
-            currentAdmin = null;
             document.getElementById('adminLoginForm').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('username').value = '';
@@ -2097,7 +1865,7 @@
                     URL.revokeObjectURL(url);
                 });
             });
-        }
+        });
         
         // 导出所有数据
         document.getElementById('exportBtn').addEventListener('click', function() {
