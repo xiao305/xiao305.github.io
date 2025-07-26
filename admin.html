@@ -7,7 +7,7 @@
     <base href="https://hongjsf.cyou/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 优化后的样式系统 */
+       /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
             --secondary: #FFF0F0;
@@ -510,8 +510,8 @@
         <!-- 管理员页面 -->
         <div id="admin">
             <div class="page-header">
-                <h1>管理员面板</h1> <!-- 修改标题 -->
-                <p>管理网站数据和用户留言</p> <!-- 修改副标题 -->
+                <h1>管理员面板</h1>
+                <p>管理网站数据和用户留言</p>
             </div>
             <div class="login-form" id="adminLoginForm">
                 <form id="adminLogin">
@@ -530,7 +530,7 @@
             </div>
             <div id="adminPanel" class="admin-panel" style="display: none;">
                 <div class="admin-header">
-                    <h2>网站管理系统</h2> <!-- 修改标题 -->
+                    <h2>网站管理系统</h2>
                     <button id="logoutBtn" class="btn-outline">
                         <i class="fas fa-sign-out-alt"></i> 退出登录
                     </button>
@@ -575,8 +575,8 @@
                             <th>电话</th>
                             <th>留言内容</th>
                             <th>提交时间</th>
-                            <th>状态</th> <!-- 添加状态列 -->
-                            <th>操作</th> <!-- 添加操作列 -->
+                            <th>状态</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody id="messageTableBody">
@@ -704,7 +704,7 @@
         </div>
     </div>
     <script>
-        // 全局变量 (从 index.html 复制并修改)
+        // 全局变量
         let messages = JSON.parse(localStorage.getItem('messages')) || [];
         let isAdminLoggedIn = false;
         let logs = JSON.parse(localStorage.getItem('adminLogs')) || [];
@@ -814,7 +814,7 @@
 
         // 管理员登录
         document.getElementById('adminLogin').addEventListener('submit', function(e) {
-            e.preventDefault();
+            e.preventDefault(); // 阻止表单默认提交刷新页面
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             // 简单的管理员验证 (使用哈希比较)
@@ -835,13 +835,13 @@
                 // 初始化设置面板
                 initializeSettingsPanel();
             } else {
-                alert('管理员账号或密码错误！'); // 保持一致的提示
+                alert('管理员账号或密码错误！');
             }
         });
 
         // 更改管理员密码
         document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            e.preventDefault(); // 阻止表单默认提交刷新页面
             if (!isAdminLoggedIn || !currentAdminUser) {
                 alert('请先登录！');
                 return;
@@ -882,7 +882,7 @@
 
         // 新增管理员账号
         document.getElementById('addAdminForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            e.preventDefault(); // 阻止表单默认提交刷新页面
             if (!isAdminLoggedIn) {
                 alert('请先登录！');
                 return;
@@ -914,14 +914,14 @@
         });
 
 
-        // 加载留言数据 (从 index.html 复制并修改)
+        // 加载留言数据
         function loadMessages() {
             const tableBody = document.getElementById('messageTableBody');
             tableBody.innerHTML = '';
              // 更新统计信息
             updateMessageStats();
             if(messages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">暂无留言数据</td></tr>'; // 更新 colspan
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">暂无留言数据</td></tr>';
                 return;
             }
             // 按时间倒序排列
@@ -936,7 +936,7 @@
                     <td>${msg.phone}</td>
                     <td>${msg.message}</td>
                     <td>${msg.timestamp}</td>
-                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td> <!-- 添加状态 -->
+                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="action-btn delete-btn" data-index="${index}">
@@ -946,16 +946,16 @@
                                 <i class="fas fa-download"></i>
                             </button>
                         </div>
-                    </td> <!-- 添加操作 -->
+                    </td>
                 `;
                 tableBody.appendChild(row);
-                // 标记为已读 (逻辑与 index.html 一致)
+                // 标记为已读
                 if(!msg.read) {
                     messages[messages.length - 1 - index].read = true;
                     localStorage.setItem('messages', JSON.stringify(messages));
                     updateMessageStats(); // 更新统计
                 }
-                // 添加删除功能 (从 index.html 复制)
+                // 添加删除功能
                 row.querySelector('.delete-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     if(confirm('确定要删除这条留言吗？')) {
@@ -966,7 +966,7 @@
                         loadMessages(); // 重新加载
                     }
                 });
-                // 添加导出功能 (从 index.html 复制)
+                // 添加导出功能
                 row.querySelector('.export-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     const message = messages[index];
@@ -990,7 +990,7 @@
             });
         }
 
-        // 更新留言统计信息 (从 index.html 复制)
+        // 更新留言统计信息
         function updateMessageStats() {
             const today = new Date().toLocaleDateString();
             // 计算今日留言
@@ -1006,7 +1006,7 @@
             document.getElementById('unreadMessages').textContent = unreadMessages;
         }
 
-        // 加载访问统计 (从 index.html 复制)
+        // 加载访问统计
         function loadVisits() {
             // 更新总访问量
             document.getElementById('totalVisits').textContent = visits.total;
@@ -1043,7 +1043,7 @@
             });
         }
 
-         // 加载操作日志 (从 index.html 复制)
+         // 加载操作日志
         function loadLogs() {
             const logsList = document.getElementById('logsList');
             logsList.innerHTML = '';
@@ -1067,7 +1067,7 @@
             });
         }
 
-        // 添加操作日志 (从 index.html 复制)
+        // 添加操作日志
         function addLog(action, details) {
             const timestamp = new Date().toLocaleString();
             logs.push({ action, details, timestamp });
@@ -1080,7 +1080,7 @@
         }
 
 
-        // 退出登录 (从 index.html 复制并修改)
+        // 退出登录
         document.getElementById('logoutBtn').addEventListener('click', function() {
             // 记录退出日志
             addLog('管理员退出', `管理员 ${currentAdminUser} 退出系统`);
@@ -1096,7 +1096,7 @@
             document.getElementById('addAdminForm').reset();
         });
 
-        // 搜索功能 (从 index.html 复制)
+        // 搜索功能
         document.getElementById('searchBtn').addEventListener('click', function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             if(!searchTerm) return;
@@ -1110,7 +1110,7 @@
             const tableBody = document.getElementById('messageTableBody');
             tableBody.innerHTML = '';
             if(filteredMessages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">未找到匹配的留言</td></tr>'; // 更新 colspan
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">未找到匹配的留言</td></tr>';
                 return;
             }
             // 按时间倒序排列
@@ -1138,7 +1138,7 @@
                     </td>
                 `;
                 tableBody.appendChild(row);
-                // 添加删除功能 (从 index.html 复制)
+                // 添加删除功能
                 row.querySelector('.delete-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     if(confirm('确定要删除这条留言吗？')) {
@@ -1149,7 +1149,7 @@
                         loadMessages(); // 重新加载
                     }
                 });
-                // 添加导出功能 (从 index.html 复制)
+                // 添加导出功能
                 row.querySelector('.export-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     const message = messages[index];
@@ -1173,7 +1173,7 @@
             });
         });
 
-        // 导出所有数据 (从 index.html 复制)
+        // 导出所有数据
         document.getElementById('exportBtn').addEventListener('click', function() {
             // 记录导出日志
             addLog('导出数据', '导出了所有留言数据');
