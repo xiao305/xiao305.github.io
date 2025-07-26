@@ -330,20 +330,6 @@
             from { opacity: 0; transform: translateX(-50%) translateY(-5px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
-
-        /* 新增群聊徽章样式 */
-        .group-badge {
-            position: absolute;
-            top: -16px;
-            right: 25px;
-            background: linear-gradient(45deg, #4CAF50 0%, #81C784 100%);
-            color: white;
-            padding: 6px 20px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(76,175,80,0.2);
-        }
         
         /* 页脚样式 */
         .footer {
@@ -621,6 +607,77 @@
             margin-top: 20px;
             font-size: 0.9rem;
         }
+        
+        /* 管理员登录表单 */
+        .login-form {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        /* 留言表格 */
+        .message-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .message-table th,
+        .message-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .message-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .message-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .message-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        /* 管理员面板 */
+        .admin-panel {
+            padding: 30px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
@@ -669,6 +726,7 @@
                 <a href="#" class="nav-link" data-page="products"><i class="fas fa-store"></i> 特产商城</a>
                 <a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a>
                 <a href="#" class="nav-link" data-page="contact"><i class="fas fa-phone-alt"></i> 联系方式</a>
+                <a href="#" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a>
             </div>
         </div>
     </nav>
@@ -892,20 +950,20 @@
                 
                 <div class="contact-box" style="margin-top: 30px;">
                     <h2><i class="fas fa-comment-dots"></i> 在线留言</h2>
-                    <form style="margin-top: 20px;">
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">您的姓名</label>
-                            <input type="text" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <form id="messageForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="name">您的姓名</label>
+                            <input type="text" id="name" required>
                         </div>
                         
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">联系电话</label>
-                            <input type="tel" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        <div class="form-group">
+                            <label for="phone">联系电话</label>
+                            <input type="tel" id="phone" required>
                         </div>
                         
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">留言内容</label>
-                            <textarea rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+                        <div class="form-group">
+                            <label for="message">留言内容</label>
+                            <textarea id="message" rows="4" required></textarea>
                         </div>
                         
                         <button type="submit" class="btn" style="width: 100%;">
@@ -918,6 +976,55 @@
                 <div class="disclaimer">
                     <p><strong>免责声明：</strong>本页面仅为测试展示，联系方式可能不是最新或准确的。实际联系请通过首页二维码添加微信。</p>
                 </div>
+            </div>
+        </div>
+        
+        <!-- 管理员页面 -->
+        <div id="admin" class="page">
+            <div class="page-header">
+                <h1>管理员登录</h1>
+                <p>请使用管理员账号登录以查看留言数据</p>
+            </div>
+            
+            <div class="login-form">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="username">管理员账号</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">管理员密码</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </button>
+                </form>
+            </div>
+            
+            <div id="adminPanel" class="admin-panel" style="display: none;">
+                <div class="admin-header">
+                    <h2>留言管理</h2>
+                    <button id="logoutBtn" class="btn-outline">
+                        <i class="fas fa-sign-out-alt"></i> 退出登录
+                    </button>
+                </div>
+                
+                <table class="message-table">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>电话</th>
+                            <th>留言内容</th>
+                            <th>提交时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messageTableBody">
+                        <!-- 留言数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -937,16 +1044,17 @@
                     <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
                     <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
                     <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
+                    <li><a href="#" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li>
                 </ul>
             </div>
             
             <div class="footer-section">
                 <h3>联系我们</h3>
                 <ul class="footer-links">
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 山西省孝义市崇文街532号</a></li>
-                    <li><a href="tel:03587623456"><i class="fas fa-phone-alt"></i> 无</a></li>
-                    <li><a href="#"><i class="fab fa-weixin"></i> 微信: rr66tt8</a></li>
-                    <li><a href="mailto:hongjiesf@example.com"><i class="fas fa-envelope"></i> 暂不设置</a></li>
+                    <li><a href="#" class="footer-link"><i class="fas fa-map-marker-alt"></i> 山西省孝义市崇文街532号</a></li>
+                    <li><a href="#" class="footer-link"><i class="fas fa-phone-alt"></i> 无</a></li>
+                    <li><a href="#" class="footer-link"><i class="fab fa-weixin"></i> 微信: rr66tt8</a></li>
+                    <li><a href="#" class="footer-link"><i class="fas fa-envelope"></i> 暂不设置</a></li>
                 </ul>
             </div>
             
@@ -972,21 +1080,33 @@
         // 全局变量
         let countdownInterval = null;
         let targetPageId = null;
+        let messages = JSON.parse(localStorage.getItem('messages')) || [];
+        let isAdminLoggedIn = false;
         
         // 页面导航功能
-        document.querySelectorAll('.nav-link, .footer-links a').forEach(link => {
+        document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 const pageId = this.getAttribute('data-page');
                 
                 // 如果点击的是非首页链接
-                if(pageId !== 'home') {
+                if(pageId !== 'home' && pageId !== 'admin') {
                     showWarningModal(pageId);
                     return;
                 }
                 
                 // 切换页面
+                switchPage(pageId);
+            });
+        });
+        
+        // 页脚链接点击处理（不显示弹窗）
+        document.querySelectorAll('.footer-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const pageId = this.getAttribute('data-page');
                 switchPage(pageId);
             });
         });
@@ -1034,8 +1154,13 @@
             countdownEl.textContent = seconds;
             timerEl.textContent = seconds;
             
+            // 使用高性能计时器
+            const startTime = Date.now();
+            
             countdownInterval = setInterval(() => {
-                seconds--;
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                seconds = Math.max(0, 10 - elapsed);
+                
                 countdownEl.textContent = seconds;
                 timerEl.textContent = seconds;
                 
@@ -1044,7 +1169,7 @@
                     continueBtn.disabled = false;
                     continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
                 }
-            }, 1000);
+            }, 200); // 每200毫秒更新一次
         }
         
         // 返回首页按钮
@@ -1123,6 +1248,90 @@
             }
             
             lastScrollTop = scrollTop;
+        });
+        
+        // 留言表单提交
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+            const timestamp = new Date().toLocaleString();
+            
+            // 创建留言对象
+            const newMessage = {
+                name,
+                phone,
+                message,
+                timestamp
+            };
+            
+            // 添加到留言数组
+            messages.push(newMessage);
+            
+            // 保存到localStorage
+            localStorage.setItem('messages', JSON.stringify(messages));
+            
+            // 清空表单
+            this.reset();
+            
+            // 显示成功提示
+            alert('留言提交成功！');
+        });
+        
+        // 管理员登录
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 简单的管理员验证（实际应用中应使用更安全的方式）
+            if(username === 'admin' && password === 'hongjie123') {
+                isAdminLoggedIn = true;
+                document.getElementById('adminLoginForm').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                
+                // 加载留言数据
+                loadMessages();
+            } else {
+                alert('管理员账号或密码错误！');
+            }
+        });
+        
+        // 加载留言数据
+        function loadMessages() {
+            const tableBody = document.getElementById('messageTableBody');
+            tableBody.innerHTML = '';
+            
+            if(messages.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">暂无留言数据</td></tr>';
+                return;
+            }
+            
+            // 按时间倒序排列
+            const sortedMessages = [...messages].reverse();
+            
+            sortedMessages.forEach(msg => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${msg.name}</td>
+                    <td>${msg.phone}</td>
+                    <td>${msg.message}</td>
+                    <td>${msg.timestamp}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            isAdminLoggedIn = false;
+            document.getElementById('adminLoginForm').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
         });
     </script>
 </body>
