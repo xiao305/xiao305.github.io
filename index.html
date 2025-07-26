@@ -1149,15 +1149,125 @@
             contact: ''
         };
 
+        // --- GitHub 配置 (用于读取) ---
+        const GITHUB_OWNER = "xiao305";
+        const GITHUB_REPO = "xiao305.github.io";
+        const CONFIG_ISSUE_NUMBER = 3;
+        // 注意：index.html 读取公开仓库的 Issue 评论通常不需要 Token，
+        // 但为了保险和可能的更高频率访问，也可以加上 (虽然不推荐硬编码)
+        // const GITHUB_TOKEN_READ = "YOUR_GITHUB_PAT_HERE"; // 可选，如果需要的话
+
         // 页面加载时初始化访问统计
         document.addEventListener('DOMContentLoaded', function() {
-            // 更新总访问量
-            visits.total = (visits.total || 0) + 1;
-            // 更新每日访问量
-            const today = new Date().toLocaleDateString();
-            visits.daily[today] = (visits.daily[today] || 0) + 1;
-            // 保存到localStorage
-            localStorage.setItem('siteVisits', JSON.stringify(visits));
+            // --- 修改初始化逻辑 ---
+            // 页面加载完成后初始化
+            function initializeApp() {
+                // 辅助函数：初始化设置面板状态 (从传入的配置)
+                function initializeWithConfig(config, passwords) {
+                     // 假设 pageStatusConfig 和 pagePasswords 是全局变量
+                     window.pageStatusConfig = config;
+                     window.pagePasswords = passwords;
+                     // 如果有初始化设置面板的函数，调用它
+                     // 注意：index.html 没有设置面板UI，所以这里不需要调用
+                     // ... 其他需要配置的初始化逻辑 ...
+                     // 更新总访问量
+                     visits.total = (visits.total || 0) + 1;
+                     // 更新每日访问量
+                     const today = new Date().toLocaleDateString();
+                     visits.daily[today] = (visits.daily[today] || 0) + 1;
+                     // 保存到localStorage
+                     localStorage.setItem('siteVisits', JSON.stringify(visits));
+                }
+
+                // 尝试从 GitHub 获取最新配置
+                fetchLatestConfigFromGitHub()
+                    .then((githubConfig) => {
+                        if (githubConfig && githubConfig.pageStatusConfig) {
+                            console.log("GitHub: 成功加载远程配置", githubConfig);
+                            initializeWithConfig(githubConfig.pageStatusConfig, githubConfig.pagePasswords || {});
+                        } else {
+                            console.log("GitHub: 远程配置无效或为空，回退到本地配置");
+                            fallbackToLocalStorage();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("GitHub: 加载远程配置失败:", error);
+                        fallbackToLocalStorage();
+                    });
+            }
+
+            // --- 新增：从 GitHub Issue 获取最新配置的函数 ---
+            async function fetchLatestConfigFromGitHub() {
+                const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${CONFIG_ISSUE_NUMBER}/comments?sort=created&direction=desc&per_page=1`;
+
+                // 构建 headers，如果不使用 Token 可以省略 Authorization
+                const headers = {
+                    'Accept': 'application/vnd.github.v3+json'
+                    // 如果需要 Token: 'Authorization': `token ${GITHUB_TOKEN_READ}`
+                };
+
+                const response = await fetch(url, { headers });
+
+                if (!response.ok) {
+                    // 如果是 404，可能 Issue 不存在或无评论
+                    if (response.status === 404) {
+                         console.log("GitHub: Issue 或评论未找到");
+                         return null; // 返回 null 表示没有配置
+                    }
+                    throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+                }
+
+                const comments = await response.json();
+
+                if (comments && comments.length > 0) {
+                    const latestCommentBody = comments[0].body;
+                    console.log("Latest Comment Body:", latestCommentBody);
+                    // 简单提取代码块中的 JSON
+                    const jsonMatch = latestCommentBody.match(/```json\s*([\s\S]*?)\s*```/);
+                    if (jsonMatch && jsonMatch[1]) {
+                        try {
+                            const configData = JSON.parse(jsonMatch[1]);
+                            return configData;
+                        } catch (parseError) {
+                            console.error("Failed to parse JSON from comment:", parseError);
+                            return null; // 解析失败
+                        }
+                    } else {
+                        console.log("No JSON code block found in the latest comment.");
+                        return null; // 没有找到 JSON 代码块
+                    }
+                } else {
+                    console.log("No comments found in the issue.");
+                    return null; // 没有评论
+                }
+            }
+
+            // --- 新增：回退到 LocalStorage 的函数 ---
+            function fallbackToLocalStorage() {
+                // 回退到本地 localStorage 配置
+                const localPageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                    products: { status: 'limit', duration: 10 },
+                    about: { status: 'limit', duration: 10 },
+                    contact: { status: 'limit', duration: 10 }
+                };
+                const localPagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                    products: '',
+                    about: '',
+                    contact: ''
+                };
+                // 假设 pageStatusConfig 和 pagePasswords 是全局变量
+                window.pageStatusConfig = localPageStatusConfig;
+                window.pagePasswords = localPagePasswords;
+                // ... 其他需要配置的初始化逻辑 ...
+                // 更新总访问量
+                visits.total = (visits.total || 0) + 1;
+                const today = new Date().toLocaleDateString();
+                visits.daily[today] = (visits.daily[today] || 0) + 1;
+                localStorage.setItem('siteVisits', JSON.stringify(visits));
+            }
+
+            // 启动初始化流程
+            initializeApp();
         });
 
         // 页面导航功能
