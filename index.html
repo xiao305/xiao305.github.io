@@ -865,6 +865,75 @@
             font-weight: bold;
             color: var(--primary);
         }
+        
+        /* 新增设置面板样式 */
+        .settings-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+        
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .settings-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .settings-tab.active {
+            border-bottom-color: var(--primary);
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .settings-content {
+            display: none;
+        }
+        
+        .settings-content.active {
+            display: block;
+        }
+        
+        .settings-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .page-status-card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .status-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .status-btn {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+        
+        .status-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -874,16 +943,23 @@
             <div class="modal-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <h2 class="modal-title">重要提示</h2>
+            <h2 class="modal-title" id="modalTitle">重要提示</h2>
             <div class="modal-text">
                 <p id="warningMessage">您正在访问的"特产商城"版块目前为测试页面，内容仅供展示。</p>
                 
-                <div class="highlight">
+                <div class="highlight" id="warningDetails">
                     <p><i class="fas fa-exclamation-circle"></i> 页面展示的商品信息、价格、联系方式等内容可能不是最新或准确的</p>
                     <p><i class="fas fa-exclamation-circle"></i> 本网站仅为测试用途，不提供实际购买功能</p>
                 </div>
                 
-                <p>如需购买商品，请返回首页并通过微信二维码联系红姐进行购买。</p>
+                <div id="passwordSection" style="display: none; margin: 20px 0;">
+                    <div class="form-group">
+                        <label for="accessPassword">访问密码</label>
+                        <input type="password" id="accessPassword" required>
+                    </div>
+                </div>
+                
+                <p id="additionalMessage">如需购买商品，请返回首页并通过微信二维码联系红姐进行购买。</p>
                 
                 <div class="countdown">
                     请阅读提示 <span id="countdown">10</span> 秒
@@ -1258,6 +1334,147 @@
                         <!-- 日志将通过JS动态填充 -->
                     </div>
                 </div>
+                
+                <!-- 系统设置面板 -->
+                <div class="settings-panel">
+                    <h3>系统设置</h3>
+                    <div class="settings-tabs">
+                        <div class="settings-tab active" data-tab="password">密码管理</div>
+                        <div class="settings-tab" data-tab="users">管理员账号</div>
+                        <div class="settings-tab" data-tab="pages">页面状态</div>
+                    </div>
+                    
+                    <div class="settings-content active" id="passwordSettings">
+                        <form id="changePasswordForm" class="settings-form">
+                            <div class="form-group">
+                                <label for="oldPassword">旧密码</label>
+                                <input type="password" id="oldPassword" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newPassword">新密码</label>
+                                <input type="password" id="newPassword" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="confirmPassword">确认新密码</label>
+                                <input type="password" id="confirmPassword" required>
+                            </div>
+                            
+                            <button type="submit" class="btn">
+                                <i class="fas fa-key"></i> 更改密码
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="settings-content" id="usersSettings">
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label for="newUsername">新管理员账号</label>
+                                <input type="text" id="newUsername" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newUserPassword">密码</label>
+                                <input type="password" id="newUserPassword" required>
+                            </div>
+                            
+                            <button id="addAdminBtn" class="btn">
+                                <i class="fas fa-user-plus"></i> 添加管理员
+                            </button>
+                            
+                            <h4 style="margin-top: 20px;">管理员列表</h4>
+                            <table class="message-table" style="margin-top: 10px;">
+                                <thead>
+                                    <tr>
+                                        <th>账号</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminList">
+                                    <!-- 管理员列表将通过JS动态填充 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-content" id="pagesSettings">
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label>全局关闭密码</label>
+                                <input type="password" id="globalClosePassword" placeholder="设置关闭页面的访问密码">
+                            </div>
+                            
+                            <h4 style="margin-top: 20px;">页面状态设置</h4>
+                            
+                            <div class="page-status-card">
+                                <h5>首页</h5>
+                                <p>状态: <span class="tag tag-success">开启</span></p>
+                                <div class="status-controls">
+                                    <div class="status-btn active">开启</div>
+                                    <div class="status-btn">关闭</div>
+                                    <div class="status-btn">限制</div>
+                                </div>
+                            </div>
+                            
+                            <div class="page-status-card">
+                                <h5>特产商城</h5>
+                                <p>状态: <span class="tag tag-warning">限制</span></p>
+                                <div class="status-controls">
+                                    <div class="status-btn">开启</div>
+                                    <div class="status-btn">关闭</div>
+                                    <div class="status-btn active">限制</div>
+                                </div>
+                                <div class="form-group" style="margin-top: 10px;">
+                                    <label for="productsDuration">强制时长(秒)</label>
+                                    <input type="number" id="productsDuration" value="10" min="5" max="60">
+                                </div>
+                            </div>
+                            
+                            <div class="page-status-card">
+                                <h5>关于我们</h5>
+                                <p>状态: <span class="tag tag-warning">限制</span></p>
+                                <div class="status-controls">
+                                    <div class="status-btn">开启</div>
+                                    <div class="status-btn">关闭</div>
+                                    <div class="status-btn active">限制</div>
+                                </div>
+                                <div class="form-group" style="margin-top: 10px;">
+                                    <label for="aboutDuration">强制时长(秒)</label>
+                                    <input type="number" id="aboutDuration" value="10" min="5" max="60">
+                                </div>
+                            </div>
+                            
+                            <div class="page-status-card">
+                                <h5>联系方式</h5>
+                                <p>状态: <span class="tag tag-warning">限制</span></p>
+                                <div class="status-controls">
+                                    <div class="status-btn">开启</div>
+                                    <div class="status-btn">关闭</div>
+                                    <div class="status-btn active">限制</div>
+                                </div>
+                                <div class="form-group" style="margin-top: 10px;">
+                                    <label for="contactDuration">强制时长(秒)</label>
+                                    <input type="number" id="contactDuration" value="10" min="5" max="60">
+                                </div>
+                            </div>
+                            
+                            <div class="page-status-card">
+                                <h5>管理员</h5>
+                                <p>状态: <span class="tag tag-success">开启</span></p>
+                                <div class="status-controls">
+                                    <div class="status-btn active">开启</div>
+                                    <div class="status-btn">关闭</div>
+                                    <div class="status-btn">限制</div>
+                                </div>
+                            </div>
+                            
+                            <button id="savePageSettings" class="btn" style="margin-top: 20px;">
+                                <i class="fas fa-save"></i> 保存设置
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1273,11 +1490,11 @@
             <div class="footer-section">
                 <h3>快速链接</h3>
                 <ul class="footer-links">
-                    <li><a href="#" data-page="home"><i class="fas fa-chevron-right"></i> 首页</a></li>
-                    <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
-                    <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
-                    <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
-                    <li><a href="#" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li>
+                    <li><a href="#" data-page="home" data-nav="true"><i class="fas fa-chevron-right"></i> 首页</a></li>
+                    <li><a href="#" data-page="products" data-nav="true"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
+                    <li><a href="#" data-page="about" data-nav="true"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
+                    <li><a href="#" data-page="contact" data-nav="true"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
+                    <li><a href="#" data-page="admin" data-nav="true"><i class="fas fa-lock"></i> 管理员</a></li>
                 </ul>
             </div>
             
@@ -1317,6 +1534,24 @@
         let isAdminLoggedIn = false;
         let logs = JSON.parse(localStorage.getItem('adminLogs')) || [];
         let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
+        let currentAdmin = null;
+        
+        // 页面设置状态
+        const pageSettings = JSON.parse(localStorage.getItem('pageSettings')) || {
+            home: { status: "open" },
+            products: { status: "restricted", duration: 10 },
+            about: { status: "restricted", duration: 10 },
+            contact: { status: "restricted", duration: 10 },
+            admin: { status: "open" }
+        };
+        
+        // 管理员账号
+        const adminUsers = JSON.parse(localStorage.getItem('adminUsers')) || [
+            { username: "admin", password: "hongjie123" }
+        ];
+        
+        // 关闭页面密码
+        const closePassword = localStorage.getItem('closePassword') || "hongjie123";
         
         // 页面加载时初始化访问统计
         document.addEventListener('DOMContentLoaded', function() {
@@ -1329,7 +1564,139 @@
             
             // 保存到localStorage
             localStorage.setItem('siteVisits', JSON.stringify(visits));
+            
+            // 初始化设置面板
+            initSettings();
         });
+        
+        // 初始化设置面板
+        function initSettings() {
+            // 设置标签页切换
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.settings-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(this.getAttribute('data-tab') + 'Settings').classList.add('active');
+                });
+            });
+            
+            // 密码修改表单
+            document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const oldPassword = document.getElementById('oldPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (newPassword !== confirmPassword) {
+                    alert('新密码和确认密码不一致！');
+                    return;
+                }
+                
+                // 找到当前管理员
+                const adminIndex = adminUsers.findIndex(u => u.username === currentAdmin);
+                if (adminIndex === -1 || adminUsers[adminIndex].password !== oldPassword) {
+                    alert('旧密码不正确！');
+                    return;
+                }
+                
+                // 更新密码
+                adminUsers[adminIndex].password = newPassword;
+                localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
+                
+                // 记录日志
+                addLog('修改密码', `管理员 ${currentAdmin} 修改了密码`);
+                
+                alert('密码修改成功！');
+                this.reset();
+            });
+            
+            // 添加管理员
+            document.getElementById('addAdminBtn').addEventListener('click', function() {
+                const newUsername = document.getElementById('newUsername').value;
+                const newUserPassword = document.getElementById('newUserPassword').value;
+                
+                if (!newUsername || !newUserPassword) {
+                    alert('请填写完整的账号和密码！');
+                    return;
+                }
+                
+                if (adminUsers.some(u => u.username === newUsername)) {
+                    alert('该管理员账号已存在！');
+                    return;
+                }
+                
+                adminUsers.push({ username: newUsername, password: newUserPassword });
+                localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
+                
+                // 记录日志
+                addLog('添加管理员', `添加了新管理员: ${newUsername}`);
+                
+                alert('管理员添加成功！');
+                document.getElementById('newUsername').value = '';
+                document.getElementById('newUserPassword').value = '';
+                
+                // 刷新管理员列表
+                loadAdminList();
+            });
+            
+            // 保存页面设置
+            document.getElementById('savePageSettings').addEventListener('click', function() {
+                // 保存关闭密码
+                const globalPassword = document.getElementById('globalClosePassword').value;
+                if (globalPassword) {
+                    localStorage.setItem('closePassword', globalPassword);
+                }
+                
+                // 保存页面状态
+                localStorage.setItem('pageSettings', JSON.stringify(pageSettings));
+                
+                // 记录日志
+                addLog('保存设置', '更新了页面状态设置');
+                
+                alert('设置保存成功！');
+            });
+        }
+        
+        // 加载管理员列表
+        function loadAdminList() {
+            const adminList = document.getElementById('adminList');
+            adminList.innerHTML = '';
+            
+            adminUsers.forEach((admin, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${admin.username}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn delete-btn" data-index="${index}">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                    </td>
+                `;
+                adminList.appendChild(row);
+                
+                // 添加删除功能（不能删除自己）
+                row.querySelector('.delete-btn').addEventListener('click', function() {
+                    if (admin.username === currentAdmin) {
+                        alert('不能删除当前登录的管理员！');
+                        return;
+                    }
+                    
+                    if (confirm(`确定要删除管理员 ${admin.username} 吗？`)) {
+                        adminUsers.splice(index, 1);
+                        localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
+                        loadAdminList();
+                        
+                        // 记录日志
+                        addLog('删除管理员', `删除了管理员: ${admin.username}`);
+                    }
+                });
+            });
+        }
         
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -1338,9 +1705,12 @@
                 
                 const pageId = this.getAttribute('data-page');
                 
+                // 检查页面状态
+                const status = pageSettings[pageId]?.status || "restricted";
+                
                 // 如果点击的是非首页链接
-                if(pageId !== 'home' && pageId !== 'admin') {
-                    showWarningModal(pageId);
+                if (pageId !== 'home' && pageId !== 'admin' && status !== "open") {
+                    showWarningModal(pageId, status);
                     return;
                 }
                 
@@ -1350,15 +1720,18 @@
         });
         
         // 页脚链接点击处理 - 添加警告
-        document.querySelectorAll('.footer-links a').forEach(link => {
+        document.querySelectorAll('.footer-links a[data-nav="true"]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 const pageId = this.getAttribute('data-page');
                 
+                // 检查页面状态
+                const status = pageSettings[pageId]?.status || "restricted";
+                
                 // 如果点击的是非首页链接
-                if(pageId !== 'home' && pageId !== 'admin') {
-                    showWarningModal(pageId);
+                if (pageId !== 'home' && pageId !== 'admin' && status !== "open") {
+                    showWarningModal(pageId, status);
                     return;
                 }
                 
@@ -1386,7 +1759,7 @@
         }
         
         // 显示警告弹窗
-        function showWarningModal(pageId) {
+        function showWarningModal(pageId, status) {
             // 清除之前的倒计时
             if (countdownInterval) {
                 clearInterval(countdownInterval);
@@ -1406,17 +1779,37 @@
             };
             
             const pageName = pageNames[pageId] || '该版块';
-            document.getElementById('warningMessage').textContent = 
-                `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
             
-            let seconds = 10;
+            // 根据页面状态设置不同的提示
+            if (status === "closed") {
+                document.getElementById('modalTitle').textContent = '页面已关闭';
+                document.getElementById('warningMessage').textContent = 
+                    `您正在访问的"${pageName}"版块已被管理员关闭。`;
+                document.getElementById('warningDetails').style.display = 'none';
+                document.getElementById('passwordSection').style.display = 'block';
+                document.getElementById('additionalMessage').textContent = 
+                    '如需访问，请输入访问密码：';
+                document.getElementById('countdown').textContent = '';
+                document.querySelector('.countdown').style.display = 'none';
+            } else {
+                document.getElementById('modalTitle').textContent = '重要提示';
+                document.getElementById('warningMessage').textContent = 
+                    `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
+                document.getElementById('warningDetails').style.display = 'block';
+                document.getElementById('passwordSection').style.display = 'none';
+                document.getElementById('additionalMessage').textContent = 
+                    '如需购买商品，请返回首页并通过微信二维码联系红姐进行购买。';
+                document.querySelector('.countdown').style.display = 'block';
+            }
+            
+            let seconds = pageSettings[pageId]?.duration || 10;
             const countdownEl = document.getElementById('countdown');
             const timerEl = document.getElementById('timer');
             const continueBtn = document.getElementById('continueBtn');
             
             // 重置按钮状态
             continueBtn.disabled = true;
-            continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>)';
+            continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (<span id="timer">${seconds}</span>)`;
             
             countdownEl.textContent = seconds;
             timerEl.textContent = seconds;
@@ -1426,13 +1819,17 @@
             
             countdownInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                seconds = Math.max(0, 10 - elapsed);
+                const remaining = Math.max(0, seconds - elapsed);
                 
                 // 同时更新两个地方的倒计时显示
-                countdownEl.textContent = seconds;
-                timerEl.textContent = seconds;
+                countdownEl.textContent = remaining;
+                timerEl.textContent = remaining;
                 
-                if(seconds <= 0) {
+                if (status === "closed") {
+                    // 关闭状态不需要倒计时
+                    continueBtn.disabled = false;
+                    continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
+                } else if (remaining <= 0) {
                     clearInterval(countdownInterval);
                     continueBtn.disabled = false;
                     continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
@@ -1456,6 +1853,18 @@
         // 继续查看按钮
         document.getElementById('continueBtn').addEventListener('click', function() {
             const modal = document.getElementById('warningModal');
+            const pageId = targetPageId;
+            const status = pageSettings[pageId]?.status || "restricted";
+            
+            if (status === "closed") {
+                // 检查密码
+                const enteredPassword = document.getElementById('accessPassword').value;
+                if (enteredPassword !== closePassword) {
+                    alert('访问密码错误！');
+                    return;
+                }
+            }
+            
             modal.style.display = 'none';
             
             // 清除倒计时
@@ -1556,9 +1965,12 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // 简单的管理员验证
-            if(username === 'admin' && password === 'hongjie123') {
+            // 验证管理员
+            const validAdmin = adminUsers.find(u => u.username === username && u.password === password);
+            
+            if(validAdmin) {
                 isAdminLoggedIn = true;
+                currentAdmin = username;
                 document.getElementById('adminLoginForm').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
@@ -1573,6 +1985,9 @@
                 
                 // 加载操作日志
                 loadLogs();
+                
+                // 加载管理员列表
+                loadAdminList();
             } else {
                 alert('管理员账号或密码错误！');
             }
@@ -1775,6 +2190,7 @@
             addLog('管理员退出', '管理员退出系统');
             
             isAdminLoggedIn = false;
+            currentAdmin = null;
             document.getElementById('adminLoginForm').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('username').value = '';
@@ -1865,7 +2281,7 @@
                     URL.revokeObjectURL(url);
                 });
             });
-        });
+        }
         
         // 导出所有数据
         document.getElementById('exportBtn').addEventListener('click', function() {
