@@ -562,12 +562,6 @@
             margin-bottom: 20px;
         }
         
-        .modal-icon {
-            font-size: 4rem;
-            color: #ffcc00;
-            margin-bottom: 20px;
-        }
-        
         .modal-text {
             font-size: 1.1rem;
             line-height: 1.6;
@@ -684,12 +678,9 @@
     <!-- 警告弹窗 -->
     <div id="warningModal" class="warning-modal" style="display: none;">
         <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
             <h2 class="modal-title">重要提示</h2>
             <div class="modal-text">
-                <p>您正在访问的"特产商城"、"关于我们"和"联系方式"版块目前为测试页面，内容仅供展示。</p>
+                <p id="warningMessage">您正在访问的"特产商城"版块目前为测试页面，内容仅供展示。</p>
                 
                 <div class="highlight">
                     <p><i class="fas fa-exclamation-circle"></i> 页面展示的商品信息、价格、联系方式等内容可能不是最新或准确的</p>
@@ -726,7 +717,7 @@
                 <a href="#" class="nav-link" data-page="products"><i class="fas fa-store"></i> 特产商城</a>
                 <a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a>
                 <a href="#" class="nav-link" data-page="contact"><i class="fas fa-phone-alt"></i> 联系方式</a>
-                <a href="#" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a>
+                <a href="admin.html" class="nav-link"><i class="fas fa-lock"></i> 管理员</a>
             </div>
         </div>
     </nav>
@@ -978,55 +969,6 @@
                 </div>
             </div>
         </div>
-        
-        <!-- 管理员页面 -->
-        <div id="admin" class="page">
-            <div class="page-header">
-                <h1>管理员登录</h1>
-                <p>请使用管理员账号登录以查看留言数据</p>
-            </div>
-            
-            <div class="login-form">
-                <form id="adminLoginForm">
-                    <div class="form-group">
-                        <label for="username">管理员账号</label>
-                        <input type="text" id="username" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">管理员密码</label>
-                        <input type="password" id="password" required>
-                    </div>
-                    
-                    <button type="submit" class="btn" style="width: 100%;">
-                        <i class="fas fa-sign-in-alt"></i> 登录
-                    </button>
-                </form>
-            </div>
-            
-            <div id="adminPanel" class="admin-panel" style="display: none;">
-                <div class="admin-header">
-                    <h2>留言管理</h2>
-                    <button id="logoutBtn" class="btn-outline">
-                        <i class="fas fa-sign-out-alt"></i> 退出登录
-                    </button>
-                </div>
-                
-                <table class="message-table">
-                    <thead>
-                        <tr>
-                            <th>姓名</th>
-                            <th>电话</th>
-                            <th>留言内容</th>
-                            <th>提交时间</th>
-                        </tr>
-                    </thead>
-                    <tbody id="messageTableBody">
-                        <!-- 留言数据将通过JavaScript动态填充 -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
     <!-- 页脚 -->
@@ -1044,7 +986,7 @@
                     <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
                     <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
                     <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
-                    <li><a href="#" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li>
+                    <li><a href="admin.html"><i class="fas fa-lock"></i> 管理员</a></li>
                 </ul>
             </div>
             
@@ -1081,11 +1023,13 @@
         let countdownInterval = null;
         let targetPageId = null;
         let messages = JSON.parse(localStorage.getItem('messages')) || [];
-        let isAdminLoggedIn = false;
         
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
+                // 管理员页面直接跳转
+                if(this.getAttribute('href') === 'admin.html') return;
+                
                 e.preventDefault();
                 
                 const pageId = this.getAttribute('data-page');
@@ -1107,7 +1051,11 @@
                 e.preventDefault();
                 
                 const pageId = this.getAttribute('data-page');
-                switchPage(pageId);
+                if(pageId) {
+                    switchPage(pageId);
+                } else if(this.getAttribute('href') === 'admin.html') {
+                    window.location.href = 'admin.html';
+                }
             });
         });
         
@@ -1122,8 +1070,11 @@
             });
             
             // 添加当前active类
-            document.querySelector(`.nav-link[data-page="${pageId}"]`).classList.add('active');
-            document.getElementById(pageId).classList.add('active');
+            const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+            if(activeLink) activeLink.classList.add('active');
+            
+            const activePage = document.getElementById(pageId);
+            if(activePage) activePage.classList.add('active');
             
             // 滚动到顶部
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1141,6 +1092,17 @@
             
             // 存储目标页面ID
             targetPageId = pageId;
+            
+            // 根据点击的页面设置警告信息
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            
+            const pageName = pageNames[pageId] || '该版块';
+            document.getElementById('warningMessage').textContent = 
+                `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
             
             let seconds = 10;
             const countdownEl = document.getElementById('countdown');
@@ -1278,60 +1240,6 @@
             
             // 显示成功提示
             alert('留言提交成功！');
-        });
-        
-        // 管理员登录
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // 简单的管理员验证（实际应用中应使用更安全的方式）
-            if(username === 'admin' && password === 'hongjie123') {
-                isAdminLoggedIn = true;
-                document.getElementById('adminLoginForm').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
-                
-                // 加载留言数据
-                loadMessages();
-            } else {
-                alert('管理员账号或密码错误！');
-            }
-        });
-        
-        // 加载留言数据
-        function loadMessages() {
-            const tableBody = document.getElementById('messageTableBody');
-            tableBody.innerHTML = '';
-            
-            if(messages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">暂无留言数据</td></tr>';
-                return;
-            }
-            
-            // 按时间倒序排列
-            const sortedMessages = [...messages].reverse();
-            
-            sortedMessages.forEach(msg => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${msg.name}</td>
-                    <td>${msg.phone}</td>
-                    <td>${msg.message}</td>
-                    <td>${msg.timestamp}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-        
-        // 退出登录
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            isAdminLoggedIn = false;
-            document.getElementById('adminLoginForm').style.display = 'block';
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
         });
     </script>
 </body>
