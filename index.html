@@ -1165,7 +1165,7 @@
             // 替换为您的实际 OSS Bucket 名称和地域
             const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
             const REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域，例如 "oss-cn-hangzhou"
-            const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/config.json`;
+            const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json`;
 
             console.log("开始尝试从 OSS 读取配置...");
             fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
