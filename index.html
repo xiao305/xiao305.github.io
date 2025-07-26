@@ -168,7 +168,7 @@
             transform: translateY(-50%);
             width: 24px;
             height: 24px;
-            background: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
         }
         /* 二维码视觉升级 */
         .qr-code {
@@ -860,7 +860,8 @@
                 <a href="#" class="nav-link" data-page="products"><i class="fas fa-store"></i> 特产商城</a>
                 <a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a>
                 <a href="#" class="nav-link" data-page="contact"><i class="fas fa-phone-alt"></i> 联系方式</a>
-                <a href="admin.html" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a> <!-- 修改为指向 admin.html -->
+                <!-- 修复：顶部导航栏管理员链接直接跳转到 admin.html -->
+                <a href="admin.html" class="nav-link" data-page="admin"><i class="fas fa-lock"></i> 管理员</a>
             </div>
         </div>
     </nav>
@@ -1099,7 +1100,7 @@
                     <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
                     <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
                     <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
-                    <li><a href="admin.html" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 修改为指向 admin.html -->
+                    <li><a href="admin.html" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 页脚管理员链接保持不变 -->
                 </ul>
             </div>
             <div class="footer-section">
@@ -1161,38 +1162,41 @@
 
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const pageId = this.getAttribute('data-page');
-                // 如果点击的是非首页链接 (且不是管理员页)
-                if(pageId !== 'home' && pageId !== 'admin') {
-                    handlePageAccess(pageId);
-                    return;
-                }
-                // 切换页面
-                switchPage(pageId);
-            });
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 如果点击的是非首页链接 (且不是管理员页)
+                    if(pageId !== 'home') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 切换页面
+                    switchPage(pageId);
+                });
+            }
         });
 
         // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
         document.querySelectorAll('.footer-links a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const pageId = this.getAttribute('data-page');
-                // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
-                if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
-                    handlePageAccess(pageId);
-                    return;
-                }
-                // 如果是首页或管理员页，则直接切换页面
-                if(pageId === 'home') {
-                    switchPage(pageId);
-                } else if (pageId === 'admin') {
-                     // 管理员页跳转到独立页面
-                     window.location.href = 'admin.html';
-                }
-                // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
-            });
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
+                    if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 如果是首页，则直接切换页面
+                    if(pageId === 'home') {
+                        switchPage(pageId);
+                    }
+                    // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
+                });
+            }
         });
 
         // 处理页面访问逻辑 (根据状态决定是否弹窗)
