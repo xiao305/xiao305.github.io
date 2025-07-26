@@ -906,34 +906,6 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
-        
-        .page-status-card {
-            background: #f9f9f9;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid #eee;
-        }
-        
-        .status-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .status-btn {
-            flex: 1;
-            padding: 8px;
-            text-align: center;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 1px solid #ddd;
-        }
-        
-        .status-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
     </style>
 </head>
 <body>
@@ -943,23 +915,16 @@
             <div class="modal-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <h2 class="modal-title" id="modalTitle">重要提示</h2>
+            <h2 class="modal-title">重要提示</h2>
             <div class="modal-text">
                 <p id="warningMessage">您正在访问的"特产商城"版块目前为测试页面，内容仅供展示。</p>
                 
-                <div class="highlight" id="warningDetails">
+                <div class="highlight">
                     <p><i class="fas fa-exclamation-circle"></i> 页面展示的商品信息、价格、联系方式等内容可能不是最新或准确的</p>
                     <p><i class="fas fa-exclamation-circle"></i> 本网站仅为测试用途，不提供实际购买功能</p>
                 </div>
                 
-                <div id="passwordSection" style="display: none; margin: 20px 0;">
-                    <div class="form-group">
-                        <label for="accessPassword">访问密码</label>
-                        <input type="password" id="accessPassword" required>
-                    </div>
-                </div>
-                
-                <p id="additionalMessage">如需购买商品，请返回首页并通过微信二维码联系红姐进行购买。</p>
+                <p>如需购买商品，请返回首页并通过微信二维码联系红姐进行购买。</p>
                 
                 <div class="countdown">
                     请阅读提示 <span id="countdown">10</span> 秒
@@ -1341,7 +1306,6 @@
                     <div class="settings-tabs">
                         <div class="settings-tab active" data-tab="password">密码管理</div>
                         <div class="settings-tab" data-tab="users">管理员账号</div>
-                        <div class="settings-tab" data-tab="pages">页面状态</div>
                     </div>
                     
                     <div class="settings-content active" id="passwordSettings">
@@ -1397,83 +1361,6 @@
                             </table>
                         </div>
                     </div>
-                    
-                    <div class="settings-content" id="pagesSettings">
-                        <div class="settings-form">
-                            <div class="form-group">
-                                <label>全局关闭密码</label>
-                                <input type="password" id="globalClosePassword" placeholder="设置关闭页面的访问密码">
-                            </div>
-                            
-                            <h4 style="margin-top: 20px;">页面状态设置</h4>
-                            
-                            <div class="page-status-card">
-                                <h5>首页</h5>
-                                <p>状态: <span class="tag tag-success">开启</span></p>
-                                <div class="status-controls">
-                                    <div class="status-btn active">开启</div>
-                                    <div class="status-btn">关闭</div>
-                                    <div class="status-btn">限制</div>
-                                </div>
-                            </div>
-                            
-                            <div class="page-status-card">
-                                <h5>特产商城</h5>
-                                <p>状态: <span class="tag tag-warning">限制</span></p>
-                                <div class="status-controls">
-                                    <div class="status-btn">开启</div>
-                                    <div class="status-btn">关闭</div>
-                                    <div class="status-btn active">限制</div>
-                                </div>
-                                <div class="form-group" style="margin-top: 10px;">
-                                    <label for="productsDuration">强制时长(秒)</label>
-                                    <input type="number" id="productsDuration" value="10" min="5" max="60">
-                                </div>
-                            </div>
-                            
-                            <div class="page-status-card">
-                                <h5>关于我们</h5>
-                                <p>状态: <span class="tag tag-warning">限制</span></p>
-                                <div class="status-controls">
-                                    <div class="status-btn">开启</div>
-                                    <div class="status-btn">关闭</div>
-                                    <div class="status-btn active">限制</div>
-                                </div>
-                                <div class="form-group" style="margin-top: 10px;">
-                                    <label for="aboutDuration">强制时长(秒)</label>
-                                    <input type="number" id="aboutDuration" value="10" min="5" max="60">
-                                </div>
-                            </div>
-                            
-                            <div class="page-status-card">
-                                <h5>联系方式</h5>
-                                <p>状态: <span class="tag tag-warning">限制</span></p>
-                                <div class="status-controls">
-                                    <div class="status-btn">开启</div>
-                                    <div class="status-btn">关闭</div>
-                                    <div class="status-btn active">限制</div>
-                                </div>
-                                <div class="form-group" style="margin-top: 10px;">
-                                    <label for="contactDuration">强制时长(秒)</label>
-                                    <input type="number" id="contactDuration" value="10" min="5" max="60">
-                                </div>
-                            </div>
-                            
-                            <div class="page-status-card">
-                                <h5>管理员</h5>
-                                <p>状态: <span class="tag tag-success">开启</span></p>
-                                <div class="status-controls">
-                                    <div class="status-btn active">开启</div>
-                                    <div class="status-btn">关闭</div>
-                                    <div class="status-btn">限制</div>
-                                </div>
-                            </div>
-                            
-                            <button id="savePageSettings" class="btn" style="margin-top: 20px;">
-                                <i class="fas fa-save"></i> 保存设置
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1490,11 +1377,11 @@
             <div class="footer-section">
                 <h3>快速链接</h3>
                 <ul class="footer-links">
-                    <li><a href="#" data-page="home" data-nav="true"><i class="fas fa-chevron-right"></i> 首页</a></li>
-                    <li><a href="#" data-page="products" data-nav="true"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
-                    <li><a href="#" data-page="about" data-nav="true"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
-                    <li><a href="#" data-page="contact" data-nav="true"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
-                    <li><a href="#" data-page="admin" data-nav="true"><i class="fas fa-lock"></i> 管理员</a></li>
+                    <li><a href="#" data-page="home"><i class="fas fa-chevron-right"></i> 首页</a></li>
+                    <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
+                    <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
+                    <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
+                    <li><a href="#" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li>
                 </ul>
             </div>
             
@@ -1536,22 +1423,10 @@
         let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
         let currentAdmin = null;
         
-        // 页面设置状态
-        const pageSettings = JSON.parse(localStorage.getItem('pageSettings')) || {
-            home: { status: "open" },
-            products: { status: "restricted", duration: 10 },
-            about: { status: "restricted", duration: 10 },
-            contact: { status: "restricted", duration: 10 },
-            admin: { status: "open" }
-        };
-        
         // 管理员账号
         const adminUsers = JSON.parse(localStorage.getItem('adminUsers')) || [
             { username: "admin", password: "hongjie123" }
         ];
-        
-        // 关闭页面密码
-        const closePassword = localStorage.getItem('closePassword') || "hongjie123";
         
         // 页面加载时初始化访问统计
         document.addEventListener('DOMContentLoaded', function() {
@@ -1641,23 +1516,6 @@
                 // 刷新管理员列表
                 loadAdminList();
             });
-            
-            // 保存页面设置
-            document.getElementById('savePageSettings').addEventListener('click', function() {
-                // 保存关闭密码
-                const globalPassword = document.getElementById('globalClosePassword').value;
-                if (globalPassword) {
-                    localStorage.setItem('closePassword', globalPassword);
-                }
-                
-                // 保存页面状态
-                localStorage.setItem('pageSettings', JSON.stringify(pageSettings));
-                
-                // 记录日志
-                addLog('保存设置', '更新了页面状态设置');
-                
-                alert('设置保存成功！');
-            });
         }
         
         // 加载管理员列表
@@ -1705,12 +1563,9 @@
                 
                 const pageId = this.getAttribute('data-page');
                 
-                // 检查页面状态
-                const status = pageSettings[pageId]?.status || "restricted";
-                
                 // 如果点击的是非首页链接
-                if (pageId !== 'home' && pageId !== 'admin' && status !== "open") {
-                    showWarningModal(pageId, status);
+                if(pageId !== 'home' && pageId !== 'admin') {
+                    showWarningModal(pageId);
                     return;
                 }
                 
@@ -1720,18 +1575,15 @@
         });
         
         // 页脚链接点击处理 - 添加警告
-        document.querySelectorAll('.footer-links a[data-nav="true"]').forEach(link => {
+        document.querySelectorAll('.footer-links a').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 const pageId = this.getAttribute('data-page');
                 
-                // 检查页面状态
-                const status = pageSettings[pageId]?.status || "restricted";
-                
                 // 如果点击的是非首页链接
-                if (pageId !== 'home' && pageId !== 'admin' && status !== "open") {
-                    showWarningModal(pageId, status);
+                if(pageId !== 'home' && pageId !== 'admin') {
+                    showWarningModal(pageId);
                     return;
                 }
                 
@@ -1759,7 +1611,7 @@
         }
         
         // 显示警告弹窗
-        function showWarningModal(pageId, status) {
+        function showWarningModal(pageId) {
             // 清除之前的倒计时
             if (countdownInterval) {
                 clearInterval(countdownInterval);
@@ -1779,37 +1631,17 @@
             };
             
             const pageName = pageNames[pageId] || '该版块';
+            document.getElementById('warningMessage').textContent = 
+                `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
             
-            // 根据页面状态设置不同的提示
-            if (status === "closed") {
-                document.getElementById('modalTitle').textContent = '页面已关闭';
-                document.getElementById('warningMessage').textContent = 
-                    `您正在访问的"${pageName}"版块已被管理员关闭。`;
-                document.getElementById('warningDetails').style.display = 'none';
-                document.getElementById('passwordSection').style.display = 'block';
-                document.getElementById('additionalMessage').textContent = 
-                    '如需访问，请输入访问密码：';
-                document.getElementById('countdown').textContent = '';
-                document.querySelector('.countdown').style.display = 'none';
-            } else {
-                document.getElementById('modalTitle').textContent = '重要提示';
-                document.getElementById('warningMessage').textContent = 
-                    `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
-                document.getElementById('warningDetails').style.display = 'block';
-                document.getElementById('passwordSection').style.display = 'none';
-                document.getElementById('additionalMessage').textContent = 
-                    '如需购买商品，请返回首页并通过微信二维码联系红姐进行购买。';
-                document.querySelector('.countdown').style.display = 'block';
-            }
-            
-            let seconds = pageSettings[pageId]?.duration || 10;
+            let seconds = 10;
             const countdownEl = document.getElementById('countdown');
             const timerEl = document.getElementById('timer');
             const continueBtn = document.getElementById('continueBtn');
             
             // 重置按钮状态
             continueBtn.disabled = true;
-            continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (<span id="timer">${seconds}</span>)`;
+            continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>)';
             
             countdownEl.textContent = seconds;
             timerEl.textContent = seconds;
@@ -1819,17 +1651,13 @@
             
             countdownInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const remaining = Math.max(0, seconds - elapsed);
+                seconds = Math.max(0, 10 - elapsed);
                 
                 // 同时更新两个地方的倒计时显示
-                countdownEl.textContent = remaining;
-                timerEl.textContent = remaining;
+                countdownEl.textContent = seconds;
+                timerEl.textContent = seconds;
                 
-                if (status === "closed") {
-                    // 关闭状态不需要倒计时
-                    continueBtn.disabled = false;
-                    continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
-                } else if (remaining <= 0) {
+                if(seconds <= 0) {
                     clearInterval(countdownInterval);
                     continueBtn.disabled = false;
                     continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
@@ -1853,18 +1681,6 @@
         // 继续查看按钮
         document.getElementById('continueBtn').addEventListener('click', function() {
             const modal = document.getElementById('warningModal');
-            const pageId = targetPageId;
-            const status = pageSettings[pageId]?.status || "restricted";
-            
-            if (status === "closed") {
-                // 检查密码
-                const enteredPassword = document.getElementById('accessPassword').value;
-                if (enteredPassword !== closePassword) {
-                    alert('访问密码错误！');
-                    return;
-                }
-            }
-            
             modal.style.display = 'none';
             
             // 清除倒计时
