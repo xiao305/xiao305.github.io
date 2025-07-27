@@ -1240,12 +1240,10 @@
             // 记录导出日志
             addLog('导出数据', '导出了所有留言数据');
             // 创建CSV内容
-            let csvContent = "姓名,电话,留言内容,提交时间
-";
-            messages.forEach(msg => {
-                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"
-`;
-            });
+let csvContent = "姓名,电话,留言内容,提交时间\n"; // <<< 使用 \n 替代直接的换行符 >>>
+messages.forEach(msg => {
+    csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // <<< 使用 \n 替代直接的换行符 >>>
+});
             // 创建下载链接
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
