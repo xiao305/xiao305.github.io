@@ -510,8 +510,8 @@
         <!-- 管理员页面 -->
         <div id="admin">
             <div class="page-header">
-                <h1>管理员面板</h1>
-                <p>管理网站数据和用户留言</p>
+                <h1>管理员面板</h1> <!-- 修改标题 -->
+                <p>管理网站数据和用户留言</p> <!-- 修改副标题 -->
             </div>
             <div class="login-form" id="adminLoginForm">
                 <form id="adminLogin">
@@ -530,7 +530,7 @@
             </div>
             <div id="adminPanel" class="admin-panel" style="display: none;">
                 <div class="admin-header">
-                    <h2>网站管理系统</h2>
+                    <h2>网站管理系统</h2> <!-- 修改标题 -->
                     <button id="logoutBtn" class="btn-outline">
                         <i class="fas fa-sign-out-alt"></i> 退出登录
                     </button>
@@ -575,8 +575,8 @@
                             <th>电话</th>
                             <th>留言内容</th>
                             <th>提交时间</th>
-                            <th>状态</th>
-                            <th>操作</th>
+                            <th>状态</th> <!-- 添加状态列 -->
+                            <th>操作</th> <!-- 添加操作列 -->
                         </tr>
                     </thead>
                     <tbody id="messageTableBody">
@@ -728,6 +728,41 @@
         // 当前登录的管理员用户名
         let currentAdminUser = null;
 
+        // --- 新增：阿里云 FC 配置 ---
+        // 替换为您的实际阿里云函数 HTTP 触发器 URL
+        const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run";
+
+        // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
+        function syncConfigToFC(configData) {
+            console.log("Aliyun FC Sync: 开始同步配置到 FC...", configData);
+
+            return fetch(FC_SYNC_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 由于触发器认证方式为 anonymous，通常不需要额外 Header
+                    // 如果您设置了其他认证，请在此添加相应 Header
+                },
+                body: JSON.stringify(configData)
+            })
+            .then(response => {
+                console.log("Aliyun FC Sync: Fetch 响应对象:", response);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); // 解析 JSON 响应体
+            })
+            .then(data => {
+                console.log('Aliyun FC Sync: 成功', data);
+                return data; // 返回成功响应数据
+            })
+            .catch((error) => {
+                console.error('Aliyun FC Sync: 失败', error);
+                throw error; // 重新抛出错误，让调用者处理
+            });
+        }
+        // --- 结束新增 ---
+
         // 页面加载完成后初始化设置面板
         document.addEventListener('DOMContentLoaded', function() {
             initializeSettingsPanel();
@@ -778,7 +813,7 @@
             }
         }
 
-        // 应用页面状态设置
+        // --- 修改：应用页面状态设置 (添加阿里云 FC 同步) ---
         function applyPageStatus(pageId) {
             const statusSelect = document.getElementById(`${pageId}Status`);
             const durationInput = document.getElementById(`${pageId}Duration`);
@@ -799,18 +834,39 @@
             };
             pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
 
-            // 保存到 localStorage
+            // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
             localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
             localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
 
-            // 更新UI显示
-            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+            // 2. 准备要同步到阿里云 FC 的数据结构
+            const configToSync = {
+                pageStatusConfig: pageStatusConfig,
+                pagePasswords: pagePasswords,
+                // 可以添加时间戳
+                timestamp: new Date().toISOString()
+            };
 
-            // 记录操作日志
-            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''}`);
-
-            alert(`页面 "${pageId}" 的状态已更新。`);
+            // 3. 保存到阿里云 FC (实现跨设备同步)
+            syncConfigToFC(configToSync)
+                .then(() => {
+                    console.log('Aliyun FC Sync: 页面状态配置已同步');
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 记录操作日志
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步到阿里云 FC`);
+                    alert(`页面 "${pageId}" 的状态已更新并同步。`);
+                })
+                .catch((error) => {
+                    console.error('Aliyun FC Sync: 同步配置失败:', error);
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 即使同步失败，本地设置已生效，可以提示用户
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步到阿里云 FC 失败: ${error.message})`);
+                    alert(`页面 "${pageId}" 的状态已更新(本地)，但同步到阿里云时出错: ${error.message}`);
+                });
         }
+        // --- 结束修改 ---
+
 
         // 管理员登录 - 修复：确保始终阻止默认提交
         document.getElementById('adminLogin').addEventListener('submit', function(e) {
@@ -835,7 +891,7 @@
                 // 初始化设置面板
                 initializeSettingsPanel();
             } else {
-                alert('管理员账号或密码错误！');
+                alert('管理员账号或密码错误！'); // 保持一致的提示
             }
         });
 
@@ -921,7 +977,7 @@
              // 更新统计信息
             updateMessageStats();
             if(messages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">暂无留言数据</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">暂无留言数据</td></tr>'; // 更新 colspan
                 return;
             }
             // 按时间倒序排列
@@ -936,7 +992,7 @@
                     <td>${msg.phone}</td>
                     <td>${msg.message}</td>
                     <td>${msg.timestamp}</td>
-                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td>
+                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td> <!-- 添加状态 -->
                     <td>
                         <div class="action-buttons">
                             <button class="action-btn delete-btn" data-index="${index}">
@@ -946,16 +1002,16 @@
                                 <i class="fas fa-download"></i>
                             </button>
                         </div>
-                    </td>
+                    </td> <!-- 添加操作 -->
                 `;
                 tableBody.appendChild(row);
-                // 标记为已读
+                // 标记为已读 (逻辑与 index.html 一致)
                 if(!msg.read) {
                     messages[messages.length - 1 - index].read = true;
                     localStorage.setItem('messages', JSON.stringify(messages));
                     updateMessageStats(); // 更新统计
                 }
-                // 添加删除功能
+                // 添加删除功能 (从 index.html 复制)
                 row.querySelector('.delete-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     if(confirm('确定要删除这条留言吗？')) {
@@ -966,11 +1022,14 @@
                         loadMessages(); // 重新加载
                     }
                 });
-                // 添加导出功能
+                // 添加导出功能 (从 index.html 复制)
                 row.querySelector('.export-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     const message = messages[index];
-                    const content = `姓名: ${message.name}\n电话: ${message.phone}\n留言: ${message.message}\n时间: ${message.timestamp}`; // 修复：使用 \n
+                    const content = `姓名: ${message.name}
+电话: ${message.phone}
+留言: ${message.message}
+时间: ${message.timestamp}`;
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1107,7 +1166,7 @@
             const tableBody = document.getElementById('messageTableBody');
             tableBody.innerHTML = '';
             if(filteredMessages.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">未找到匹配的留言</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">未找到匹配的留言</td></tr>'; // 更新 colspan
                 return;
             }
             // 按时间倒序排列
@@ -1135,7 +1194,13 @@
                     </td>
                 `;
                 tableBody.appendChild(row);
-                // 添加删除功能
+                // 标记为已读 (逻辑与 index.html 一致)
+                if(!msg.read) {
+                    messages[messages.length - 1 - index].read = true;
+                    localStorage.setItem('messages', JSON.stringify(messages));
+                    updateMessageStats(); // 更新统计
+                }
+                // 添加删除功能 (从 index.html 复制)
                 row.querySelector('.delete-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     if(confirm('确定要删除这条留言吗？')) {
@@ -1146,11 +1211,14 @@
                         loadMessages(); // 重新加载
                     }
                 });
-                // 添加导出功能
+                // 添加导出功能 (从 index.html 复制)
                 row.querySelector('.export-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     const message = messages[index];
-                    const content = `姓名: ${message.name}\n电话: ${message.phone}\n留言: ${message.message}\n时间: ${message.timestamp}`; // 修复：使用 \n
+                    const content = `姓名: ${message.name}
+电话: ${message.phone}
+留言: ${message.message}
+时间: ${message.timestamp}`;
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1167,14 +1235,16 @@
             });
         });
 
-        // 导出所有数据 - 修复：使用 \n 转义序列
+        // 导出所有数据
         document.getElementById('exportBtn').addEventListener('click', function() {
             // 记录导出日志
             addLog('导出数据', '导出了所有留言数据');
-            // 创建CSV内容 - 修复：使用 \n 转义序列
-            let csvContent = "姓名,电话,留言内容,提交时间\n"; // 修复：使用 \n
+            // 创建CSV内容
+            let csvContent = "姓名,电话,留言内容,提交时间
+";
             messages.forEach(msg => {
-                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // 修复：使用 \n
+                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"
+`;
             });
             // 创建下载链接
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
