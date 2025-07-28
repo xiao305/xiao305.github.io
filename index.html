@@ -1207,6 +1207,67 @@
             localStorage.setItem('siteVisits', JSON.stringify(visits));
         });
 
+        // --- 新增：测试从阿里云 OSS 读取配置 ---
+        // 替换为您的实际 OSS Bucket 名称和地域
+        const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
+        const REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域
+        // 注意：确保您的 Bucket 是公共读权限
+        const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json`; // <--- 修改为您的实际文件名
+
+        console.log("开始尝试从 OSS 读取配置...");
+        fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
+            .then(response => {
+                console.log("Fetch 响应对象:", response); // 调试日志
+                if (!response.ok) {
+                    if (response.status === 404) {
+                         console.log("OSS: 配置文件未找到");
+                         return null; // 文件不存在
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); // <--- 关键：尝试解析 JSON
+            })
+            .then(data => {
+                if (data && data.pageStatusConfig) {
+                    console.log("✅ 成功从 OSS 读取到配置:", data);
+                    // 更新全局配置变量
+                    window.pageStatusConfig = data.pageStatusConfig;
+                    window.pagePasswords = data.pagePasswords || {};
+                    console.log("🔄 已更新全局配置变量");
+                } else {
+                    console.log("OSS: 远程配置为空或格式不正确");
+                    // 回退到 localStorage
+                    window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                        products: { status: 'limit', duration: 10 },
+                        about: { status: 'limit', duration: 10 },
+                        contact: { status: 'limit', duration: 10 }
+                    };
+                    window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                        products: '',
+                        about: '',
+                        contact: ''
+                    };
+                    console.log("🔙 回退到使用 localStorage 配置");
+                }
+            })
+            .catch(error => {
+                console.error("❌ 从 OSS 读取配置失败:", error);
+                // 回退到 localStorage
+                window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                    products: { status: 'limit', duration: 10 },
+                    about: { status: 'limit', duration: 10 },
+                    contact: { status: 'limit', duration: 10 }
+                };
+                window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                    products: '',
+                    about: '',
+                    contact: ''
+                };
+                console.log("🔙 回退到使用 localStorage 配置 (因错误)");
+            });
+        // --- 结束新增 ---
+    });
+
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
