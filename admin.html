@@ -730,47 +730,41 @@
 
         // --- 新增：阿里云 FC 配置 ---
         // 替换为您的实际阿里云函数 HTTP 触发器 URL
-        const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run";
+        const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/";
 
-        // --- 新增：调用阿里云 FC 函数同步配置的函数 (修改版 - 同步所有管理员数据) ---
-function syncConfigToFC(configData) {
-    // 替换为您的实际阿里云函数 HTTP 触发器 URL
-    const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/"; // <--- 请确保这是您修改后的 FC 函数 URL
+        // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
+        async function syncConfigToFC(configData) {
+            console.log("Aliyun FC Sync: 开始同步配置到 FC...", configData);
 
-    console.log("Aliyun FC Sync: 开始同步所有配置和数据到 FC...", configData);
+            try {
+                const response = await fetch(FC_SYNC_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // 由于触发器认证方式为 anonymous，通常不需要额外 Header
+                        // 如果您设置了其他认证，请在此添加相应 Header
+                    },
+                    body: JSON.stringify(configData)
+                });
 
-    return fetch(FC_SYNC_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-            // 由于触发器认证方式为 anonymous，通常不需要额外 Header
-            // 如果您设置了其他认证，请在此添加相应 Header
-        },
-        body: JSON.stringify(configData)
-    })
-    .then(response => {
-        console.log("Aliyun FC Sync: Fetch 响应对象:", response);
-        if (!response.ok) {
-            // --- 关键修改：尝试读取错误响应体以获取更详细的错误信息 ---
-            return response.text().then(errorText => {
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-            });
-            // --- 结束关键修改 ---
+                console.log("Aliyun FC Sync: Fetch 响应对象:", response);
+                if (!response.ok) {
+                    // --- 关键修改：尝试读取错误响应体以获取更详细的错误信息 ---
+                    return response.text().then(errorText => {
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                    });
+                    // --- 结束关键修改 ---
+                }
+                return response.json(); // 解析 JSON 响应体
+            } catch (error) {
+                console.error('Aliyun FC Sync: 失败', error);
+                throw error; // 重新抛出错误，让调用者处理
+            }
         }
-        return response.json(); // 解析 JSON 响应体
-    })
-    .then(data => {
-        console.log('Aliyun FC Sync: 成功', data);
-        return data; // 返回成功响应数据
-    })
-    .catch((error) => {
-        console.error('Aliyun FC Sync: 失败', error);
-        throw error; // 重新抛出错误，让调用者处理
-    });
-}
-// --- 结束新增 ---
+        // --- 结束新增 ---
 
-        // 页面加载完成后初始化设置面板
+
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             initializeSettingsPanel();
         });
@@ -820,70 +814,58 @@ function syncConfigToFC(configData) {
             }
         }
 
-        // 应用页面状态设置 (修改版 - 同步所有管理员数据到阿里云 FC)
-function applyPageStatus(pageId) {
-    const statusSelect = document.getElementById(`${pageId}Status`);
-    const durationInput = document.getElementById(`${pageId}Duration`);
-    const passwordInput = document.getElementById(`${pageId}Password`);
-    const statusTag = document.getElementById(`${pageId}StatusTag`);
-    const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
+        // --- 修改：应用页面状态设置 (添加阿里云 FC 同步) ---
+        function applyPageStatus(pageId) {
+            const statusSelect = document.getElementById(`${pageId}Status`);
+            const durationInput = document.getElementById(`${pageId}Duration`);
+            const passwordInput = document.getElementById(`${pageId}Password`);
+            const statusTag = document.getElementById(`${pageId}StatusTag`);
+            const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
 
-    if (!statusSelect) return;
+            if (!statusSelect) return;
 
-    const newStatus = statusSelect.value;
-    const newDuration = parseInt(durationInput?.value) || 10;
-    const newPassword = passwordInput?.value.trim() || '';
+            const newStatus = statusSelect.value;
+            const newDuration = parseInt(durationInput?.value) || 10;
+            const newPassword = passwordInput?.value.trim() || '';
 
-    // 更新内存中的配置
-    pageStatusConfig[pageId] = {
-        status: newStatus,
-        duration: newStatus === 'limit' ? newDuration : undefined // 只在限制状态时保存时长
-    };
-    pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
+            // 更新内存中的配置
+            pageStatusConfig[pageId] = {
+                status: newStatus,
+                duration: newStatus === 'limit' ? newDuration : undefined // 只在限制状态时保存时长
+            };
+            pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
 
-    // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
-    localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
-    localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
+            // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
+            localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
+            localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
 
-    // --- 关键修改：准备要同步到阿里云 FC 的完整数据结构 (包含所有管理员数据) ---
-    const configToSync = {
-        pageStatusConfig: pageStatusConfig,
-        pagePasswords: pagePasswords,
-        // 添加其他需要同步的管理员数据
-        adminAccounts: adminAccounts, // 同步管理员账号
-        messages: messages, // 同步留言
-        adminLogs: logs, // 同步操作日志
-        siteVisits: visits, // 同步访问统计
-        // 可以添加时间戳
-        timestamp: new Date().toISOString()
-    };
-    // --- 结束关键修改 ---
+            // 2. 准备要同步到阿里云 FC 的数据结构
+            const configToSync = {
+                pageStatusConfig: pageStatusConfig,
+                pagePasswords: pagePasswords,
+                // 可以添加时间戳
+                timestamp: new Date().toISOString()
+            };
 
-    // 2. 保存到阿里云 FC (实现跨设备同步所有数据)
-    // --- 关键修改：调用同步所有数据的函数 ---
-    syncConfigToFC(configToSync)
-    // --- 结束关键修改 ---
-        .then(() => {
-            console.log('Aliyun FC Sync: 所有配置和数据已同步');
-            // 更新UI显示
-            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-            // 记录操作日志
-            // --- 关键修改：更新日志描述 ---
-            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步所有数据到阿里云 FC`);
-            // --- 结束关键修改 ---
-            alert(`页面 "${pageId}" 的状态已更新并同步所有数据。`);
-        })
-        .catch((error) => {
-            console.error('Aliyun FC Sync: 同步所有数据失败:', error);
-            // 更新UI显示
-            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-            // 即使同步失败，本地设置已生效，可以提示用户
-            // --- 关键修改：更新日志描述 ---
-            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步所有数据到阿里云 FC 失败: ${error.message})`);
-            // --- 结束关键修改 ---
-            alert(`页面 "${pageId}" 的状态已更新(本地)，但同步所有数据到阿里云时出错: ${error.message}`);
-        });
-}
+            // 3. 保存到阿里云 FC (实现跨设备同步)
+            syncConfigToFC(configToSync)
+                .then(() => {
+                    console.log('Aliyun FC Sync: 页面状态配置已同步');
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 记录操作日志
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步到阿里云 FC`);
+                    alert(`页面 "${pageId}" 的状态已更新并同步。`);
+                })
+                .catch((error) => {
+                    console.error('Aliyun FC Sync: 同步配置失败:', error);
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 即使同步失败，本地设置已生效，可以提示用户
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步到阿里云 FC 失败: ${error.message})`);
+                    alert(`页面 "${pageId}" 的状态已更新(本地)，但同步到阿里云时出错: ${error.message}`);
+                });
+        }
         // --- 结束修改 ---
 
 
@@ -1048,7 +1030,7 @@ function applyPageStatus(pageId) {
                     const content = `姓名: ${message.name}
 电话: ${message.phone}
 留言: ${message.message}
-时间: ${message.timestamp}`;
+时间: ${message.timestamp}`; // 修复：使用 \n
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1237,7 +1219,7 @@ function applyPageStatus(pageId) {
                     const content = `姓名: ${message.name}
 电话: ${message.phone}
 留言: ${message.message}
-时间: ${message.timestamp}`;
+时间: ${message.timestamp}`; // 修复：使用 \n
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1254,15 +1236,15 @@ function applyPageStatus(pageId) {
             });
         });
 
-        // 导出所有数据
+        // 导出所有数据 - 修复：使用 \n 转义序列
         document.getElementById('exportBtn').addEventListener('click', function() {
             // 记录导出日志
             addLog('导出数据', '导出了所有留言数据');
-            // 创建CSV内容
-let csvContent = "姓名,电话,留言内容,提交时间\n"; // <<< 使用 \n 替代直接的换行符 >>>
-messages.forEach(msg => {
-    csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // <<< 使用 \n 替代直接的换行符 >>>
-});
+            // 创建CSV内容 - 修复：使用 \n 转义序列
+            let csvContent = "姓名,电话,留言内容,提交时间\n"; // 修复：使用 \n
+            messages.forEach(msg => {
+                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // 修复：使用 \n
+            });
             // 创建下载链接
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
