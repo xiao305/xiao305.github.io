@@ -844,13 +844,22 @@ function initializeSettingsPanel() {
             localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
             localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
 
-            // 2. 准备要同步到阿里云 FC 的数据结构
+            // --- 关键修改：准备要同步到阿里云 FC 的完整数据结构 (包含所有管理员数据) ---
             const configToSync = {
                 pageStatusConfig: pageStatusConfig,
                 pagePasswords: pagePasswords,
+                // --- 新增：同步管理员账号数据 ---
+                adminAccounts: adminAccounts,       // <<<--- 新增：同步管理员账号
+                // --- 新增：同步留言数据 ---
+                messages: messages,                 // <<<--- 新增：同步留言
+                // --- 新增：同步操作日志数据 ---
+                adminLogs: logs,                     // <<<--- 新增：同步操作日志
+                // --- 新增：同步访问统计数据 ---
+                siteVisits: visits,                  // <<<--- 新增：同步访问统计
                 // 可以添加时间戳
                 timestamp: new Date().toISOString()
             };
+            // --- 结束关键修改 ---
 
             // 3. 保存到阿里云 FC (实现跨设备同步)
             syncConfigToFC(configToSync)
