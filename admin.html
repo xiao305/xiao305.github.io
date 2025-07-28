@@ -908,13 +908,17 @@ function applyPageStatus(pageId) {
                 // 加载操作日志
                 loadLogs();
                 // - 新增：从 OSS 加载配置并初始化设置面板 -
-                loadConfigFromOSSAndInitializeSettings().then(() => {
-                    console.log('✅ 成功从 OSS 加载配置并初始化设置面板');
-                }).catch((error) => {
-                    console.error('❌ 从 OSS 加载配置并初始化设置面板失败:', error);
-                    // 即使加载失败，也使用本地默认值初始化
-                    initializeSettingsPanel();
-                });
+                loadConfigFromOSSAndInitializeSettings()
+                    .then(() => {
+                        console.log('✅ 成功从 OSS 加载配置并初始化设置面板');
+                        // 初始化设置面板 (使用从 OSS 加载的最新配置)
+                        initializeSettingsPanel();
+                    })
+                    .catch((error) => {
+                        console.error('❌ 从 OSS 加载配置并初始化设置面板失败:', error);
+                        // 即使加载失败，也使用本地默认值初始化
+                        initializeSettingsPanel();
+                    });
                 // --- 关键修改：确保 if 块正确闭合 ---
             } else {
                 alert('管理员账号或密码错误！'); // 保持一致的提示
