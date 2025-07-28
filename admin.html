@@ -886,15 +886,21 @@ function applyPageStatus(pageId) {
 }
         // --- 结束修改 ---
 
-
-                // 管理员登录 - 修复：确保始终阻止默认提交并正确处理 if/else 逻辑
-        document.getElementById('adminLogin').addEventListener('submit', function(e) {
+                // 管理员登录 - 修复：确保始终阻止默认提交并正确处理 if/else 逻辑 (使用 async/await 重构)
+        document.getElementById('adminLogin').addEventListener('submit', async function(e) {
             e.preventDefault(); // 关键：绝对阻止表单默认提交和页面刷新
+            console.log("管理员登录表单提交事件被触发"); // 调试日志
+
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
+            console.log(`输入的用户名: ${username}, 输入的密码: ${password}`); // 调试日志
+
             // 简单的管理员验证 (使用哈希比较)
             const storedHash = adminAccounts[username];
+            console.log(`存储的哈希: ${storedHash}`); // 调试日志
+
             if(storedHash && storedHash === btoa(password)) { // 使用 Base64 解码比较
+                console.log("✅ 管理员验证成功"); // 调试日志
                 isAdminLoggedIn = true;
                 currentAdminUser = username; // 记录当前用户
                 document.getElementById('adminLoginForm').style.display = 'none';
@@ -907,62 +913,142 @@ function applyPageStatus(pageId) {
                 loadVisits();
                 // 加载操作日志
                 loadLogs();
-                // - 新增：从 OSS 加载配置并初始化设置面板 -
-                loadConfigFromOSSAndInitializeSettings()
-                    .then(() => {
-                        console.log('✅ 成功从 OSS 加载配置并初始化设置面板');
-                        // 初始化设置面板 (使用从 OSS 加载的最新配置)
-                        initializeSettingsPanel();
-                    })
-                    .catch((error) => {
-                        console.error('❌ 从 OSS 加载配置并初始化设置面板失败:', error);
-                        // 即使加载失败，也使用本地默认值初始化
-                        initializeSettingsPanel();
-                    });
-                // --- 关键修改：确保 if 块正确闭合 ---
+
+                // --- 关键修改：使用 async/await 重构加载 OSS 配置逻辑 ---
+                try {
+                    console.log("开始尝试从 OSS 加载配置并初始化设置面板...");
+                    await loadConfigFromOSSAndInitializeSettings(); // 等待 OSS 配置加载和初始化完成
+                    console.log('✅ 成功从 OSS 加载配置并初始化设置面板');
+                    // 注意：loadConfigFromOSSAndInitializeSettings 内部已经调用了 initializeSettingsPanel()
+                } catch (error) {
+                    console.error('❌ 从 OSS 加载配置并初始化设置面板失败:', error);
+                    // 即使加载失败，也使用本地默认值初始化
+                    initializeSettingsPanel();
+                }
+                // --- 结束关键修改 ---
+
             } else {
+                console.log("❌ 管理员验证失败"); // 调试日志
                 alert('管理员账号或密码错误！'); // 保持一致的提示
             }
-            // --- 结束关键修改 ---
         });
         // --- 结束新增 ---
-            // --- 新增：从 OSS 加载配置并初始化设置面板的函数 ---
-async function loadConfigFromOSSAndInitializeSettings() {
-    console.log("开始尝试从 OSS 加载最新配置以初始化设置面板...");
 
-    // --- 新增：OSS 配置 (用于读取) ---
-    // 替换为您的实际 OSS Bucket 名称和地域
-    const OSS_REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域
-    const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
-    const CONFIG_FILE_NAME = "test-config.json"; // <--- 请修改为您的配置文件名
-    // 注意：确保您的 Bucket 是公共读权限
-    const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${OSS_REGION}.aliyuncs.com/${CONFIG_FILE_NAME}?${new Date().getTime()}`; // <--- 修改为您的实际文件名, 添加时间戳防缓存
-    // --- 结束新增 ---
+        // --- 新增：从 OSS 加载配置并初始化设置面板的函数 (修复版 - 增强健壮性) ---
+        async function loadConfigFromOSSAndInitializeSettings() {
+            console.log("开始尝试从 OSS 加载最新配置以初始化设置面板...");
 
-    try {
-        const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' }); // 禁用缓存确保拿到最新
-        console.log("Fetch 响应对象 (OSS Config):", response); // 调试日志
+            // --- 新增：OSS 配置 (用于读取) ---
+            // 替换为您的实际 OSS Bucket 名称和地域
+            const OSS_REGION = "oss-cn-hangzhou"; // <- 请修改为您的 Bucket 所在地域
+            const OSS_BUCKET_NAME = "xiao-config-bucket"; // <- 请修改为您的 Bucket 名称
+            const CONFIG_FILE_NAME = "test-config.json"; // <- 请修改为您的配置文件名
+            // 注意：确保您的 Bucket 是公共读权限
+            const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${OSS_REGION}.aliyuncs.com/${CONFIG_FILE_NAME}?${new Date().getTime()}`; // <- 修改为您的实际文件名, 添加时间戳防缓存
+            // --- 结束新增 ---
 
-        if (!response.ok) {
-            if (response.status === 404) {
-                 console.log("OSS: 配置文件未找到");
-                 // 回退到本地默认配置
-                 window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
-                     products: { status: 'limit', duration: 10 },
-                     about: { status: 'limit', duration: 10 },
-                     contact: { status: 'limit', duration: 10 }
-                 };
-                 window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
-                     products: '',
-                     about: '',
-                     contact: ''
-                 };
-                 console.log("🔙 回退到使用本地默认配置");
-                 initializeSettingsPanel(); // 使用回退的配置初始化
-                 return; // 结束函数
+            try {
+                const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' }); // 禁用缓存确保拿到最新
+                console.log("Fetch 响应对象 (OSS Config):", response); // 调试日志
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                         console.log("OSS: 配置文件未找到");
+                         // 回退到本地默认配置
+                         window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                             products: { status: 'limit', duration: 10 },
+                             about: { status: 'limit', duration: 10 },
+                             contact: { status: 'limit', duration: 10 }
+                         };
+                         window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                             products: '',
+                             about: '',
+                             contact: ''
+                         };
+                         console.log("🔙 回退到使用本地默认配置");
+                         initializeSettingsPanel(); // 使用回退的配置初始化
+                         return; // 结束函数
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // --- 关键修改：检查 Content-Type 并安全读取响应体 ---
+                const contentType = response.headers.get('content-type');
+                console.log("OSS: 响应 Content-Type:", contentType);
+                let data = null;
+                if (contentType && contentType.includes('application/json')) {
+                    // 如果是 JSON 类型，尝试解析
+                    console.log("OSS: 响应体是 JSON 类型，尝试解析...");
+                    try {
+                        data = await response.json(); // 使用 await 等待解析
+                        console.log("OSS: 成功解析 JSON 响应体:", data);
+                    } catch (parseError) {
+                        console.error("OSS: 解析 JSON 响应体失败:", parseError);
+                        // 即使 Content-Type 声称为 JSON，解析也可能失败
+                        // 我们可以尝试读取文本内容看看实际是什么
+                        const textContent = await response.text();
+                        console.log("OSS: 实际响应体文本内容:", textContent);
+                        data = null; // 解析失败，设置为 null
+                    }
+                } else {
+                    // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
+                    console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
+                    const textContent = await response.text();
+                    console.log("OSS: 响应体文本内容:", textContent);
+                    // 尝试将文本内容解析为 JSON
+                    try {
+                        data = JSON.parse(textContent);
+                        console.log("OSS: 成功将文本内容解析为 JSON:", data);
+                    } catch (parseError) {
+                        console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
+                        data = null; // 解析失败，设置为 null
+                    }
+                }
+                // --- 结束关键修改 ---
+
+                if (data && data.pageStatusConfig) {
+                    console.log("✅ 成功从 OSS 读取到配置:", data);
+                    // --- 关键修改：更新全局配置变量 ---
+                    window.pageStatusConfig = data.pageStatusConfig;
+                    window.pagePasswords = data.pagePasswords || {};
+                    // --- 结束关键修改 ---
+                    console.log("🔄 已更新全局配置变量");
+                    // 使用从 OSS 读取的最新配置初始化设置面板
+                    initializeSettingsPanel();
+                } else {
+                    console.log("OSS: 远程配置为空或格式不正确");
+                    // 回退到本地默认配置
+                    window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                        products: { status: 'limit', duration: 10 },
+                        about: { status: 'limit', duration: 10 },
+                        contact: { status: 'limit', duration: 10 }
+                    };
+                    window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                        products: '',
+                        about: '',
+                        contact: ''
+                    };
+                    console.log("🔙 回退到使用本地默认配置");
+                    initializeSettingsPanel(); // 使用回退的配置初始化
+                }
+            } catch (error) {
+                console.error("❌ 从 OSS 读取配置失败:", error);
+                // 回退到本地默认配置
+                window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                    products: { status: 'limit', duration: 10 },
+                    about: { status: 'limit', duration: 10 },
+                    contact: { status: 'limit', duration: 10 }
+                };
+                window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                    products: '',
+                    about: '',
+                    contact: ''
+                };
+                console.log("🔙 回退到使用本地默认配置 (因错误)");
+                initializeSettingsPanel(); // 使用回退的配置初始化
             }
-            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        // --- 结束新增 ---
 
         // --- 关键修改：检查 Content-Type 并安全读取响应体 ---
         const contentType = response.headers.get('content-type');
