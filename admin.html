@@ -769,23 +769,28 @@
             initializeSettingsPanel();
         });
 
-        // 初始化设置面板状态
-        function initializeSettingsPanel() {
-            // 初始化页面状态下拉框和输入框
-            for (const pageId in pageStatusConfig) {
-                const config = pageStatusConfig[pageId];
-                const statusSelect = document.getElementById(`${pageId}Status`);
-                const durationInput = document.getElementById(`${pageId}Duration`);
-                const passwordInput = document.getElementById(`${pageId}Password`);
-                const statusTag = document.getElementById(`${pageId}StatusTag`);
-                const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
+        // 初始化设置面板状态 (修复：优先使用从 OSS 读取并更新的全局变量)
+function initializeSettingsPanel() {
+    // 初始化页面状态下拉框和输入框
+    // --- 关键修改：优先使用从 OSS 读取并更新的全局 window.pageStatusConfig 和 window.pagePasswords ---
+    for (const pageId in (window.pageStatusConfig || pageStatusConfig)) { // <<<--- 修改：遍历全局或局部变量
+        // --- 修改：优先使用全局变量 ---
+        const config = (window.pageStatusConfig && window.pageStatusConfig[pageId]) || (pageStatusConfig && pageStatusConfig[pageId]); // <<<--- 修改：优先使用全局变量
+        const password = (window.pagePasswords && window.pagePasswords[pageId]) || (pagePasswords && pagePasswords[pageId]); // <<<--- 修改：优先使用全局变量
+        // --- 结束修改 ---
+        const statusSelect = document.getElementById(`${pageId}Status`);
+        const durationInput = document.getElementById(`${pageId}Duration`);
+        const passwordInput = document.getElementById(`${pageId}Password`);
+        const statusTag = document.getElementById(`${pageId}StatusTag`);
+        const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
 
-                if (statusSelect) statusSelect.value = config.status;
-                if (durationInput) durationInput.value = config.duration || 10;
-                if (passwordInput) passwordInput.value = pagePasswords[pageId] || '';
-                updateStatusTagAndText(pageId, config.status, config.duration, statusTag, currentStatusText);
-            }
-        }
+        if (statusSelect) statusSelect.value = config.status;
+        if (durationInput) durationInput.value = config.duration || 10;
+        if (passwordInput) passwordInput.value = password || ''; // <<<--- 修改：使用全局或局部密码变量
+        updateStatusTagAndText(pageId, config.status, config.duration, statusTag, currentStatusText);
+    }
+    // --- 结束关键修改 ---
+}
 
         // 更新状态标签和当前状态文本
         function updateStatusTagAndText(pageId, status, duration, statusTagElement, currentStatusTextElement) {
