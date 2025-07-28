@@ -1338,7 +1338,7 @@
 
         // 处理页面访问逻辑 (根据状态决定是否弹窗)
         function handlePageAccess(pageId) {
-            const config = pageStatusConfig[pageId];
+            const config = (window.pageStatusConfig && window.pageStatusConfig[pageId]) || (pageStatusConfig && pageStatusConfig[pageId]);
             if (!config) {
                 // 默认行为：如果配置不存在，则限制访问
                 showWarningModal(pageId);
@@ -1455,7 +1455,7 @@
             // 为确认按钮添加一次性事件监听器
             const handleConfirm = function() {
                 const enteredPassword = inputElement.value.trim();
-                const requiredPassword = pagePasswords[pageId];
+                const requiredPassword = (window.pagePasswords && window.pagePasswords[pageId]) || (pagePasswords && pagePasswords[pageId]);
 
                 if (enteredPassword === requiredPassword && requiredPassword !== '') {
                     // 密码正确，关闭弹窗并切换页面
