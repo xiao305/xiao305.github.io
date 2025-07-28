@@ -732,36 +732,43 @@
         // 替换为您的实际阿里云函数 HTTP 触发器 URL
         const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run";
 
-        // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
-        function syncConfigToFC(configData) {
-            console.log("Aliyun FC Sync: 开始同步配置到 FC...", configData);
+        // --- 新增：调用阿里云 FC 函数同步配置的函数 (修改版 - 同步所有管理员数据) ---
+function syncConfigToFC(configData) {
+    // 替换为您的实际阿里云函数 HTTP 触发器 URL
+    const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/"; // <--- 请确保这是您修改后的 FC 函数 URL
 
-            return fetch(FC_SYNC_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 由于触发器认证方式为 anonymous，通常不需要额外 Header
-                    // 如果您设置了其他认证，请在此添加相应 Header
-                },
-                body: JSON.stringify(configData)
-            })
-            .then(response => {
-                console.log("Aliyun FC Sync: Fetch 响应对象:", response);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json(); // 解析 JSON 响应体
-            })
-            .then(data => {
-                console.log('Aliyun FC Sync: 成功', data);
-                return data; // 返回成功响应数据
-            })
-            .catch((error) => {
-                console.error('Aliyun FC Sync: 失败', error);
-                throw error; // 重新抛出错误，让调用者处理
+    console.log("Aliyun FC Sync: 开始同步所有配置和数据到 FC...", configData);
+
+    return fetch(FC_SYNC_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+            // 由于触发器认证方式为 anonymous，通常不需要额外 Header
+            // 如果您设置了其他认证，请在此添加相应 Header
+        },
+        body: JSON.stringify(configData)
+    })
+    .then(response => {
+        console.log("Aliyun FC Sync: Fetch 响应对象:", response);
+        if (!response.ok) {
+            // --- 关键修改：尝试读取错误响应体以获取更详细的错误信息 ---
+            return response.text().then(errorText => {
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             });
+            // --- 结束关键修改 ---
         }
-        // --- 结束新增 ---
+        return response.json(); // 解析 JSON 响应体
+    })
+    .then(data => {
+        console.log('Aliyun FC Sync: 成功', data);
+        return data; // 返回成功响应数据
+    })
+    .catch((error) => {
+        console.error('Aliyun FC Sync: 失败', error);
+        throw error; // 重新抛出错误，让调用者处理
+    });
+}
+// --- 结束新增 ---
 
         // 页面加载完成后初始化设置面板
         document.addEventListener('DOMContentLoaded', function() {
