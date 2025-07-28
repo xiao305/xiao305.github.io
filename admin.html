@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>红姐私房美食 - 管理员控制台</title>
+    <title>管理员页面 - 红姐私房美食</title>
     <base href="https://hongjsf.cyou/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 优化后的样式系统 */
+       /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
             --secondary: #FFF0F0;
@@ -133,234 +133,39 @@
             margin: 20px auto;
             line-height: 1.6;
         }
-        /* 登录表单样式 */
-        .login-container {
+        /* 管理员登录表单 */
+        .login-form {
             max-width: 400px;
             margin: 50px auto;
+            padding: 30px;
             background: white;
-            padding: 40px;
             border-radius: 15px;
             box-shadow: var(--shadow);
-            text-align: center;
-        }
-        .login-container h2 {
-            color: var(--primary);
-            margin-bottom: 30px;
-            font-size: 1.8rem;
         }
         .form-group {
             margin-bottom: 20px;
-            text-align: left;
         }
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
+            font-weight: bold;
         }
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(228, 57, 60, 0.1);
-        }
-        .btn {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor: pointer;
-            text-align: center;
-            font-size: 1rem;
-        }
-        .btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(228, 57, 60, 0.3);
-        }
-        .btn-outline {
-            display: inline-block;
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor: pointer;
-            text-align: center;
-        }
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-        .btn i {
-            margin-right: 5px;
-        }
-        /* 新增：管理员设置区域样式 */
-        .admin-settings {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 30px;
-            box-shadow: var(--shadow);
-        }
-        .settings-section {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        .settings-section:last-child {
-            border-bottom: none;
-        }
-        .settings-section h3 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .settings-section h3 i {
-            color: var(--accent);
-        }
-        .page-setting {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        .page-setting h4 {
-            margin: 0 0 15px 0;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .page-setting h4 i {
-            color: var(--primary);
-        }
-        .setting-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .setting-row label {
-            font-weight: 500;
-            min-width: 100px;
-        }
-        .setting-row select, .setting-row input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-        .setting-row input[type="number"] {
-            width: 80px;
-        }
-        .current-status {
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #e8f4fd;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-        .status-tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-left: 5px;
-        }
-        .status-tag-open {
-            background: #f6ffed;
-            color: #52c41a;
-        }
-        .status-tag-limit {
-            background: #fff7e6;
-            color: #fa8c16;
-        }
-        .status-tag-closed {
-            background: #fff2f0;
-            color: #f5222d;
-        }
-        /* 新增管理员表单样式 */
-        .add-admin-form {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        .add-admin-form h4 {
-            margin: 0 0 15px 0;
-            color: var(--dark);
-        }
-        .form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .form-row input {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px 15px;
+            padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
         }
-        .form-row button {
-            padding: 10px 20px;
-        }
-        /* 留言管理样式 */
-        .messages-container {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 30px;
-            box-shadow: var(--shadow);
-        }
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .message-stats {
-            display: flex;
-            gap: 20px;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--gray);
-        }
+        /* 留言表格 */
         .message-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
         }
         .message-table th,
         .message-table td {
@@ -541,224 +346,227 @@
             font-weight: bold;
             color: var(--primary);
         }
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .content-container {
-                padding: 0 15px;
-            }
-            .login-container {
-                margin: 20px auto;
-                padding: 30px 20px;
-            }
-            .setting-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .setting-row select, .setting-row input {
-                width: 100%;
-            }
-            .form-row {
-                flex-direction: column;
-            }
-            .message-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            .message-stats {
-                width: 100%;
-                justify-content: space-around;
-            }
-            .admin-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-align: center;
         }
+        .btn:hover {
+            background: #c62a2d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(228, 57, 60, 0.3);
+        }
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .btn i {
+            margin-right: 5px;
+        }
+
+        /* 新增：管理员设置区域样式 */
+        .admin-settings {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+        .settings-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .settings-section:last-child {
+             border-bottom: none;
+             margin-bottom: 0;
+             padding-bottom: 0;
+        }
+        .settings-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        .settings-section p {
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: end;
+        }
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+        }
+        .page-status-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: end;
+        }
+        .page-status-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            min-width: 250px;
+        }
+        .page-status-item h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        .status-select, .duration-input, .password-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .duration-input, .password-input {
+            width: calc(100% - 26px); /* 减去按钮宽度和间距 */
+        }
+        .apply-btn {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+            height: fit-content; /* 与输入框高度匹配 */
+        }
+        .apply-btn:hover {
+            background: #c62a2d;
+        }
+        .apply-btn:disabled {
+             background: #cccccc;
+             cursor: not-allowed;
+        }
+        .status-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            display: block;
+        }
+        .status-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .status-tag-open { background-color: #d4edda; color: #155724; }
+        .status-tag-limit { background-color: #fff3cd; color: #856404; }
+        .status-tag-closed { background-color: #f8d7da; color: #721c24; }
+
     </style>
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="logo">
                 <i class="fas fa-utensils"></i>
-                <span>红姐私房美食</span>
+                <span>红姐私房 - 管理员面板</span>
             </div>
             <div class="nav-links">
-                <a href="index.html"><i class="fas fa-home"></i> 首页</a>
-                <a href="products.html"><i class="fas fa-shopping-bag"></i> 特产商城</a>
-                <a href="about.html"><i class="fas fa-info-circle"></i> 关于我们</a>
-                <a href="contact.html"><i class="fas fa-phone"></i> 联系方式</a>
-                <a href="admin.html" class="active"><i class="fas fa-user-shield"></i> 管理员</a>
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> 返回首页</a> <!-- 修改为指向 index.html -->
             </div>
         </div>
     </nav>
-
-    <!-- 主要内容 -->
+    <!-- 内容容器 -->
     <div class="content-container">
-        <div class="page-header">
-            <h1><i class="fas fa-user-shield"></i> 管理员控制台</h1>
-            <p>欢迎使用红姐私房美食网站后台管理系统</p>
-        </div>
-
-        <!-- 登录区域 -->
-        <div id="loginSection" class="login-container">
-            <h2><i class="fas fa-sign-in-alt"></i> 管理员登录</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username"><i class="fas fa-user"></i> 用户名</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password"><i class="fas fa-lock"></i> 密码</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit" class="btn"><i class="fas fa-sign-in-alt"></i> 登录</button>
-            </form>
-        </div>
-
-        <!-- 管理员面板 (默认隐藏) -->
-        <div id="adminPanel" class="admin-panel" style="display: none;">
-            <div class="admin-header">
-                <h2><i class="fas fa-tachometer-alt"></i> 仪表盘</h2>
-                <button id="logoutBtn" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
+        <!-- 管理员页面 -->
+        <div id="admin">
+            <div class="page-header">
+                <h1>管理员面板</h1> <!-- 修改标题 -->
+                <p>管理网站数据和用户留言</p> <!-- 修改副标题 -->
             </div>
-
-            <!-- 统计卡片 -->
-            <div class="admin-stats">
-                <div class="stat-card">
-                    <div class="stat-label">总访问量</div>
-                    <div class="stat-value" id="totalVisits">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">今日访问</div>
-                    <div class="stat-value" id="todayVisits">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">总留言数</div>
-                    <div class="stat-value" id="totalMessages">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">未读留言</div>
-                    <div class="stat-value" id="unreadMessages">0</div>
-                </div>
+            <div class="login-form" id="adminLoginForm">
+                <form id="adminLogin">
+                    <div class="form-group">
+                        <label for="username">管理员账号</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">管理员密码</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </button>
+                </form>
             </div>
-
-            <!-- 管理员设置区域 -->
-            <div class="admin-settings">
-                <div class="settings-section">
-                    <h3><i class="fas fa-cogs"></i> 页面状态管理</h3>
-                    
-                    <!-- 特产商城设置 -->
-                    <div class="page-setting">
-                        <h4><i class="fas fa-shopping-bag"></i> 特产商城</h4>
-                        <div class="setting-row">
-                            <label>状态:</label>
-                            <select id="productsStatus">
-                                <option value="open">开启</option>
-                                <option value="limit">限制访问</option>
-                                <option value="closed">关闭</option>
-                            </select>
-                            <input type="number" id="productsDuration" placeholder="限制秒数" min="1">
-                            <button class="btn" onclick="applyPageStatus('products')"><i class="fas fa-save"></i> 应用</button>
-                        </div>
-                        <div class="current-status">
-                            当前状态: <span id="productsCurrentStatus">未知</span>
-                        </div>
+            <div id="adminPanel" class="admin-panel" style="display: none;">
+                <div class="admin-header">
+                    <h2>网站管理系统</h2> <!-- 修改标题 -->
+                    <button id="logoutBtn" class="btn-outline">
+                        <i class="fas fa-sign-out-alt"></i> 退出登录
+                    </button>
+                </div>
+                 <!-- 管理员功能增强 -->
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalMessages">0</div>
+                        <div class="stat-label">留言总数</div>
                     </div>
-
-                    <!-- 关于我们设置 -->
-                    <div class="page-setting">
-                        <h4><i class="fas fa-info-circle"></i> 关于我们</h4>
-                        <div class="setting-row">
-                            <label>状态:</label>
-                            <select id="aboutStatus">
-                                <option value="open">开启</option>
-                                <option value="limit">限制访问</option>
-                                <option value="closed">关闭</option>
-                            </select>
-                            <input type="number" id="aboutDuration" placeholder="限制秒数" min="1">
-                            <button class="btn" onclick="applyPageStatus('about')"><i class="fas fa-save"></i> 应用</button>
-                        </div>
-                        <div class="current-status">
-                            当前状态: <span id="aboutCurrentStatus">未知</span>
-                        </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="todayMessages">0</div>
+                        <div class="stat-label">今日留言</div>
                     </div>
-
-                    <!-- 联系方式设置 -->
-                    <div class="page-setting">
-                        <h4><i class="fas fa-phone"></i> 联系方式</h4>
-                        <div class="setting-row">
-                            <label>状态:</label>
-                            <select id="contactStatus">
-                                <option value="open">开启</option>
-                                <option value="limit">限制访问</option>
-                                <option value="closed">关闭</option>
-                            </select>
-                            <input type="number" id="contactDuration" placeholder="限制秒数" min="1">
-                            <button class="btn" onclick="applyPageStatus('contact')"><i class="fas fa-save"></i> 应用</button>
-                        </div>
-                        <div class="current-status">
-                            当前状态: <span id="contactCurrentStatus">未知</span>
-                        </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="unreadMessages">0</div>
+                        <div class="stat-label">未读留言</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalVisits">0</div>
+                        <div class="stat-label">总访问量</div>
                     </div>
                 </div>
-
-                <!-- 新增管理员 -->
-                <div class="settings-section">
-                    <h3><i class="fas fa-user-plus"></i> 管理员管理</h3>
-                    <form id="addAdminForm" class="add-admin-form">
-                        <h4>创建新管理员账号</h4>
-                        <div class="form-row">
-                            <input type="text" id="newAdminUsername" placeholder="输入新管理员用户名" required>
-                            <button type="submit" class="btn"><i class="fas fa-plus"></i> 新增</button>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--gray); margin-top: 10px;">
-                            <i class="fas fa-info-circle"></i> 新账号默认密码为 <strong>123456</strong>，创建后请及时修改密码。
-                        </p>
-                    </form>
-                </div>
-
-                <!-- 修改密码 -->
-                <div class="settings-section">
-                    <h3><i class="fas fa-key"></i> 修改密码</h3>
-                    <form id="changePasswordForm" class="add-admin-form">
-                        <div class="form-row">
-                            <input type="password" id="oldPassword" placeholder="当前密码" required>
-                            <input type="password" id="newPassword" placeholder="新密码" required>
-                            <button type="submit" class="btn"><i class="fas fa-sync"></i> 修改</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- 留言管理 -->
-            <div class="messages-container">
-                <div class="message-header">
-                    <h3><i class="fas fa-comments"></i> 留言管理</h3>
-                    <div class="message-stats">
-                        <div class="stat-item">
-                            <div class="stat-number" id="totalMessagesHeader">0</div>
-                            <div class="stat-label">总留言</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" id="unreadMessagesHeader">0</div>
-                            <div class="stat-label">未读</div>
-                        </div>
-                    </div>
+                <!-- 流量统计图表 -->
+                <h3>最近7天访问趋势</h3>
+                <div class="traffic-chart" id="trafficChart">
+                    <!-- 流量柱状图将通过JS生成 -->
                 </div>
                 <div class="search-box">
-                    <input type="text" id="messageSearch" placeholder="搜索留言内容...">
-                    <button class="btn" onclick="loadMessages()"><i class="fas fa-search"></i> 搜索</button>
+                    <input type="text" id="searchInput" placeholder="搜索留言内容...">
+                    <button class="btn" id="searchBtn">
+                        <i class="fas fa-search"></i> 搜索
+                    </button>
+                    <button class="btn" id="exportBtn">
+                        <i class="fas fa-download"></i> 导出数据
+                    </button>
                 </div>
                 <table class="message-table">
                     <thead>
@@ -766,211 +574,228 @@
                             <th>姓名</th>
                             <th>电话</th>
                             <th>留言内容</th>
-                            <th>时间</th>
-                            <th>状态</th>
-                            <th>操作</th>
+                            <th>提交时间</th>
+                            <th>状态</th> <!-- 添加状态列 -->
+                            <th>操作</th> <!-- 添加操作列 -->
                         </tr>
                     </thead>
                     <tbody id="messageTableBody">
-                        <!-- 留言内容将通过JavaScript动态加载 -->
+                        <!-- 留言数据将通过JavaScript动态填充 -->
                     </tbody>
                 </table>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn btn-outline" id="exportBtn"><i class="fas fa-file-export"></i> 导出所有留言</button>
+                 <!-- 操作日志 -->
+                <div class="logs-container">
+                    <h3>操作日志 <span class="tag tag-info">最近30条</span></h3>
+                    <div id="logsList">
+                        <!-- 日志将通过JS动态填充 -->
+                    </div>
                 </div>
-            </div>
 
-            <!-- 访问日志 -->
-            <div class="logs-container">
-                <h3><i class="fas fa-history"></i> 操作日志</h3>
-                <div id="logsList">
-                    <!-- 日志内容将通过JavaScript动态加载 -->
-                </div>
-            </div>
+                <!-- 新增：管理员设置区域 -->
+                <div class="admin-settings">
+                    <h2>管理员设置</h2>
 
-            <!-- 流量图 -->
-            <div class="logs-container">
-                <h3><i class="fas fa-chart-line"></i> 近期访问流量</h3>
-                <div class="traffic-chart" id="trafficChart">
-                    <!-- 流量图将通过JavaScript动态生成 -->
-                </div>
+                    <!-- 更改密码 -->
+                    <div class="settings-section">
+                        <h3><i class="fas fa-key"></i> 更改管理员密码</h3>
+                        <p>修改当前登录管理员的密码。</p>
+                        <form id="changePasswordForm">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <label for="currentPassword">当前密码:</label>
+                                    <input type="password" id="currentPassword" class="password-input" required>
+                                </div>
+                                <div class="form-col">
+                                    <label for="newPassword">新密码:</label>
+                                    <input type="password" id="newPassword" class="password-input" required>
+                                </div>
+                                <div class="form-col">
+                                    <label for="confirmNewPassword">确认新密码:</label>
+                                    <input type="password" id="confirmNewPassword" class="password-input" required>
+                                </div>
+                                <div class="form-col">
+                                    <button type="submit" class="apply-btn">更改密码</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- 新增管理员 -->
+                    <div class="settings-section">
+                        <h3><i class="fas fa-user-plus"></i> 新增管理员账号</h3>
+                        <p>创建新的管理员账户。新账号默认密码为 '123456'。</p>
+                        <form id="addAdminForm">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <label for="newAdminUsername">新管理员账号:</label>
+                                    <input type="text" id="newAdminUsername" class="password-input" required>
+                                </div>
+                                <div class="form-col">
+                                    <button type="submit" class="apply-btn">新增管理员</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- 设置页面状态 -->
+                    <div class="settings-section">
+                        <h3><i class="fas fa-cogs"></i> 设置页面状态</h3>
+                        <p>配置各个页面的访问权限和行为。</p>
+                        <div class="page-status-controls">
+                            <!-- 特产商城 -->
+                            <div class="page-status-item">
+                                <h4>特产商城 (products)</h4>
+                                <label for="productsStatus">状态:</label>
+                                <select id="productsStatus" class="status-select">
+                                    <option value="open">开启 (无需弹窗)</option>
+                                    <option value="limit">限制 (显示警告弹窗)</option>
+                                    <option value="closed">关闭 (需要密码访问)</option>
+                                </select>
+                                <span id="productsStatusTag" class="status-tag status-tag-limit">限制</span>
+                                <label for="productsDuration">限制时长 (秒):</label>
+                                <input type="number" id="productsDuration" class="duration-input" min="1" value="10">
+                                <label for="productsPassword">关闭密码:</label>
+                                <input type="text" id="productsPassword" class="password-input" placeholder="设置关闭密码">
+                                <button class="apply-btn" onclick="applyPageStatus('products')">应用设置</button>
+                                <span class="status-info">当前: <span id="productsCurrentStatus">限制 (10秒)</span></span>
+                            </div>
+
+                            <!-- 关于我们 -->
+                            <div class="page-status-item">
+                                <h4>关于我们 (about)</h4>
+                                <label for="aboutStatus">状态:</label>
+                                <select id="aboutStatus" class="status-select">
+                                    <option value="open">开启 (无需弹窗)</option>
+                                    <option value="limit">限制 (显示警告弹窗)</option>
+                                    <option value="closed">关闭 (需要密码访问)</option>
+                                </select>
+                                <span id="aboutStatusTag" class="status-tag status-tag-limit">限制</span>
+                                <label for="aboutDuration">限制时长 (秒):</label>
+                                <input type="number" id="aboutDuration" class="duration-input" min="1" value="10">
+                                <label for="aboutPassword">关闭密码:</label>
+                                <input type="text" id="aboutPassword" class="password-input" placeholder="设置关闭密码">
+                                <button class="apply-btn" onclick="applyPageStatus('about')">应用设置</button>
+                                <span class="status-info">当前: <span id="aboutCurrentStatus">限制 (10秒)</span></span>
+                            </div>
+
+                            <!-- 联系方式 -->
+                            <div class="page-status-item">
+                                <h4>联系方式 (contact)</h4>
+                                <label for="contactStatus">状态:</label>
+                                <select id="contactStatus" class="status-select">
+                                    <option value="open">开启 (无需弹窗)</option>
+                                    <option value="limit">限制 (显示警告弹窗)</option>
+                                    <option value="closed">关闭 (需要密码访问)</option>
+                                </select>
+                                <span id="contactStatusTag" class="status-tag status-tag-limit">限制</span>
+                                <label for="contactDuration">限制时长 (秒):</label>
+                                <input type="number" id="contactDuration" class="duration-input" min="1" value="10">
+                                <label for="contactPassword">关闭密码:</label>
+                                <input type="text" id="contactPassword" class="password-input" placeholder="设置关闭密码">
+                                <button class="apply-btn" onclick="applyPageStatus('contact')">应用设置</button>
+                                <span class="status-info">当前: <span id="contactCurrentStatus">限制 (10秒)</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <!-- /admin-settings -->
+
             </div>
         </div>
     </div>
-
     <script>
         // 全局变量
-        let isAdminLoggedIn = false;
-        let adminAccounts = JSON.parse(localStorage.getItem('adminAccounts')) || {"admin": "aG9uZ2ppZTEyMw=="}; // 默认账号 admin:123456 (base64)
         let messages = JSON.parse(localStorage.getItem('messages')) || [];
+        let isAdminLoggedIn = false;
         let logs = JSON.parse(localStorage.getItem('adminLogs')) || [];
         let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
-        let pageStatusConfig = {
-            products: { status: 'closed' },
-            about: { status: 'closed' },
-            contact: { status: 'limit', duration: 120 }
+        // 从 localStorage 获取管理员账户信息 (包含密码哈希)
+        let adminAccounts = JSON.parse(localStorage.getItem('adminAccounts')) || {
+            'admin': btoa('hongjie123') // 使用 Base64 编码存储密码
         };
-        let pagePasswords = {
-            products: '999',
-            about: '999',
+        // 从 localStorage 获取页面状态配置
+        let pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+            products: { status: 'limit', duration: 10 },
+            about: { status: 'limit', duration: 10 },
+            contact: { status: 'limit', duration: 10 }
+        };
+        // 从 localStorage 获取页面密码 (关闭状态时需要)
+        let pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+            products: '',
+            about: '',
             contact: ''
         };
+        // 当前登录的管理员用户名
+        let currentAdminUser = null;
 
-        // --- 新增：阿里云 FC 同步函数 ---
-        // 请将 YOUR_FC_ENDPOINT 替换为你实际的阿里云函数触发器 URL
-        const FC_ENDPOINT = 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/';
-        // 请将 YOUR_OSS_CONFIG_URL 替换为你实际的 OSS 文件公开访问 URL
-        const OSS_CONFIG_URL = 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json';
+        // --- 新增：阿里云 FC 配置 ---
+        // 替换为您的实际阿里云函数 HTTP 触发器 URL
+        const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/";
 
+        // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
         async function syncConfigToFC(configData) {
-            console.log("Aliyun FC Sync: 开始同步配置到阿里云 FC", configData);
+            console.log("Aliyun FC Sync: 开始同步配置到 FC...", configData);
+
             try {
-                const response = await fetch(FC_ENDPOINT, {
+                const response = await fetch(FC_SYNC_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
+                        // 由于触发器认证方式为 anonymous，通常不需要额外 Header
+                        // 如果您设置了其他认证，请在此添加相应 Header
                     },
                     body: JSON.stringify(configData)
                 });
+
                 console.log("Aliyun FC Sync: Fetch 响应对象:", response);
-
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                    // --- 关键修改：尝试读取错误响应体以获取更详细的错误信息 ---
+                    return response.text().then(errorText => {
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                    });
+                    // --- 结束关键修改 ---
                 }
-
-                console.log('Aliyun FC Sync: 成功 (状态码 2xx)');
-                return { message: 'Configuration updated successfully' };
+                return response.json(); // 解析 JSON 响应体
             } catch (error) {
                 console.error('Aliyun FC Sync: 失败', error);
-                throw error;
+                throw error; // 重新抛出错误，让调用者处理
             }
         }
         // --- 结束新增 ---
 
 
-        // --- 新增：从阿里云 OSS 加载配置并初始化设置面板 ---
-        async function loadConfigFromOSSAndInitializeSettingsPanel() {
-            console.log("🔄 开始从阿里云 OSS 加载配置...");
-            try {
-                // 添加时间戳防止缓存
-                const urlWithTimestamp = `${OSS_CONFIG_URL}?t=${new Date().getTime()}`;
-                const response = await fetch(urlWithTimestamp, { cache: 'no-store' });
-                console.log("Fetch 响应对象 (OSS Config):", response);
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSettingsPanel();
+        });
 
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        console.log("OSS: 配置文件未找到");
-                        return null;
-                    }
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+        // 初始化设置面板状态 (修复：优先使用从 OSS 读取并更新的全局变量)
+function initializeSettingsPanel() {
+    // 初始化页面状态下拉框和输入框
+    // --- 关键修改：优先使用从 OSS 读取并更新的全局 window.pageStatusConfig 和 window.pagePasswords ---
+    for (const pageId in (window.pageStatusConfig || pageStatusConfig)) { // <<<--- 修改：遍历全局或局部变量
+        // --- 修改：优先使用全局变量 ---
+        const config = (window.pageStatusConfig && window.pageStatusConfig[pageId]) || (pageStatusConfig && pageStatusConfig[pageId]); // <<<--- 修改：优先使用全局变量
+        const password = (window.pagePasswords && window.pagePasswords[pageId]) || (pagePasswords && pagePasswords[pageId]); // <<<--- 修改：优先使用全局变量
+        // --- 结束修改 ---
+        const statusSelect = document.getElementById(`${pageId}Status`);
+        const durationInput = document.getElementById(`${pageId}Duration`);
+        const passwordInput = document.getElementById(`${pageId}Password`);
+        const statusTag = document.getElementById(`${pageId}StatusTag`);
+        const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
 
-                const contentType = response.headers.get('content-type');
-                console.log("OSS: 响应 Content-Type:", contentType);
-                let data = null;
+        if (statusSelect) statusSelect.value = config.status;
+        if (durationInput) durationInput.value = config.duration || 10;
+        if (passwordInput) passwordInput.value = password || ''; // <<<--- 修改：使用全局或局部密码变量
+        updateStatusTagAndText(pageId, config.status, config.duration, statusTag, currentStatusText);
+    }
+    // --- 结束关键修改 ---
+}
 
-                if (contentType && contentType.includes('application/json')) {
-                    console.log("OSS: 响应体是 JSON 类型，尝试解析...");
-                    try {
-                        data = await response.json();
-                        console.log("OSS: 成功解析 JSON 响应体:", data);
-                    } catch (parseError) {
-                        console.error("OSS: 解析 JSON 响应体失败:", parseError);
-                        const textContent = await response.text();
-                        console.log("OSS: 实际响应体文本内容:", textContent);
-                        data = null;
-                    }
-                } else {
-                    console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
-                    const textContent = await response.text();
-                    console.log("OSS: 响应体文本内容:", textContent);
-                    try {
-                        data = JSON.parse(textContent);
-                        console.log("OSS: 成功将文本内容解析为 JSON:", data);
-                    } catch (parseError) {
-                        console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
-                        data = null;
-                    }
-                }
-
-                if (data && data.pageStatusConfig) {
-                    console.log("✅ 成功从 OSS 读取到配置:", data);
-                    // 更新全局配置变量
-                    window.pageStatusConfig = data.pageStatusConfig;
-                    window.pagePasswords = data.pagePasswords || {};
-                    window.adminAccounts = data.adminAccounts || {}; // <<<--- 新增：更新全局管理员账号变量
-                    console.log("🔄 已更新全局配置变量");
-                    // 使用从 OSS 读取的最新配置初始化设置面板 UI
-                    initializeSettingsPanel();
-                } else {
-                    console.log("OSS: 远程配置为空或格式不正确");
-                    // 回退到 localStorage
-                    initializeSettingsPanel();
-                }
-            } catch (fetchError) {
-                console.error("❌ 从阿里云 OSS 加载配置失败:", fetchError);
-                // 回退到 localStorage
-                initializeSettingsPanel();
-            }
-        }
-        // --- 结束新增 ---
-
-
-        // 初始化设置面板 UI
-        function initializeSettingsPanel() {
-            console.log("🔧 开始初始化设置面板 UI...");
-            const config = window.pageStatusConfig || pageStatusConfig; // 优先使用全局
-            const passwords = window.pagePasswords || pagePasswords; // 优先使用全局
-            const accounts = window.adminAccounts || adminAccounts; // 优先使用全局 <<<--- 新增
-
-            console.log("🔧 使用的配置:", config);
-            console.log("🔧 使用的密码:", passwords);
-            console.log("🔧 使用的管理员账号:", accounts); // <<<--- 新增
-
-            // 初始化页面状态选择器
-            Object.keys(config).forEach(pageId => {
-                const statusSelect = document.getElementById(`${pageId}Status`);
-                const durationInput = document.getElementById(`${pageId}Duration`);
-                const currentStatusTextElement = document.getElementById(`${pageId}CurrentStatus`);
-
-                if (statusSelect) {
-                    statusSelect.value = config[pageId].status || 'closed';
-                }
-                if (durationInput) {
-                    durationInput.value = config[pageId].duration || '';
-                    durationInput.style.display = (config[pageId].status === 'limit') ? 'inline-block' : 'none';
-                }
-                if (currentStatusTextElement) {
-                    updateCurrentStatusDisplay(pageId);
-                }
-            });
-
-            // 初始化密码输入框
-            Object.keys(passwords).forEach(pageId => {
-                const passwordInput = document.getElementById(`${pageId}Password`);
-                if (passwordInput) {
-                    passwordInput.value = passwords[pageId];
-                }
-            });
-
-            // 更新统计信息
-            updateStats();
-            loadMessages();
-            loadLogs();
-            drawTrafficChart();
-            console.log("🔧 设置面板 UI 初始化完成");
-        }
-
-        // 更新当前状态显示
-        function updateCurrentStatusDisplay(pageId) {
-            const config = window.pageStatusConfig || pageStatusConfig; // 优先使用全局
-            const status = config[pageId]?.status || 'closed';
-            const duration = config[pageId]?.duration;
-            const currentStatusTextElement = document.getElementById(`${pageId}CurrentStatus`);
+        // 更新状态标签和当前状态文本
+        function updateStatusTagAndText(pageId, status, duration, statusTagElement, currentStatusTextElement) {
             let statusText = '';
             let statusClass = '';
-
             switch(status) {
                 case 'open':
                     statusText = '开启';
@@ -985,273 +810,349 @@
                     statusClass = 'status-tag-closed';
                     break;
             }
-
+            if (statusTagElement) {
+                statusTagElement.textContent = statusText.replace(/ \(.*\)/, ''); // 移除括号内容用于标签
+                statusTagElement.className = `status-tag ${statusClass}`;
+            }
             if (currentStatusTextElement) {
                 currentStatusTextElement.textContent = statusText;
-                // 为状态文本添加标签样式
-                currentStatusTextElement.innerHTML = `${statusText.replace(/ \(.*\)/, '')}<span class="status-tag ${statusClass}">${statusText.match(/\((.*)\)/)?.[1] || statusText}</span>`;
             }
         }
 
-
-        // 应用页面状态设置 (添加阿里云 FC 同步)
+        // --- 修改：应用页面状态设置 (添加阿里云 FC 同步) ---
         function applyPageStatus(pageId) {
-            if (!isAdminLoggedIn) {
-                alert('请先登录！');
-                return;
-            }
-
             const statusSelect = document.getElementById(`${pageId}Status`);
             const durationInput = document.getElementById(`${pageId}Duration`);
             const passwordInput = document.getElementById(`${pageId}Password`);
+            const statusTag = document.getElementById(`${pageId}StatusTag`);
+            const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
 
             if (!statusSelect) return;
 
-            const status = statusSelect.value;
-            const duration = status === 'limit' ? parseInt(durationInput?.value) || 10 : null;
-            const password = passwordInput?.value || '';
+            const newStatus = statusSelect.value;
+            const newDuration = parseInt(durationInput?.value) || 10;
+            const newPassword = passwordInput?.value.trim() || '';
 
             // 更新内存中的配置
-            const config = window.pageStatusConfig || pageStatusConfig; // 优先使用全局
-            const passwords = window.pagePasswords || pagePasswords; // 优先使用全局
+            pageStatusConfig[pageId] = {
+                status: newStatus,
+                duration: newStatus === 'limit' ? newDuration : undefined // 只在限制状态时保存时长
+            };
+            pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
 
-            config[pageId] = config[pageId] || {};
-            config[pageId].status = status;
-            if (duration !== null) {
-                config[pageId].duration = duration;
-            } else {
-                delete config[pageId].duration;
-            }
+            // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
+            localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
+            localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
 
-            if (passwordInput) {
-                passwords[pageId] = password;
-            }
-
-            // 更新UI显示
-            updateCurrentStatusDisplay(pageId);
-            if (durationInput) {
-                durationInput.style.display = (status === 'limit') ? 'inline-block' : 'none';
-            }
-
-            // 记录日志
-            addLog('修改页面状态', `将页面 "${pageId}" 的状态修改为: ${status}${duration ? ` (${duration}秒)` : ''}`);
-
-            // 准备要同步到阿里云 FC 的完整数据结构 (包含所有管理员数据)
+            // 2. 准备要同步到阿里云 FC 的数据结构
             const configToSync = {
-                pageStatusConfig: window.pageStatusConfig || pageStatusConfig, // 优先使用全局
-                pagePasswords: window.pagePasswords || pagePasswords, // 优先使用全局
-                adminAccounts: window.adminAccounts || adminAccounts, // <<<--- 新增：同步管理员账号数据
-                messages: messages,
-                adminLogs: logs,
-                siteVisits: visits,
+                pageStatusConfig: pageStatusConfig,
+                pagePasswords: pagePasswords,
+                // 可以添加时间戳
                 timestamp: new Date().toISOString()
             };
 
-            // 调用阿里云 FC 同步函数
-            syncConfigToFC(configToSync).then(() => {
-                console.log('Aliyun FC Sync: 配置已同步');
-                alert(`页面 "${pageId}" 状态已更新并同步到云端！`);
-            }).catch((error) => {
-                console.error('Aliyun FC Sync: 同步配置失败:', error);
-                addLog('修改页面状态', `将页面 "${pageId}" 的状态修改为: ${status} (本地修改成功，远程同步到阿里云 FC 失败: ${error.message})`);
-                alert(`页面 "${pageId}" 状态已更新(本地)，但同步到云端时出错: ${error.message}`);
-            });
+            // 3. 保存到阿里云 FC (实现跨设备同步)
+            syncConfigToFC(configToSync)
+                .then(() => {
+                    console.log('Aliyun FC Sync: 页面状态配置已同步');
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 记录操作日志
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步到阿里云 FC`);
+                    alert(`页面 "${pageId}" 的状态已更新并同步。`);
+                })
+                .catch((error) => {
+                    console.error('Aliyun FC Sync: 同步配置失败:', error);
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 即使同步失败，本地设置已生效，可以提示用户
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步到阿里云 FC 失败: ${error.message})`);
+                    alert(`页面 "${pageId}" 的状态已更新(本地)，但同步到阿里云时出错: ${error.message}`);
+                });
+        }
+        // --- 结束修改 ---
+
+
+        // 管理员登录 - 修复：确保始终阻止默认提交
+        document.getElementById('adminLogin').addEventListener('submit', function(e) {
+            e.preventDefault(); // 关键：绝对阻止表单默认提交和页面刷新
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            // 简单的管理员验证 (使用哈希比较)
+            const storedHash = adminAccounts[username];
+            if(storedHash && storedHash === btoa(password)) { // 使用 Base64 解码比较
+                isAdminLoggedIn = true;
+                currentAdminUser = username; // 记录当前用户
+                document.getElementById('adminLoginForm').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                // 记录登录日志
+                addLog('管理员登录', `管理员 ${username} 登录系统`);
+                // 加载留言数据
+                loadMessages();
+                 // 加载访问统计
+                loadVisits();
+                // 加载操作日志
+                loadLogs();
+                // 初始化设置面板
+                initializeSettingsPanel();
+                // --- 新增：从 OSS 加载配置并初始化设置面板 UI ---
+                loadConfigFromOSSAndInitializeSettingsPanel()
+        .then(() => {
+            console.log('✅ 成功从 OSS 加载配置并初始化设置面板 UI');
+        })
+        .catch((error) => {
+            console.error('❌ 从 OSS 加载配置并初始化设置面板 UI 失败:', error);
+            // 即使加载失败，也使用本地默认值初始化
+            // initializeSettingsPanel(); // 这行已经在上面调用了
+        });
+    // --- 结束新增 ---
+            } else {
+                alert('管理员账号或密码错误！'); // 保持一致的提示
+            }
+        });
+
+        // --- 新增：从 OSS 加载配置并初始化设置面板 UI 的函数 ---
+async function loadConfigFromOSSAndInitializeSettingsPanel() {
+    console.log("开始尝试从 OSS 加载最新配置以初始化设置面板 UI...");
+
+    // --- 新增：OSS 配置 (用于读取) ---
+    // 替换为您的实际 OSS Bucket 名称和地域
+    const OSS_REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域
+    const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
+    const CONFIG_FILE_NAME = "test-config.json"; // <--- 请修改为您的配置文件名
+    // 注意：确保您的 Bucket 是公共读权限
+    const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${OSS_REGION}.aliyuncs.com/${CONFIG_FILE_NAME}?${new Date().getTime()}`; // <--- 修改为您的实际文件名, 添加时间戳防缓存
+    // --- 结束新增 ---
+
+    try {
+        const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' }); // 禁用缓存确保拿到最新
+        console.log("Fetch 响应对象 (OSS Config):", response); // 调试日志
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                 console.log("OSS: 配置文件未找到");
+                 return null; // 文件不存在
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
+        // --- 关键修改：检查 Content-Type 并安全读取响应体 ---
+        const contentType = response.headers.get('content-type');
+        console.log("OSS: 响应 Content-Type:", contentType);
+        let data = null;
+        if (contentType && contentType.includes('application/json')) {
+            // 如果是 JSON 类型，尝试解析
+            console.log("OSS: 响应体是 JSON 类型，尝试解析...");
+            try {
+                data = await response.json(); // 使用 await 等待解析
+                console.log("OSS: 成功解析 JSON 响应体:", data);
+            } catch (parseError) {
+                console.error("OSS: 解析 JSON 响应体失败:", parseError);
+                // 即使 Content-Type 声称为 JSON，解析也可能失败
+                // 我们可以尝试读取文本内容看看实际是什么
+                const textContent = await response.text();
+                console.log("OSS: 实际响应体文本内容:", textContent);
+                data = null; // 解析失败，设置为 null
+            }
+        } else {
+            // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
+            console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
+            const textContent = await response.text();
+            console.log("OSS: 响应体文本内容:", textContent);
+            // 尝试将文本内容解析为 JSON
+            try {
+                data = JSON.parse(textContent);
+                console.log("OSS: 成功将文本内容解析为 JSON:", data);
+            } catch (parseError) {
+                console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
+                data = null; // 解析失败，设置为 null
+            }
+        }
+        // --- 结束关键修改 ---
 
-        // 修改密码
+        if (data && data.pageStatusConfig) {
+            console.log("✅ 成功从 OSS 读取到配置:", data);
+            // --- 关键修改：更新全局配置变量和密码变量 ---
+            window.pageStatusConfig = data.pageStatusConfig;
+            window.pagePasswords = data.pagePasswords || {};
+            // --- 结束关键修改 ---
+            console.log("🔄 已更新全局配置变量");
+            // --- 关键修改：使用从 OSS 读取的最新配置初始化设置面板 UI ---
+            initializeSettingsPanel();
+            // --- 结束关键修改 ---
+        } else {
+            console.log("OSS: 远程配置为空或格式不正确");
+            // 回退到 localStorage
+            window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                products: { status: 'limit', duration: 10 },
+                about: { status: 'limit', duration: 10 },
+                contact: { status: 'limit', duration: 10 }
+            };
+            window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                products: '',
+                about: '',
+                contact: ''
+            };
+            console.log("🔙 回退到使用 localStorage 配置");
+            // 使用回退的配置初始化设置面板 UI
+            initializeSettingsPanel();
+        }
+    } catch (error) {
+        console.error("❌ 从 OSS 读取配置失败:", error);
+        // 回退到 localStorage
+        window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+            products: { status: 'limit', duration: 10 },
+            about: { status: 'limit', duration: 10 },
+            contact: { status: 'limit', duration: 10 }
+        };
+        window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+            products: '',
+            about: '',
+            contact: ''
+        };
+        console.log("🔙 回退到使用 localStorage 配置 (因错误)");
+        // 使用回退的配置初始化设置面板 UI
+        initializeSettingsPanel();
+    }
+}
+// --- 结束新增 ---
+
+        // 更改管理员密码
         document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (!isAdminLoggedIn) {
+            e.preventDefault(); // 阻止表单默认提交刷新页面
+            if (!isAdminLoggedIn || !currentAdminUser) {
                 alert('请先登录！');
                 return;
             }
 
-            const oldPasswordInput = document.getElementById('oldPassword');
-            const newPasswordInput = document.getElementById('newPassword');
-            const oldPassword = oldPasswordInput.value;
-            const newPassword = newPasswordInput.value;
-            const currentUsername = 'admin'; // 假设只有一个管理员账号用于修改密码
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
 
-            // 验证旧密码 (使用全局 adminAccounts)
-            const accounts = window.adminAccounts || adminAccounts; // 优先使用全局
-            if (accounts[currentUsername] !== btoa(oldPassword)) {
-                alert('旧密码错误！');
+            // 验证当前密码
+            const storedHash = adminAccounts[currentAdminUser];
+            if (!storedHash || storedHash !== btoa(currentPassword)) {
+                alert('当前密码错误！');
+                return;
+            }
+
+            // 验证新密码
+            if (newPassword.length < 6) {
+                alert('新密码长度至少为6位！');
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                alert('两次输入的新密码不一致！');
                 return;
             }
 
             // 更新密码
-            accounts[currentUsername] = btoa(newPassword);
-            // 同步到 localStorage
-            localStorage.setItem('adminAccounts', JSON.stringify(accounts));
-            // 同步到全局变量 (如果 window.adminAccounts 存在)
-            if (window.adminAccounts) {
-                window.adminAccounts = accounts;
-            }
+            adminAccounts[currentAdminUser] = btoa(newPassword); // Base64 编码存储
+            localStorage.setItem('adminAccounts', JSON.stringify(adminAccounts));
 
             // 记录日志
-            addLog('修改密码', '修改了管理员密码');
+            addLog('更改密码', `管理员 ${currentAdminUser} 更改了密码`);
 
             // 清空表单
-            oldPasswordInput.value = '';
-            newPasswordInput.value = '';
-
-            alert('密码修改成功！');
-
-            // 修改密码后也同步所有配置
-            const configToSync = {
-                pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
-                pagePasswords: window.pagePasswords || pagePasswords,
-                adminAccounts: window.adminAccounts || adminAccounts,
-                messages: messages,
-                adminLogs: logs,
-                siteVisits: visits,
-                timestamp: new Date().toISOString()
-            };
-
-            syncConfigToFC(configToSync).then(() => {
-                console.log('Aliyun FC Sync: 修改密码后，配置已同步');
-            }).catch((error) => {
-                console.error('Aliyun FC Sync: 修改密码后，同步配置失败:', error);
-                addLog('修改密码', `修改了管理员密码 (本地修改成功，远程同步到阿里云 FC 失败: ${error.message})`);
-                alert(`密码已修改(本地)，但同步到云端时出错: ${error.message}`);
-            });
+            this.reset();
+            alert('密码更改成功！');
         });
 
-
-        // 新增管理员账号 (修复并添加同步)
+        // 新增管理员账号
         document.getElementById('addAdminForm').addEventListener('submit', function(e) {
             e.preventDefault(); // 阻止表单默认提交刷新页面
             if (!isAdminLoggedIn) {
                 alert('请先登录！');
                 return;
             }
+
             const newUsername = document.getElementById('newAdminUsername').value.trim();
+
             if (!newUsername) {
                 alert('请输入新管理员账号！');
                 return;
             }
-            // 修复：检查全局变量 window.adminAccounts
-            const currentAdminAccounts = window.adminAccounts || adminAccounts;
-            if (currentAdminAccounts[newUsername]) {
+
+            if (adminAccounts[newUsername]) {
                 alert('该管理员账号已存在！');
                 return;
             }
 
             // 添加新账号，默认密码 '123456'
             const defaultPassword = '123456';
-            // 修复：更新全局变量和 localStorage
-            if (window.adminAccounts) {
-                window.adminAccounts[newUsername] = btoa(defaultPassword); // 更新全局变量
-            }
-            adminAccounts[newUsername] = btoa(defaultPassword); // 更新局部变量（保险）
-            localStorage.setItem('adminAccounts', JSON.stringify(adminAccounts)); // 保存到 localStorage
+            adminAccounts[newUsername] = btoa(defaultPassword);
+            localStorage.setItem('adminAccounts', JSON.stringify(adminAccounts));
 
             // 记录日志
             addLog('新增管理员', `新增了管理员账号: ${newUsername} (默认密码: ${defaultPassword})`);
 
-            // --- 关键修改：明确同步所有配置 ---
-            // 准备要同步到阿里云 FC 的完整数据结构
-            const configToSync = {
-                pageStatusConfig: window.pageStatusConfig || pageStatusConfig, // 优先使用全局
-                pagePasswords: window.pagePasswords || pagePasswords, // 优先使用全局
-                adminAccounts: window.adminAccounts || adminAccounts, // 优先使用全局（包含新账号）
-                messages: messages,
-                adminLogs: logs,
-                siteVisits: visits,
-                timestamp: new Date().toISOString()
-            };
-
-            // 调用同步函数
-            syncConfigToFC(configToSync).then(() => {
-                console.log('Aliyun FC Sync: 新增管理员后，配置已同步');
-                // 清空表单
-                document.getElementById('addAdminForm').reset();
-                alert(`管理员账号 "${newUsername}" 创建成功并已同步！默认密码为 '${defaultPassword}'，请及时修改。`);
-            }).catch((error) => {
-                console.error('Aliyun FC Sync: 新增管理员后，同步配置失败:', error);
-                // 即使同步失败，本地设置已生效，可以提示用户
-                addLog('新增管理员', `新增了管理员账号: ${newUsername} (本地添加成功，远程同步到阿里云 FC 失败: ${error.message})`);
-                // 清空表单
-                document.getElementById('addAdminForm').reset();
-                alert(`管理员账号 "${newUsername}" 已创建(本地)，但同步到云端时出错: ${error.message}。请稍后手动同步或检查网络。`);
-            });
-            // --- 结束关键修改 ---
+            // 清空表单
+            this.reset();
+            alert(`管理员账号 "${newUsername}" 创建成功！默认密码为 '${defaultPassword}'，请及时修改。`);
         });
 
 
-        // 更新统计信息
-        function updateStats() {
-            document.getElementById('totalVisits').textContent = visits.total || 0;
-            document.getElementById('totalMessagesHeader').textContent = messages.length || 0;
-            const unreadCount = messages.filter(msg => !msg.read).length;
-            document.getElementById('unreadMessages').textContent = unreadCount;
-            document.getElementById('unreadMessagesHeader').textContent = unreadCount;
-            
-            const today = new Date().toLocaleDateString();
-            document.getElementById('todayVisits').textContent = visits.daily[today] || 0;
-        }
-
-        // 加载留言
+        // 加载留言数据
         function loadMessages() {
             const tableBody = document.getElementById('messageTableBody');
-            const searchTerm = document.getElementById('messageSearch').value.toLowerCase();
             tableBody.innerHTML = '';
-
-            // 反向遍历数组以实现倒序显示 (最新的在上面)
-            [...messages].reverse().forEach((msg, index) => {
-                // 搜索过滤
-                if (searchTerm && 
-                    !msg.name.toLowerCase().includes(searchTerm) &&
-                    !msg.phone.toLowerCase().includes(searchTerm) &&
-                    !msg.message.toLowerCase().includes(searchTerm)) {
-                    return; // 如果不匹配搜索词，则跳过
-                }
-
+             // 更新统计信息
+            updateMessageStats();
+            if(messages.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">暂无留言数据</td></tr>'; // 更新 colspan
+                return;
+            }
+            // 按时间倒序排列
+            const sortedMessages = [...messages].reverse();
+            sortedMessages.forEach((msg, index) => {
                 const row = document.createElement('tr');
-                const statusTag = msg.read ? 
-                    '<span class="tag tag-success">已读</span>' : 
-                    '<span class="tag tag-warning">未读</span>';
-                
+                if(!msg.read) {
+                    row.style.backgroundColor = '#fff9e6';
+                }
                 row.innerHTML = `
                     <td>${msg.name}</td>
                     <td>${msg.phone}</td>
-                    <td style="max-width: 200px; word-wrap: break-word;">${msg.message}</td>
+                    <td>${msg.message}</td>
                     <td>${msg.timestamp}</td>
-                    <td>${statusTag}</td>
+                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td> <!-- 添加状态 -->
                     <td>
                         <div class="action-buttons">
-                            <button class="action-btn delete-btn" data-index="${messages.length - 1 - index}"><i class="fas fa-trash"></i></button>
-                            <button class="action-btn export-btn" data-index="${messages.length - 1 - index}"><i class="fas fa-download"></i></button>
+                            <button class="action-btn delete-btn" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="action-btn export-btn" data-index="${index}">
+                                <i class="fas fa-download"></i>
+                            </button>
                         </div>
-                    </td>
+                    </td> <!-- 添加操作 -->
                 `;
                 tableBody.appendChild(row);
-
                 // 标记为已读 (逻辑与 index.html 一致)
                 if(!msg.read) {
                     messages[messages.length - 1 - index].read = true;
                     localStorage.setItem('messages', JSON.stringify(messages));
                     updateMessageStats(); // 更新统计
                 }
-
-                // 添加删除功能
+                // 添加删除功能 (从 index.html 复制)
                 row.querySelector('.delete-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     if(confirm('确定要删除这条留言吗？')) {
-                        // 记录删除日志
+                         // 记录删除日志
                         addLog('删除留言', `删除了 ${messages[index].name} 的留言`);
                         messages.splice(index, 1);
                         localStorage.setItem('messages', JSON.stringify(messages));
                         loadMessages(); // 重新加载
                     }
                 });
-
-                // 添加导出功能
+                // 添加导出功能 (从 index.html 复制)
                 row.querySelector('.export-btn').addEventListener('click', function() {
                     const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
                     const message = messages[index];
-                    const content = `姓名: ${message.name}\n电话: ${message.phone}\n留言: ${message.message}\n时间: ${message.timestamp}`;
+                    const content = `姓名: ${message.name}
+电话: ${message.phone}
+留言: ${message.message}
+时间: ${message.timestamp}`; // 修复：使用 \n
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1268,49 +1169,77 @@
             });
         }
 
-        // 更新留言统计 (内部调用)
+        // 更新留言统计信息
         function updateMessageStats() {
-            const unreadCount = messages.filter(msg => !msg.read).length;
-            document.getElementById('unreadMessages').textContent = unreadCount;
-            document.getElementById('unreadMessagesHeader').textContent = unreadCount;
+            const today = new Date().toLocaleDateString();
+            // 计算今日留言
+            const todayMessages = messages.filter(msg => {
+                const msgDate = new Date(msg.timestamp).toLocaleDateString();
+                return msgDate === today;
+            }).length;
+            // 计算未读留言
+            const unreadMessages = messages.filter(msg => !msg.read).length;
+            // 更新统计信息
+            document.getElementById('totalMessages').textContent = messages.length;
+            document.getElementById('todayMessages').textContent = todayMessages;
+            document.getElementById('unreadMessages').textContent = unreadMessages;
         }
 
-        // 导出所有数据
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            // 记录导出日志
-            addLog('导出数据', '导出了所有留言数据');
-            // 创建CSV内容
-            let csvContent = "姓名,电话,留言内容,提交时间\n";
-            messages.forEach(msg => {
-                // 转义可能包含逗号或换行符的字段
-                const name = `"${msg.name.replace(/"/g, '""')}"`;
-                const phone = `"${msg.phone.replace(/"/g, '""')}"`;
-                const message = `"${msg.message.replace(/"/g, '""')}"`;
-                const timestamp = `"${msg.timestamp.replace(/"/g, '""')}"`;
-                csvContent += `${name},${phone},${message},${timestamp}\n`;
+        // 加载访问统计
+        function loadVisits() {
+            // 更新总访问量
+            document.getElementById('totalVisits').textContent = visits.total;
+            // 生成最近7天访问数据
+            const dates = [];
+            const values = [];
+            const now = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(now.getDate() - i);
+                const dateStr = date.toLocaleDateString();
+                dates.push(dateStr);
+                values.push(visits.daily[dateStr] || 0);
+            }
+            // 创建流量图表
+            const maxValue = Math.max(...values, 10); // 确保有最小高度
+            const chart = document.getElementById('trafficChart');
+            chart.innerHTML = '';
+            dates.forEach((date, index) => {
+                const value = values[index];
+                const height = (value / maxValue) * 150; // 最大高度150px
+                const bar = document.createElement('div');
+                bar.className = 'traffic-bar';
+                bar.style.height = `${height}px`;
+                const label = document.createElement('div');
+                label.className = 'traffic-bar-label';
+                label.textContent = date.split('/').slice(1).join('/'); // 简化为月/日
+                const valueLabel = document.createElement('div');
+                valueLabel.className = 'traffic-value';
+                valueLabel.textContent = value;
+                bar.appendChild(valueLabel);
+                bar.appendChild(label);
+                chart.appendChild(bar);
             });
-            // 创建下载链接
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `红姐私房留言数据_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
+        }
 
-        // 加载日志
+         // 加载操作日志
         function loadLogs() {
             const logsList = document.getElementById('logsList');
             logsList.innerHTML = '';
-            // 反向遍历数组以实现倒序显示 (最新的在上面)
-            [...logs].reverse().forEach(log => {
+            // 按时间倒序排列，只显示最近30条
+            const recentLogs = [...logs].reverse().slice(0, 30);
+            if (recentLogs.length === 0) {
+                logsList.innerHTML = '<div class="log-item">暂无操作记录</div>';
+                return;
+            }
+            recentLogs.forEach(log => {
                 const logItem = document.createElement('div');
                 logItem.className = 'log-item';
                 logItem.innerHTML = `
-                    <div><span class="log-action">${log.action}</span><span class="log-details">${log.details}</span></div>
+                    <div>
+                        <span class="log-action">${log.action}</span>
+                        <span class="log-details">${log.details}</span>
+                    </div>
                     <div class="log-time">${log.timestamp}</div>
                 `;
                 logsList.appendChild(logItem);
@@ -1329,97 +1258,125 @@
             loadLogs(); // 更新日志显示
         }
 
+
         // 退出登录
         document.getElementById('logoutBtn').addEventListener('click', function() {
+            // 记录退出日志
+            addLog('管理员退出', `管理员 ${currentAdminUser} 退出系统`);
             isAdminLoggedIn = false;
-            document.getElementById('loginSection').style.display = 'block';
+            currentAdminUser = null; // 清除当前用户
+            document.getElementById('adminLoginForm').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('loginForm').reset();
-            addLog('退出登录', '管理员退出了系统');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            // 清空更改密码表单
+            document.getElementById('changePasswordForm').reset();
+            // 清空新增管理员表单
+            document.getElementById('addAdminForm').reset();
         });
 
-        // 绘制流量图
-        function drawTrafficChart() {
-            // 获取最近7天的数据
-            const dates = [];
-            const values = [];
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toLocaleDateString();
-                dates.push(dateStr);
-                values.push(visits.daily[dateStr] || 0);
+        // 搜索功能
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if(!searchTerm) return;
+            const filteredMessages = messages.filter(msg =>
+                msg.name.toLowerCase().includes(searchTerm) ||
+                msg.phone.toLowerCase().includes(searchTerm) ||
+                msg.message.toLowerCase().includes(searchTerm)
+            );
+            // 记录搜索日志
+            addLog('搜索留言', `搜索关键词: ${searchTerm}`);
+            const tableBody = document.getElementById('messageTableBody');
+            tableBody.innerHTML = '';
+            if(filteredMessages.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">未找到匹配的留言</td></tr>'; // 更新 colspan
+                return;
             }
-
-            // 创建流量图表
-            const maxValue = Math.max(...values, 10); // 确保有最小高度
-            const chart = document.getElementById('trafficChart');
-            chart.innerHTML = '';
-            dates.forEach((date, index) => {
-                const value = values[index];
-                const height = (value / maxValue) * 150; // 最大高度150px
-                const bar = document.createElement('div');
-                bar.className = 'traffic-bar';
-                bar.style.height = `${height}px`;
-                
-                const label = document.createElement('div');
-                label.className = 'traffic-bar-label';
-                label.textContent = date.split('/').slice(1).join('/'); // 显示月/日
-
-                const valueLabel = document.createElement('div');
-                valueLabel.className = 'traffic-value';
-                valueLabel.textContent = value;
-
-                bar.appendChild(valueLabel);
-                chart.appendChild(bar);
-                chart.appendChild(label);
-            });
-        }
-
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 更新总访问量
-            visits.total = (visits.total || 0) + 1;
-            // 更新每日访问量
-            const today = new Date().toLocaleDateString();
-            visits.daily[today] = (visits.daily[today] || 0) + 1;
-            // 保存到localStorage
-            localStorage.setItem('siteVisits', JSON.stringify(visits));
-
-            // 从 OSS 加载配置并初始化
-            loadConfigFromOSSAndInitializeSettingsPanel().finally(() => {
-                 console.log("✅ 页面加载和配置初始化完成");
-            });
-
-            // 为状态选择器添加事件监听器，以动态显示/隐藏时长输入框
-            ['products', 'about', 'contact'].forEach(pageId => {
-                const statusSelect = document.getElementById(`${pageId}Status`);
-                const durationInput = document.getElementById(`${pageId}Duration`);
-                if (statusSelect && durationInput) {
-                    statusSelect.addEventListener('change', function() {
-                        durationInput.style.display = (this.value === 'limit') ? 'inline-block' : 'none';
-                    });
+            // 按时间倒序排列
+            const sortedMessages = [...filteredMessages].reverse();
+            sortedMessages.forEach((msg, index) => {
+                const row = document.createElement('tr');
+                if(!msg.read) {
+                    row.style.backgroundColor = '#fff9e6';
                 }
-            });
-
-            // 登录表单提交事件
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-
-                // 验证登录 (使用全局 adminAccounts)
-                const accounts = window.adminAccounts || adminAccounts; // 优先使用全局
-                if (accounts[username] && accounts[username] === btoa(password)) {
-                    isAdminLoggedIn = true;
-                    document.getElementById('loginSection').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    addLog('登录成功', `管理员 ${username} 登录了系统`);
-                } else {
-                    alert('用户名或密码错误！');
-                    addLog('登录失败', `尝试使用用户名 ${username} 登录失败`);
+                row.innerHTML = `
+                    <td>${msg.name}</td>
+                    <td>${msg.phone}</td>
+                    <td>${msg.message}</td>
+                    <td>${msg.timestamp}</td>
+                    <td>${msg.read ? '<span class="tag tag-success">已读</span>' : '<span class="tag tag-warning">未读</span>'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn delete-btn" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="action-btn export-btn" data-index="${index}">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                // 标记为已读 (逻辑与 index.html 一致)
+                if(!msg.read) {
+                    messages[messages.length - 1 - index].read = true;
+                    localStorage.setItem('messages', JSON.stringify(messages));
+                    updateMessageStats(); // 更新统计
                 }
+                // 添加删除功能 (从 index.html 复制)
+                row.querySelector('.delete-btn').addEventListener('click', function() {
+                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
+                    if(confirm('确定要删除这条留言吗？')) {
+                         // 记录删除日志
+                        addLog('删除留言', `删除了 ${messages[index].name} 的留言`);
+                        messages.splice(index, 1);
+                        localStorage.setItem('messages', JSON.stringify(messages));
+                        loadMessages(); // 重新加载
+                    }
+                });
+                // 添加导出功能 (从 index.html 复制)
+                row.querySelector('.export-btn').addEventListener('click', function() {
+                    const index = messages.length - 1 - parseInt(this.getAttribute('data-index'));
+                    const message = messages[index];
+                    const content = `姓名: ${message.name}
+电话: ${message.phone}
+留言: ${message.message}
+时间: ${message.timestamp}`; // 修复：使用 \n
+                    // 记录导出日志
+                    addLog('导出留言', `导出了 ${message.name} 的留言`);
+                    // 创建下载链接
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `留言_${message.name}_${message.timestamp.replace(/[/:\\]/g, '-')}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
             });
+        });
+
+        // 导出所有数据 - 修复：使用 \n 转义序列
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            // 记录导出日志
+            addLog('导出数据', '导出了所有留言数据');
+            // 创建CSV内容 - 修复：使用 \n 转义序列
+            let csvContent = "姓名,电话,留言内容,提交时间\n"; // 修复：使用 \n
+            messages.forEach(msg => {
+                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // 修复：使用 \n
+            });
+            // 创建下载链接
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `红姐私房留言数据_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 </body>
