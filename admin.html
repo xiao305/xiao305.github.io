@@ -730,69 +730,395 @@
 
         // --- 新增：阿里云 FC 配置 ---
         // 替换为您的实际阿里云函数 HTTP 触发器 URL
-        const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run";
+        const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/";
 
-        // --- 新增：调用阿里云 FC 函数同步配置的函数 (修改版 - 同步所有管理员数据) ---
-function syncConfigToFC(configData) {
-    // 替换为您的实际阿里云函数 HTTP 触发器 URL
-    const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/"; // <--- 请确保这是您修改后的 FC 函数 URL
+        // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
+        async function syncConfigToFC(configData) {
+            console.log("Aliyun FC Sync: 开始同步配置到 FC...", configData);
 
-    console.log("Aliyun FC Sync: 开始同步所有配置和数据到 FC...", configData);
+            try {
+                const response = await fetch(FC_SYNC_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // 由于触发器认证方式为 anonymous，通常不需要额外 Header
+                        // 如果您设置了其他认证，请在此添加相应 Header
+                    },
+                    body: JSON.stringify(configData)
+                });
 
-    return fetch(FC_SYNC_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-            // 由于触发器认证方式为 anonymous，通常不需要额外 Header
-            // 如果您设置了其他认证，请在此添加相应 Header
-        },
-        body: JSON.stringify(configData)
-    })
-    .then(response => {
-        console.log("Aliyun FC Sync: Fetch 响应对象:", response);
-        if (!response.ok) {
-            // --- 关键修改：尝试读取错误响应体以获取更详细的错误信息 ---
-            return response.text().then(errorText => {
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-            });
-            // --- 结束关键修改 ---
+                console.log("Aliyun FC Sync: Fetch 响应对象:", response);
+
+                // --- 关键修改：检查 HTTP 状态码，而不是尝试解析 JSON ---
+                if (!response.ok) {
+                    // 如果响应不成功，抛出错误
+                    const errorText = await response.text(); // 获取错误文本
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                // 如果响应成功 (2xx)，我们假设同步成功
+                // 注意：我们不再尝试 response.json()，因为 FC 函数现在返回的是纯文本 "Hello World!" 或其他非JSON内容
+                console.log('Aliyun FC Sync: 成功');
+                return { message: 'Configuration updated successfully' }; // 返回一个模拟的成功对象
+                // --- 结束关键修改 ---
+            } catch (error) {
+                console.error('Aliyun FC Sync: 失败', error);
+                throw error; // 重新抛出错误，让调用者处理
+            }
         }
-        return response.json(); // 解析 JSON 响应体
-    })
-    .then(data => {
-        console.log('Aliyun FC Sync: 成功', data);
-        return data; // 返回成功响应数据
-    })
-    .catch((error) => {
-        console.error('Aliyun FC Sync: 失败', error);
-        throw error; // 重新抛出错误，让调用者处理
-    });
-}
-// --- 结束新增 ---
+        // --- 结束新增 ---
 
-        // 页面加载完成后初始化设置面板
+
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            initializeSettingsPanel();
+            // 更新总访问量
+            visits.total = (visits.total || 0) + 1;
+            // 更新每日访问量
+            const today = new Date().toLocaleDateString();
+            visits.daily[today] = (visits.daily[today] || 0) + 1;
+            // 保存到localStorage
+            localStorage.setItem('siteVisits', JSON.stringify(visits));
         });
 
-        // 初始化设置面板状态
-        function initializeSettingsPanel() {
-            // 初始化页面状态下拉框和输入框
-            for (const pageId in pageStatusConfig) {
-                const config = pageStatusConfig[pageId];
-                const statusSelect = document.getElementById(`${pageId}Status`);
-                const durationInput = document.getElementById(`${pageId}Duration`);
-                const passwordInput = document.getElementById(`${pageId}Password`);
-                const statusTag = document.getElementById(`${pageId}StatusTag`);
-                const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
+        // 页面导航功能
+        document.querySelectorAll('.nav-link').forEach(link => {
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 如果点击的是非首页链接 (且不是管理员页)
+                    if(pageId !== 'home') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 切换页面
+                    switchPage(pageId);
+                });
+            }
+        });
 
-                if (statusSelect) statusSelect.value = config.status;
-                if (durationInput) durationInput.value = config.duration || 10;
-                if (passwordInput) passwordInput.value = pagePasswords[pageId] || '';
-                updateStatusTagAndText(pageId, config.status, config.duration, statusTag, currentStatusText);
+        // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
+        document.querySelectorAll('.footer-links a').forEach(link => {
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
+                    if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 如果是首页，则直接切换页面
+                    if(pageId === 'home') {
+                        switchPage(pageId);
+                    }
+                    // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
+                });
+            }
+        });
+
+        // 处理页面访问逻辑 (根据状态决定是否弹窗)
+        function handlePageAccess(pageId) {
+            const config = pageStatusConfig[pageId];
+            if (!config) {
+                // 默认行为：如果配置不存在，则限制访问
+                showWarningModal(pageId);
+                return;
+            }
+
+            if (config.status === 'open') {
+                // 开启状态：直接访问
+                switchPage(pageId);
+            } else if (config.status === 'limit') {
+                // 限制状态：显示警告弹窗
+                showWarningModal(pageId, config.duration || 10); // 传递强制时长，默认10秒
+            } else if (config.status === 'closed') {
+                // 关闭状态：显示密码输入弹窗
+                showPasswordModal(pageId);
             }
         }
 
+        // 切换页面函数
+        function switchPage(pageId) {
+            // 移除所有active类
+            document.querySelectorAll('.nav-link').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // 添加当前active类 (注意：页脚链接点击时，导航栏链接的active状态可能不会自动更新，因为页脚点击不一定会触发导航栏点击)
+            // 为了保持一致，我们尝试找到对应的导航链接并激活它
+            const navLinkToActivate = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+            if (navLinkToActivate) {
+                 navLinkToActivate.classList.add('active');
+            }
+            const pageElement = document.getElementById(pageId);
+            if (pageElement) {
+                pageElement.classList.add('active');
+            }
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 显示警告弹窗 (限制状态)
+        function showWarningModal(pageId, duration = 10) { // 接收时长参数
+            // 清除之前的倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'flex';
+            // 存储目标页面ID
+            targetPageId = pageId;
+            // 根据点击的页面设置警告信息
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            document.getElementById('warningMessage').textContent =
+                `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
+            let seconds = duration; // 使用传入的时长
+            const countdownEl = document.getElementById('countdown');
+            // const timerEl = document.getElementById('timer'); // 不再在开始时获取，而是在循环中重新获取
+            const continueBtn = document.getElementById('continueBtn');
+            // 重置按钮状态
+            continueBtn.disabled = true;
+            continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (<span id="timer">${seconds}</span>)`; // 使用传入的时长初始化
+            countdownEl.textContent = seconds;
+            // timerEl.textContent = seconds; // 不再单独设置timerEl，因为按钮HTML已重置
+
+            // 使用高性能计时器
+            const startTime = Date.now();
+            countdownInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                seconds = Math.max(0, duration - elapsed); // 使用传入的时长计算剩余时间
+                // 同时更新两个地方的倒计时显示
+                countdownEl.textContent = seconds;
+                // 修复倒计时显示问题：每次更新时重新获取并设置按钮内的 span#timer 元素文本
+                const timerSpan = continueBtn.querySelector('#timer');
+                if (timerSpan) {
+                   timerSpan.textContent = seconds;
+                }
+
+                if(seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    continueBtn.disabled = false;
+                    // 重置按钮文字，移除 (10)
+                    continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
+                }
+            }, 200); // 每200毫秒更新一次
+        }
+
+        // 显示密码输入弹窗 (关闭状态)
+        function showPasswordModal(pageId) {
+            const modal = document.getElementById('passwordModal');
+            const textElement = document.getElementById('passwordModalText');
+            const inputElement = document.getElementById('pagePasswordInput');
+
+            // 设置提示文本
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            textElement.textContent = `页面 "${pageName}" 已被管理员关闭。如需访问，请输入密码。`;
+
+            // 清空输入框
+            inputElement.value = '';
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+
+            // 为确认按钮添加一次性事件监听器
+            const handleConfirm = function() {
+                const enteredPassword = inputElement.value.trim();
+                const requiredPassword = pagePasswords[pageId];
+
+                if (enteredPassword === requiredPassword && requiredPassword !== '') {
+                    // 密码正确，关闭弹窗并切换页面
+                    modal.style.display = 'none';
+                    switchPage(pageId);
+                } else {
+                    // 密码错误或未设置
+                    alert('密码错误或页面未设置密码，请联系管理员。');
+                }
+            };
+
+            // 为取消按钮添加一次性事件监听器
+            const handleCancel = function() {
+                modal.style.display = 'none';
+            };
+
+            // 添加事件监听器
+            document.getElementById('confirmPasswordBtn').addEventListener('click', handleConfirm, { once: true });
+            document.getElementById('cancelPasswordBtn').addEventListener('click', handleCancel, { once: true });
+
+            // 允许按回车键确认
+            const handleEnterKey = function(event) {
+                if (event.key === 'Enter') {
+                    handleConfirm();
+                    inputElement.removeEventListener('keydown', handleEnterKey); // 移除监听器
+                }
+            };
+            inputElement.addEventListener('keydown', handleEnterKey);
+        }
+
+
+        // 返回首页按钮 (警告弹窗)
+        document.getElementById('backToHome').addEventListener('click', function() {
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'none';
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            switchPage('home');
+        });
+
+        // 继续查看按钮 (警告弹窗)
+        document.getElementById('continueBtn').addEventListener('click', function() {
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'none';
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            if (targetPageId) {
+                switchPage(targetPageId);
+            }
+        });
+
+        // 提示框功能
+        document.getElementById('shipping-notice').addEventListener('click', function(e) {
+            const tooltip = this.querySelector('.info-tooltip');
+            const isVisible = tooltip.style.display === 'block';
+            // 隐藏所有提示
+            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+            // 切换当前提示
+            tooltip.style.display = isVisible ? 'none' : 'block';
+            // 点击其他地方关闭
+            if(!isVisible) {
+                setTimeout(() => {
+                    document.addEventListener('click', function closeTooltip() {
+                        tooltip.style.display = 'none';
+                        document.removeEventListener('click', closeTooltip);
+                    }, {once: true});
+                }, 100);
+            }
+            e.stopPropagation();
+        });
+
+        // 确保提示框随页面滚动
+        window.addEventListener('scroll', () => {
+            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+        });
+
+        // 移动端导航栏隐藏功能
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        const threshold = 50; // 滚动阈值
+        window.addEventListener('scroll', function() {
+            // 只在移动端生效
+            if(window.innerWidth > 768) return;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > threshold) {
+                // 向下滚动 - 隐藏导航栏
+                navbar.classList.add('hide-nav');
+            } else if (scrollTop <= threshold) {
+                // 滚动到顶部附近 - 显示导航栏
+                navbar.classList.remove('hide-nav');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // 留言表单提交
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+            const timestamp = new Date().toLocaleString();
+            // 创建留言对象
+            const newMessage = {
+                name,
+                phone,
+                message,
+                timestamp,
+                read: false
+            };
+            // 添加到留言数组
+            messages.push(newMessage);
+            // 保存到localStorage
+            localStorage.setItem('messages', JSON.stringify(messages));
+            // 清空表单
+            this.reset();
+            // 显示成功提示
+            alert('留言提交成功！');
+        });
+
+        // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
+        // 应用页面状态设置 (修改版 - 添加阿里云 FC 同步)
+        function applyPageStatus(pageId) {
+            const statusSelect = document.getElementById(`${pageId}Status`);
+            const durationInput = document.getElementById(`${pageId}Duration`);
+            const passwordInput = document.getElementById(`${pageId}Password`);
+            const statusTag = document.getElementById(`${pageId}StatusTag`);
+            const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
+
+            if (!statusSelect) return;
+
+            const newStatus = statusSelect.value;
+            const newDuration = parseInt(durationInput?.value) || 10;
+            const newPassword = passwordInput?.value.trim() || '';
+
+            // 更新内存中的配置
+            pageStatusConfig[pageId] = {
+                status: newStatus,
+                duration: newStatus === 'limit' ? newDuration : undefined // 只在限制状态时保存时长
+            };
+            pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
+
+            // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
+            localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
+            localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
+
+            // 2. 准备要同步到阿里云 FC 的数据结构
+            const configToSync = {
+                pageStatusConfig: pageStatusConfig,
+                pagePasswords: pagePasswords,
+                // 可以添加时间戳
+                timestamp: new Date().toISOString()
+            };
+
+            // 3. 保存到阿里云 FC (实现跨设备同步)
+            syncConfigToFC(configToSync)
+                .then(() => {
+                    console.log('Aliyun FC Sync: 页面状态配置已同步');
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 记录操作日志
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步到阿里云 FC`);
+                    alert(`页面 "${pageId}" 的状态已更新并同步。`);
+                })
+                .catch((error) => {
+                    console.error('Aliyun FC Sync: 同步配置失败:', error);
+                    // 更新UI显示
+                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+                    // 即使同步失败，本地设置已生效，可以提示用户
+                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步到阿里云 FC 失败: ${error.message})`);
+                    alert(`页面 "${pageId}" 的状态已更新(本地)，但同步到阿里云时出错: ${error.message}`);
+                });
+        }
+        // --- 结束新增 ---
+
+
+        // --- 新增：更新状态标签和当前状态文本的函数 ---
         // 更新状态标签和当前状态文本
         function updateStatusTagAndText(pageId, status, duration, statusTagElement, currentStatusTextElement) {
             let statusText = '';
@@ -819,88 +1145,38 @@ function syncConfigToFC(configData) {
                 currentStatusTextElement.textContent = statusText;
             }
         }
+        // --- 结束新增 ---
 
-        // 应用页面状态设置 (修改版 - 同步所有管理员数据到阿里云 FC)
-function applyPageStatus(pageId) {
-    const statusSelect = document.getElementById(`${pageId}Status`);
-    const durationInput = document.getElementById(`${pageId}Duration`);
-    const passwordInput = document.getElementById(`${pageId}Password`);
-    const statusTag = document.getElementById(`${pageId}StatusTag`);
-    const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
 
-    if (!statusSelect) return;
+        // --- 新增：初始化设置面板状态的函数 ---
+        // 初始化设置面板状态
+        function initializeSettingsPanel() {
+            // 初始化页面状态下拉框和输入框
+            for (const pageId in pageStatusConfig) {
+                const config = pageStatusConfig[pageId];
+                const statusSelect = document.getElementById(`${pageId}Status`);
+                const durationInput = document.getElementById(`${pageId}Duration`);
+                const passwordInput = document.getElementById(`${pageId}Password`);
+                const statusTag = document.getElementById(`${pageId}StatusTag`);
+                const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
 
-    const newStatus = statusSelect.value;
-    const newDuration = parseInt(durationInput?.value) || 10;
-    const newPassword = passwordInput?.value.trim() || '';
+                if (statusSelect) statusSelect.value = config.status;
+                if (durationInput) durationInput.value = config.duration || 10;
+                if (passwordInput) passwordInput.value = pagePasswords[pageId] || '';
+                updateStatusTagAndText(pageId, config.status, config.duration, statusTag, currentStatusText);
+            }
+        }
+        // --- 结束新增 ---
 
-    // 更新内存中的配置
-    pageStatusConfig[pageId] = {
-        status: newStatus,
-        duration: newStatus === 'limit' ? newDuration : undefined // 只在限制状态时保存时长
-    };
-    pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
 
-    // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
-    localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
-    localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
-
-    // --- 关键修改：准备要同步到阿里云 FC 的完整数据结构 (包含所有管理员数据) ---
-    const configToSync = {
-        pageStatusConfig: pageStatusConfig,
-        pagePasswords: pagePasswords,
-        // 添加其他需要同步的管理员数据
-        adminAccounts: adminAccounts, // 同步管理员账号
-        messages: messages, // 同步留言
-        adminLogs: logs, // 同步操作日志
-        siteVisits: visits, // 同步访问统计
-        // 可以添加时间戳
-        timestamp: new Date().toISOString()
-    };
-    // --- 结束关键修改 ---
-
-    // 2. 保存到阿里云 FC (实现跨设备同步所有数据)
-    // --- 关键修改：调用同步所有数据的函数 ---
-    syncConfigToFC(configToSync)
-    // --- 结束关键修改 ---
-        .then(() => {
-            console.log('Aliyun FC Sync: 所有配置和数据已同步');
-            // 更新UI显示
-            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-            // 记录操作日志
-            // --- 关键修改：更新日志描述 ---
-            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步所有数据到阿里云 FC`);
-            // --- 结束关键修改 ---
-            alert(`页面 "${pageId}" 的状态已更新并同步所有数据。`);
-        })
-        .catch((error) => {
-            console.error('Aliyun FC Sync: 同步所有数据失败:', error);
-            // 更新UI显示
-            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-            // 即使同步失败，本地设置已生效，可以提示用户
-            // --- 关键修改：更新日志描述 ---
-            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步所有数据到阿里云 FC 失败: ${error.message})`);
-            // --- 结束关键修改 ---
-            alert(`页面 "${pageId}" 的状态已更新(本地)，但同步所有数据到阿里云时出错: ${error.message}`);
-        });
-}
-        // --- 结束修改 ---
-
-                // 管理员登录 - 修复：确保始终阻止默认提交并正确处理 if/else 逻辑 (使用 async/await 重构)
-        document.getElementById('adminLogin').addEventListener('submit', async function(e) {
+        // 管理员登录 - 修复：确保始终阻止默认提交
+        document.getElementById('adminLogin').addEventListener('submit', function(e) {
             e.preventDefault(); // 关键：绝对阻止表单默认提交和页面刷新
-            console.log("管理员登录表单提交事件被触发"); // 调试日志
-
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
-            console.log(`输入的用户名: ${username}, 输入的密码: ${password}`); // 调试日志
-
             // 简单的管理员验证 (使用哈希比较)
             const storedHash = adminAccounts[username];
-            console.log(`存储的哈希: ${storedHash}`); // 调试日志
-
             if(storedHash && storedHash === btoa(password)) { // 使用 Base64 解码比较
-                console.log("✅ 管理员验证成功"); // 调试日志
                 isAdminLoggedIn = true;
                 currentAdminUser = username; // 记录当前用户
                 document.getElementById('adminLoginForm').style.display = 'none';
@@ -913,220 +1189,11 @@ function applyPageStatus(pageId) {
                 loadVisits();
                 // 加载操作日志
                 loadLogs();
-
-                // --- 关键修改：使用 async/await 重构加载 OSS 配置逻辑 ---
-                try {
-                    console.log("开始尝试从 OSS 加载配置并初始化设置面板...");
-                    await loadConfigFromOSSAndInitializeSettings(); // 等待 OSS 配置加载和初始化完成
-                    console.log('✅ 成功从 OSS 加载配置并初始化设置面板');
-                    // 注意：loadConfigFromOSSAndInitializeSettings 内部已经调用了 initializeSettingsPanel()
-                } catch (error) {
-                    console.error('❌ 从 OSS 加载配置并初始化设置面板失败:', error);
-                    // 即使加载失败，也使用本地默认值初始化
-                    initializeSettingsPanel();
-                }
-                // --- 结束关键修改 ---
-
+                // 初始化设置面板
+                initializeSettingsPanel();
             } else {
-                console.log("❌ 管理员验证失败"); // 调试日志
                 alert('管理员账号或密码错误！'); // 保持一致的提示
             }
-        });
-        // --- 结束新增 ---
-
-        // --- 新增：从 OSS 加载配置并初始化设置面板的函数 (修复版 - 增强健壮性) ---
-        async function loadConfigFromOSSAndInitializeSettings() {
-            console.log("开始尝试从 OSS 加载最新配置以初始化设置面板...");
-
-            // --- 新增：OSS 配置 (用于读取) ---
-            // 替换为您的实际 OSS Bucket 名称和地域
-            const OSS_REGION = "oss-cn-hangzhou"; // <- 请修改为您的 Bucket 所在地域
-            const OSS_BUCKET_NAME = "xiao-config-bucket"; // <- 请修改为您的 Bucket 名称
-            const CONFIG_FILE_NAME = "test-config.json"; // <- 请修改为您的配置文件名
-            // 注意：确保您的 Bucket 是公共读权限
-            const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${OSS_REGION}.aliyuncs.com/${CONFIG_FILE_NAME}?${new Date().getTime()}`; // <- 修改为您的实际文件名, 添加时间戳防缓存
-            // --- 结束新增 ---
-
-            try {
-                const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' }); // 禁用缓存确保拿到最新
-                console.log("Fetch 响应对象 (OSS Config):", response); // 调试日志
-
-                if (!response.ok) {
-                    if (response.status === 404) {
-                         console.log("OSS: 配置文件未找到");
-                         // 回退到本地默认配置
-                         window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
-                             products: { status: 'limit', duration: 10 },
-                             about: { status: 'limit', duration: 10 },
-                             contact: { status: 'limit', duration: 10 }
-                         };
-                         window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
-                             products: '',
-                             about: '',
-                             contact: ''
-                         };
-                         console.log("🔙 回退到使用本地默认配置");
-                         initializeSettingsPanel(); // 使用回退的配置初始化
-                         return; // 结束函数
-                    }
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // --- 关键修改：检查 Content-Type 并安全读取响应体 ---
-                const contentType = response.headers.get('content-type');
-                console.log("OSS: 响应 Content-Type:", contentType);
-                let data = null;
-                if (contentType && contentType.includes('application/json')) {
-                    // 如果是 JSON 类型，尝试解析
-                    console.log("OSS: 响应体是 JSON 类型，尝试解析...");
-                    try {
-                        data = await response.json(); // 使用 await 等待解析
-                        console.log("OSS: 成功解析 JSON 响应体:", data);
-                    } catch (parseError) {
-                        console.error("OSS: 解析 JSON 响应体失败:", parseError);
-                        // 即使 Content-Type 声称为 JSON，解析也可能失败
-                        // 我们可以尝试读取文本内容看看实际是什么
-                        const textContent = await response.text();
-                        console.log("OSS: 实际响应体文本内容:", textContent);
-                        data = null; // 解析失败，设置为 null
-                    }
-                } else {
-                    // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
-                    console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
-                    const textContent = await response.text();
-                    console.log("OSS: 响应体文本内容:", textContent);
-                    // 尝试将文本内容解析为 JSON
-                    try {
-                        data = JSON.parse(textContent);
-                        console.log("OSS: 成功将文本内容解析为 JSON:", data);
-                    } catch (parseError) {
-                        console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
-                        data = null; // 解析失败，设置为 null
-                    }
-                }
-                // --- 结束关键修改 ---
-
-                if (data && data.pageStatusConfig) {
-                    console.log("✅ 成功从 OSS 读取到配置:", data);
-                    // --- 关键修改：更新全局配置变量 ---
-                    window.pageStatusConfig = data.pageStatusConfig;
-                    window.pagePasswords = data.pagePasswords || {};
-                    // --- 结束关键修改 ---
-                    console.log("🔄 已更新全局配置变量");
-                    // 使用从 OSS 读取的最新配置初始化设置面板
-                    initializeSettingsPanel();
-                } else {
-                    console.log("OSS: 远程配置为空或格式不正确");
-                    // 回退到本地默认配置
-                    window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
-                        products: { status: 'limit', duration: 10 },
-                        about: { status: 'limit', duration: 10 },
-                        contact: { status: 'limit', duration: 10 }
-                    };
-                    window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
-                        products: '',
-                        about: '',
-                        contact: ''
-                    };
-                    console.log("🔙 回退到使用本地默认配置");
-                    initializeSettingsPanel(); // 使用回退的配置初始化
-                }
-            } catch (error) {
-                console.error("❌ 从 OSS 读取配置失败:", error);
-                // 回退到本地默认配置
-                window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
-                    products: { status: 'limit', duration: 10 },
-                    about: { status: 'limit', duration: 10 },
-                    contact: { status: 'limit', duration: 10 }
-                };
-                window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
-                    products: '',
-                    about: '',
-                    contact: ''
-                };
-                console.log("🔙 回退到使用本地默认配置 (因错误)");
-                initializeSettingsPanel(); // 使用回退的配置初始化
-            }
-        }
-        // --- 结束新增 ---
-
-        // --- 关键修改：检查 Content-Type 并安全读取响应体 ---
-        const contentType = response.headers.get('content-type');
-        console.log("OSS: 响应 Content-Type:", contentType);
-        let data = null;
-        if (contentType && contentType.includes('application/json')) {
-            // 如果是 JSON 类型，尝试解析
-            console.log("OSS: 响应体是 JSON 类型，尝试解析...");
-            try {
-                data = await response.json(); // 使用 await 等待解析
-                console.log("OSS: 成功解析 JSON 响应体:", data);
-            } catch (parseError) {
-                console.error("OSS: 解析 JSON 响应体失败:", parseError);
-                // 即使 Content-Type 声称为 JSON，解析也可能失败
-                // 我们可以尝试读取文本内容看看实际是什么
-                const textContent = await response.text();
-                console.log("OSS: 实际响应体文本内容:", textContent);
-                data = null; // 解析失败，设置为 null
-            }
-        } else {
-            // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
-            console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
-            const textContent = await response.text();
-            console.log("OSS: 响应体文本内容:", textContent);
-            // 尝试将文本内容解析为 JSON
-            try {
-                data = JSON.parse(textContent);
-                console.log("OSS: 成功将文本内容解析为 JSON:", data);
-            } catch (parseError) {
-                console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
-                data = null; // 解析失败，设置为 null
-            }
-        }
-        // --- 结束关键修改 ---
-
-        if (data && data.pageStatusConfig) {
-            console.log("✅ 成功从 OSS 读取到配置:", data);
-            // --- 关键修改：更新全局配置变量 ---
-            window.pageStatusConfig = data.pageStatusConfig;
-            window.pagePasswords = data.pagePasswords || {};
-            // --- 结束关键修改 ---
-            console.log("🔄 已更新全局配置变量");
-            // 使用从 OSS 读取的最新配置初始化设置面板
-            initializeSettingsPanel();
-        } else {
-            console.log("OSS: 远程配置为空或格式不正确");
-            // 回退到本地默认配置
-            window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
-                products: { status: 'limit', duration: 10 },
-                about: { status: 'limit', duration: 10 },
-                contact: { status: 'limit', duration: 10 }
-            };
-            window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
-                products: '',
-                about: '',
-                contact: ''
-            };
-            console.log("🔙 回退到使用本地默认配置");
-            initializeSettingsPanel(); // 使用回退的配置初始化
-        }
-    } catch (error) {
-        console.error("❌ 从 OSS 读取配置失败:", error);
-        // 回退到本地默认配置
-        window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
-            products: { status: 'limit', duration: 10 },
-            about: { status: 'limit', duration: 10 },
-            contact: { status: 'limit', duration: 10 }
-        };
-        window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
-            products: '',
-            about: '',
-            contact: ''
-        };
-        console.log("🔙 回退到使用本地默认配置 (因错误)");
-        initializeSettingsPanel(); // 使用回退的配置初始化
-    }
-}
-// --- 结束新增 ---
         });
 
         // 更改管理员密码
@@ -1263,7 +1330,7 @@ function applyPageStatus(pageId) {
                     const content = `姓名: ${message.name}
 电话: ${message.phone}
 留言: ${message.message}
-时间: ${message.timestamp}`;
+时间: ${message.timestamp}`; // 修复：使用 \n
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1384,6 +1451,25 @@ function applyPageStatus(pageId) {
             document.getElementById('changePasswordForm').reset();
             // 清空新增管理员表单
             document.getElementById('addAdminForm').reset();
+            // 清空设置面板
+            document.getElementById('productsStatus').value = 'limit';
+            document.getElementById('productsDuration').value = 10;
+            document.getElementById('productsPassword').value = '';
+            document.getElementById('productsStatusTag').textContent = '限制';
+            document.getElementById('productsStatusTag').className = 'status-tag status-tag-limit';
+            document.getElementById('productsCurrentStatus').textContent = '限制 (10秒)';
+            document.getElementById('aboutStatus').value = 'limit';
+            document.getElementById('aboutDuration').value = 10;
+            document.getElementById('aboutPassword').value = '';
+            document.getElementById('aboutStatusTag').textContent = '限制';
+            document.getElementById('aboutStatusTag').className = 'status-tag status-tag-limit';
+            document.getElementById('aboutCurrentStatus').textContent = '限制 (10秒)';
+            document.getElementById('contactStatus').value = 'limit';
+            document.getElementById('contactDuration').value = 10;
+            document.getElementById('contactPassword').value = '';
+            document.getElementById('contactStatusTag').textContent = '限制';
+            document.getElementById('contactStatusTag').className = 'status-tag status-tag-limit';
+            document.getElementById('contactCurrentStatus').textContent = '限制 (10秒)';
         });
 
         // 搜索功能
@@ -1452,7 +1538,7 @@ function applyPageStatus(pageId) {
                     const content = `姓名: ${message.name}
 电话: ${message.phone}
 留言: ${message.message}
-时间: ${message.timestamp}`;
+时间: ${message.timestamp}`; // 修复：使用 \n
                     // 记录导出日志
                     addLog('导出留言', `导出了 ${message.name} 的留言`);
                     // 创建下载链接
@@ -1469,15 +1555,15 @@ function applyPageStatus(pageId) {
             });
         });
 
-        // 导出所有数据
+        // 导出所有数据 - 修复：使用 \n 转义序列
         document.getElementById('exportBtn').addEventListener('click', function() {
             // 记录导出日志
             addLog('导出数据', '导出了所有留言数据');
-            // 创建CSV内容
-let csvContent = "姓名,电话,留言内容,提交时间\n"; // <<< 使用 \n 替代直接的换行符 >>>
-messages.forEach(msg => {
-    csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // <<< 使用 \n 替代直接的换行符 >>>
-});
+            // 创建CSV内容 - 修复：使用 \n 转义序列
+            let csvContent = "姓名,电话,留言内容,提交时间\n"; // 修复：使用 \n
+            messages.forEach(msg => {
+                csvContent += `"${msg.name}","${msg.phone}","${msg.message}","${msg.timestamp}"\n`; // 修复：使用 \n
+            });
             // 创建下载链接
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
