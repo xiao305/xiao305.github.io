@@ -820,58 +820,70 @@ function syncConfigToFC(configData) {
             }
         }
 
-        // --- 修改：应用页面状态设置 (添加阿里云 FC 同步) ---
-        function applyPageStatus(pageId) {
-            const statusSelect = document.getElementById(`${pageId}Status`);
-            const durationInput = document.getElementById(`${pageId}Duration`);
-            const passwordInput = document.getElementById(`${pageId}Password`);
-            const statusTag = document.getElementById(`${pageId}StatusTag`);
-            const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
+        // 应用页面状态设置 (修改版 - 同步所有管理员数据到阿里云 FC)
+function applyPageStatus(pageId) {
+    const statusSelect = document.getElementById(`${pageId}Status`);
+    const durationInput = document.getElementById(`${pageId}Duration`);
+    const passwordInput = document.getElementById(`${pageId}Password`);
+    const statusTag = document.getElementById(`${pageId}StatusTag`);
+    const currentStatusText = document.getElementById(`${pageId}CurrentStatus`);
 
-            if (!statusSelect) return;
+    if (!statusSelect) return;
 
-            const newStatus = statusSelect.value;
-            const newDuration = parseInt(durationInput?.value) || 10;
-            const newPassword = passwordInput?.value.trim() || '';
+    const newStatus = statusSelect.value;
+    const newDuration = parseInt(durationInput?.value) || 10;
+    const newPassword = passwordInput?.value.trim() || '';
 
-            // 更新内存中的配置
-            pageStatusConfig[pageId] = {
-                status: newStatus,
-                duration: newStatus === 'limit' ? newDuration : undefined // 只在限制状态时保存时长
-            };
-            pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
+    // 更新内存中的配置
+    pageStatusConfig[pageId] = {
+        status: newStatus,
+        duration: newStatus === 'limit' ? newDuration : undefined // 只在限制状态时保存时长
+    };
+    pagePasswords[pageId] = newStatus === 'closed' ? newPassword : ''; // 只在关闭状态时保存密码
 
-            // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
-            localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
-            localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
+    // 1. 保存到 localStorage (保留本地缓存，提高加载速度)
+    localStorage.setItem('pageStatusConfig', JSON.stringify(pageStatusConfig));
+    localStorage.setItem('pagePasswords', JSON.stringify(pagePasswords));
 
-            // 2. 准备要同步到阿里云 FC 的数据结构
-            const configToSync = {
-                pageStatusConfig: pageStatusConfig,
-                pagePasswords: pagePasswords,
-                // 可以添加时间戳
-                timestamp: new Date().toISOString()
-            };
+    // --- 关键修改：准备要同步到阿里云 FC 的完整数据结构 (包含所有管理员数据) ---
+    const configToSync = {
+        pageStatusConfig: pageStatusConfig,
+        pagePasswords: pagePasswords,
+        // 添加其他需要同步的管理员数据
+        adminAccounts: adminAccounts, // 同步管理员账号
+        messages: messages, // 同步留言
+        adminLogs: logs, // 同步操作日志
+        siteVisits: visits, // 同步访问统计
+        // 可以添加时间戳
+        timestamp: new Date().toISOString()
+    };
+    // --- 结束关键修改 ---
 
-            // 3. 保存到阿里云 FC (实现跨设备同步)
-            syncConfigToFC(configToSync)
-                .then(() => {
-                    console.log('Aliyun FC Sync: 页面状态配置已同步');
-                    // 更新UI显示
-                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-                    // 记录操作日志
-                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步到阿里云 FC`);
-                    alert(`页面 "${pageId}" 的状态已更新并同步。`);
-                })
-                .catch((error) => {
-                    console.error('Aliyun FC Sync: 同步配置失败:', error);
-                    // 更新UI显示
-                    updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
-                    // 即使同步失败，本地设置已生效，可以提示用户
-                    addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步到阿里云 FC 失败: ${error.message})`);
-                    alert(`页面 "${pageId}" 的状态已更新(本地)，但同步到阿里云时出错: ${error.message}`);
-                });
-        }
+    // 2. 保存到阿里云 FC (实现跨设备同步所有数据)
+    // --- 关键修改：调用同步所有数据的函数 ---
+    syncConfigToFC(configToSync)
+    // --- 结束关键修改 ---
+        .then(() => {
+            console.log('Aliyun FC Sync: 所有配置和数据已同步');
+            // 更新UI显示
+            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+            // 记录操作日志
+            // --- 关键修改：更新日志描述 ---
+            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus}${newStatus === 'limit' ? ` (${newDuration}秒)` : ''}${newStatus === 'closed' && newPassword ? ' (已设置密码)' : ''} 并同步所有数据到阿里云 FC`);
+            // --- 结束关键修改 ---
+            alert(`页面 "${pageId}" 的状态已更新并同步所有数据。`);
+        })
+        .catch((error) => {
+            console.error('Aliyun FC Sync: 同步所有数据失败:', error);
+            // 更新UI显示
+            updateStatusTagAndText(pageId, newStatus, newDuration, statusTag, currentStatusText);
+            // 即使同步失败，本地设置已生效，可以提示用户
+            // --- 关键修改：更新日志描述 ---
+            addLog('设置页面状态', `将页面 ${pageId} 的状态设置为 ${newStatus} (本地设置成功，远程同步所有数据到阿里云 FC 失败: ${error.message})`);
+            // --- 结束关键修改 ---
+            alert(`页面 "${pageId}" 的状态已更新(本地)，但同步所有数据到阿里云时出错: ${error.message}`);
+        });
+}
         // --- 结束修改 ---
 
 
