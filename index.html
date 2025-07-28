@@ -1104,7 +1104,7 @@
                     <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
                     <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
                     <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
-                    <li><a href="admin.html" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 修改为指向 admin.html -->
+                    <li><a href="admin.html" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 页脚管理员链接保持不变 -->
                 </ul>
             </div>
             <div class="footer-section">
@@ -1184,7 +1184,7 @@
                 }
 
                 // 如果响应成功 (2xx)，我们假设同步成功
-                // 注意：我们不再尝试 response.json()，因为 FC 函数可能返回纯文本 "Hello World!"
+                // 注意：我们不再尝试 response.json()，因为 FC 函数现在返回的是纯文本 "Hello World!" 或其他非JSON内容
                 console.log('Aliyun FC Sync: 成功 (状态码 2xx)');
                 return { message: 'Configuration updated successfully' }; // 返回一个模拟的成功对象
                 // --- 结束关键修改 ---
@@ -1205,9 +1205,8 @@
             visits.daily[today] = (visits.daily[today] || 0) + 1;
             // 保存到localStorage
             localStorage.setItem('siteVisits', JSON.stringify(visits));
-        });
 
-                    // --- 新增：测试从阿里云 OSS 读取配置 (修复版 - 增强健壮性) ---
+            // --- 新增：测试从阿里云 OSS 读取配置 ---
             // 替换为您的实际 OSS Bucket 名称和地域
             const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
             const REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域
@@ -1263,10 +1262,32 @@
                 .then(data => {
                     if (data && data.pageStatusConfig) {
                         console.log("✅ 成功从 OSS 读取到配置:", data);
+                        // --- 关键修改：更新所有从 OSS 读取的管理员数据到全局变量 ---
                         // 更新全局配置变量
                         window.pageStatusConfig = data.pageStatusConfig;
                         window.pagePasswords = data.pagePasswords || {};
-                        console.log("🔄 已更新全局配置变量");
+                        // 更新全局留言变量 (如果存在)
+                        if (data.messages && Array.isArray(data.messages)) {
+                            window.messages = data.messages;
+                            localStorage.setItem('messages', JSON.stringify(window.messages)); // 同步到 localStorage
+                        }
+                        // 更新全局操作日志变量 (如果存在)
+                        if (data.adminLogs && Array.isArray(data.adminLogs)) {
+                            window.logs = data.adminLogs;
+                            localStorage.setItem('adminLogs', JSON.stringify(window.logs)); // 同步到 localStorage
+                        }
+                        // 更新全局访问统计变量 (如果存在)
+                        if (data.siteVisits && typeof data.siteVisits === 'object') {
+                            window.visits = data.siteVisits;
+                            localStorage.setItem('siteVisits', JSON.stringify(window.visits)); // 同步到 localStorage
+                        }
+                        // 更新全局管理员账户变量 (如果存在)
+                        if (data.adminAccounts && typeof data.adminAccounts === 'object') {
+                            window.adminAccounts = data.adminAccounts;
+                            localStorage.setItem('adminAccounts', JSON.stringify(window.adminAccounts)); // 同步到 localStorage
+                        }
+                        console.log("🔄 已更新所有全局配置和数据变量");
+                        // --- 结束关键修改 ---
                     } else {
                         console.log("OSS: 远程配置为空或格式不正确");
                         // 回退到 localStorage
@@ -1299,46 +1320,52 @@
                     console.log("🔙 回退到使用 localStorage 配置 (因错误)");
                 });
             // --- 结束新增 ---
-        
+        });
+
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const pageId = this.getAttribute('data-page');
-                // 如果点击的是非首页链接 (且不是管理员页)
-                if(pageId !== 'home' && pageId !== 'admin') {
-                    handlePageAccess(pageId);
-                    return;
-                }
-                // 切换页面
-                switchPage(pageId);
-            });
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 如果点击的是非首页链接 (且不是管理员页)
+                    if(pageId !== 'home') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 切换页面
+                    switchPage(pageId);
+                });
+            }
         });
 
         // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
         document.querySelectorAll('.footer-links a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const pageId = this.getAttribute('data-page');
-                // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
-                if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
-                    handlePageAccess(pageId);
-                    return;
-                }
-                // 如果是首页或管理员页，则直接切换页面
-                if(pageId === 'home') {
-                    switchPage(pageId);
-                } else if (pageId === 'admin') {
-                     // 管理员页跳转到独立页面
-                     window.location.href = 'admin.html';
-                }
-                // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
-            });
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
+                    if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 如果是首页，则直接切换页面
+                    if(pageId === 'home') {
+                        switchPage(pageId);
+                    }
+                    // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
+                });
+            }
         });
 
         // 处理页面访问逻辑 (根据状态决定是否弹窗)
         function handlePageAccess(pageId) {
+            // --- 修改：优先使用从 OSS 读取并更新的全局 window.pageStatusConfig ---
             const config = (window.pageStatusConfig && window.pageStatusConfig[pageId]) || (pageStatusConfig && pageStatusConfig[pageId]);
+            // --- 结束修改 ---
             if (!config) {
                 // 默认行为：如果配置不存在，则限制访问
                 showWarningModal(pageId);
@@ -1455,7 +1482,9 @@
             // 为确认按钮添加一次性事件监听器
             const handleConfirm = function() {
                 const enteredPassword = inputElement.value.trim();
+                // --- 修改：优先使用从 OSS 读取并更新的全局 window.pagePasswords ---
                 const requiredPassword = (window.pagePasswords && window.pagePasswords[pageId]) || (pagePasswords && pagePasswords[pageId]);
+                // --- 结束修改 ---
 
                 if (enteredPassword === requiredPassword && requiredPassword !== '') {
                     // 密码正确，关闭弹窗并切换页面
