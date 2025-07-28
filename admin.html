@@ -887,7 +887,7 @@ function applyPageStatus(pageId) {
         // --- 结束修改 ---
 
 
-        // 管理员登录 - 修复：确保始终阻止默认提交
+                // 管理员登录 - 修复：确保始终阻止默认提交并正确处理 if/else 逻辑
         document.getElementById('adminLogin').addEventListener('submit', function(e) {
             e.preventDefault(); // 关键：绝对阻止表单默认提交和页面刷新
             const username = document.getElementById('username').value.trim();
@@ -907,18 +907,21 @@ function applyPageStatus(pageId) {
                 loadVisits();
                 // 加载操作日志
                 loadLogs();
-                // --- 新增：从 OSS 加载配置并初始化设置面板 ---
-    loadConfigFromOSSAndInitializeSettings()
-        .then(() => {
-            console.log('✅ 成功从 OSS 加载配置并初始化设置面板');
-        })
-        .catch((error) => {
-            console.error('❌ 从 OSS 加载配置并初始化设置面板失败:', error);
-            // 即使加载失败，也使用本地默认值初始化
-            initializeSettingsPanel();
+                // - 新增：从 OSS 加载配置并初始化设置面板 -
+                loadConfigFromOSSAndInitializeSettings().then(() => {
+                    console.log('✅ 成功从 OSS 加载配置并初始化设置面板');
+                }).catch((error) => {
+                    console.error('❌ 从 OSS 加载配置并初始化设置面板失败:', error);
+                    // 即使加载失败，也使用本地默认值初始化
+                    initializeSettingsPanel();
+                });
+                // --- 关键修改：确保 if 块正确闭合 ---
             } else {
                 alert('管理员账号或密码错误！'); // 保持一致的提示
             }
+            // --- 结束关键修改 ---
+        });
+        // --- 结束新增 ---
             // --- 新增：从 OSS 加载配置并初始化设置面板的函数 ---
 async function loadConfigFromOSSAndInitializeSettings() {
     console.log("开始尝试从 OSS 加载最新配置以初始化设置面板...");
