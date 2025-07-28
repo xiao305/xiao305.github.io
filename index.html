@@ -1207,35 +1207,84 @@
             localStorage.setItem('siteVisits', JSON.stringify(visits));
         });
 
-        // --- 新增：测试从阿里云 OSS 读取配置 ---
-        // 替换为您的实际 OSS Bucket 名称和地域
-        const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
-        const REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域
-        // 注意：确保您的 Bucket 是公共读权限
-        const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json`; // <--- 修改为您的实际文件名
+                    // --- 新增：测试从阿里云 OSS 读取配置 (修复版 - 增强健壮性) ---
+            // 替换为您的实际 OSS Bucket 名称和地域
+            const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
+            const REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域
+            // 注意：确保您的 Bucket 是公共读权限
+            const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json?${new Date().getTime()}`; // <--- 修改为您的实际文件名, 添加时间戳防缓存
 
-        console.log("开始尝试从 OSS 读取配置...");
-        fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
-            .then(response => {
-                console.log("Fetch 响应对象:", response); // 调试日志
-                if (!response.ok) {
-                    if (response.status === 404) {
-                         console.log("OSS: 配置文件未找到");
-                         return null; // 文件不存在
+            console.log("开始尝试从 OSS 读取配置...");
+            fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
+                .then(async response => { // 使用 async/await 处理
+                    console.log("Fetch 响应对象:", response); // 调试日志
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                             console.log("OSS: 配置文件未找到");
+                             return null; // 文件不存在
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json(); // <--- 关键：尝试解析 JSON
-            })
-            .then(data => {
-                if (data && data.pageStatusConfig) {
-                    console.log("✅ 成功从 OSS 读取到配置:", data);
-                    // 更新全局配置变量
-                    window.pageStatusConfig = data.pageStatusConfig;
-                    window.pagePasswords = data.pagePasswords || {};
-                    console.log("🔄 已更新全局配置变量");
-                } else {
-                    console.log("OSS: 远程配置为空或格式不正确");
+                    // --- 关键修改：检查 Content-Type 并安全读取响应体 ---
+                    const contentType = response.headers.get('content-type');
+                    console.log("OSS: 响应 Content-Type:", contentType);
+                    let data = null;
+                    if (contentType && contentType.includes('application/json')) {
+                        // 如果是 JSON 类型，尝试解析
+                        console.log("OSS: 响应体是 JSON 类型，尝试解析...");
+                        try {
+                            data = await response.json(); // 使用 await 等待解析
+                            console.log("OSS: 成功解析 JSON 响应体:", data);
+                        } catch (parseError) {
+                            console.error("OSS: 解析 JSON 响应体失败:", parseError);
+                            // 即使 Content-Type 声称为 JSON，解析也可能失败
+                            // 我们可以尝试读取文本内容看看实际是什么
+                            const textContent = await response.text();
+                            console.log("OSS: 实际响应体文本内容:", textContent);
+                            data = null; // 解析失败，设置为 null
+                        }
+                    } else {
+                        // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
+                        console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
+                        const textContent = await response.text();
+                        console.log("OSS: 响应体文本内容:", textContent);
+                        // 尝试将文本内容解析为 JSON
+                        try {
+                            data = JSON.parse(textContent);
+                            console.log("OSS: 成功将文本内容解析为 JSON:", data);
+                        } catch (parseError) {
+                            console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
+                            data = null; // 解析失败，设置为 null
+                        }
+                    }
+                    return data; // 返回解析后的数据或 null
+                    // --- 结束关键修改 ---
+                })
+                .then(data => {
+                    if (data && data.pageStatusConfig) {
+                        console.log("✅ 成功从 OSS 读取到配置:", data);
+                        // 更新全局配置变量
+                        window.pageStatusConfig = data.pageStatusConfig;
+                        window.pagePasswords = data.pagePasswords || {};
+                        console.log("🔄 已更新全局配置变量");
+                    } else {
+                        console.log("OSS: 远程配置为空或格式不正确");
+                        // 回退到 localStorage
+                        window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                            products: { status: 'limit', duration: 10 },
+                            about: { status: 'limit', duration: 10 },
+                            contact: { status: 'limit', duration: 10 }
+                        };
+                        window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                            products: '',
+                            about: '',
+                            contact: ''
+                        };
+                        console.log("🔙 回退到使用 localStorage 配置");
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ 从 OSS 读取配置失败:", error);
                     // 回退到 localStorage
                     window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
                         products: { status: 'limit', duration: 10 },
@@ -1247,27 +1296,10 @@
                         about: '',
                         contact: ''
                     };
-                    console.log("🔙 回退到使用 localStorage 配置");
-                }
-            })
-            .catch(error => {
-                console.error("❌ 从 OSS 读取配置失败:", error);
-                // 回退到 localStorage
-                window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
-                    products: { status: 'limit', duration: 10 },
-                    about: { status: 'limit', duration: 10 },
-                    contact: { status: 'limit', duration: 10 }
-                };
-                window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
-                    products: '',
-                    about: '',
-                    contact: ''
-                };
-                console.log("🔙 回退到使用 localStorage 配置 (因错误)");
-            });
-        // --- 结束新增 ---
-    });
-
+                    console.log("🔙 回退到使用 localStorage 配置 (因错误)");
+                });
+            // --- 结束新增 ---
+        
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
