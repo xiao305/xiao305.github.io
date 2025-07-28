@@ -817,8 +817,10 @@
         };
 
         // --- 新增：阿里云 FC 同步函数 ---
-        const FC_ENDPOINT = 'YOUR_FC_ENDPOINT'; // <- 请修改为您的阿里云 FC 函数访问地址
-        const OSS_CONFIG_URL = 'YOUR_OSS_CONFIG_URL'; // <- 修改为您的实际 OSS 文件地址, 添加时间戳防缓存
+        // 请将 YOUR_FC_ENDPOINT 替换为你实际的阿里云函数触发器 URL
+        const FC_ENDPOINT = 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/';
+        // 请将 YOUR_OSS_CONFIG_URL 替换为你实际的 OSS 文件公开访问 URL
+        const OSS_CONFIG_URL = 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json';
 
         async function syncConfigToFC(configData) {
             console.log("Aliyun FC Sync: 开始同步配置到阿里云 FC", configData);
@@ -832,22 +834,16 @@
                 });
                 console.log("Aliyun FC Sync: Fetch 响应对象:", response);
 
-                // - 关键修改：检查 HTTP 状态码，而不是尝试解析 JSON -
                 if (!response.ok) {
-                    // 如果响应不成功，抛出错误
-                    const errorText = await response.text(); // 获取错误文本
+                    const errorText = await response.text();
                     throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
 
-                // 如果响应成功 (2xx)，我们假设同步成功
-                // 注意：我们不再尝试 response.json()，因为 FC 函数现在返回的是纯文本 "Hello World!" 或其他非JSON内容
                 console.log('Aliyun FC Sync: 成功 (状态码 2xx)');
-                return { message: 'Configuration updated successfully' }; // 返回一个模拟的成功对象
-                // - 结束关键修改 -
-
+                return { message: 'Configuration updated successfully' };
             } catch (error) {
                 console.error('Aliyun FC Sync: 失败', error);
-                throw error; // 重新抛出错误，让调用者处理
+                throw error;
             }
         }
         // --- 结束新增 ---
@@ -857,78 +853,66 @@
         async function loadConfigFromOSSAndInitializeSettingsPanel() {
             console.log("🔄 开始从阿里云 OSS 加载配置...");
             try {
-                // 替换为您的实际 OSS Bucket 名称和地域
-                const OSS_BUCKET_NAME = "xiao-config-bucket"; // <- 请修改为您的 Bucket 名称
-                const REGION = "oss-cn-hangzhou"; // <- 请修改为您的 Bucket 所在地域
-                // 注意：确保您的 Bucket 是公共读权限
-                const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json?${new Date().getTime()}`; // <- 修改为您的实际文件名, 添加时间戳防缓存
-                // - 结束新增 -
-                try {
-                    const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' }); // 禁用缓存确保拿到最新
-                    console.log("Fetch 响应对象 (OSS Config):", response); // 调试日志
-                    if (!response.ok) {
-                        if (response.status === 404) {
-                            console.log("OSS: 配置文件未找到");
-                            return null; // 文件不存在
-                        }
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                // 添加时间戳防止缓存
+                const urlWithTimestamp = `${OSS_CONFIG_URL}?t=${new Date().getTime()}`;
+                const response = await fetch(urlWithTimestamp, { cache: 'no-store' });
+                console.log("Fetch 响应对象 (OSS Config):", response);
 
-                    // - 关键修改：检查 Content-Type 并安全读取响应体 -
-                    const contentType = response.headers.get('content-type');
-                    console.log("OSS: 响应 Content-Type:", contentType);
-                    let data = null;
-                    if (contentType && contentType.includes('application/json')) {
-                        // 如果是 JSON 类型，尝试解析
-                        console.log("OSS: 响应体是 JSON 类型，尝试解析...");
-                        try {
-                            data = await response.json(); // 使用 await 等待解析
-                            console.log("OSS: 成功解析 JSON 响应体:", data);
-                        } catch (parseError) {
-                            console.error("OSS: 解析 JSON 响应体失败:", parseError);
-                            // 即使 Content-Type 声称为 JSON，解析也可能失败
-                            // 我们可以尝试读取文本内容看看实际是什么
-                            const textContent = await response.text();
-                            console.log("OSS: 实际响应体文本内容:", textContent);
-                            data = null; // 解析失败，设置为 null
-                        }
-                    } else {
-                        // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
-                        console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        console.log("OSS: 配置文件未找到");
+                        return null;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const contentType = response.headers.get('content-type');
+                console.log("OSS: 响应 Content-Type:", contentType);
+                let data = null;
+
+                if (contentType && contentType.includes('application/json')) {
+                    console.log("OSS: 响应体是 JSON 类型，尝试解析...");
+                    try {
+                        data = await response.json();
+                        console.log("OSS: 成功解析 JSON 响应体:", data);
+                    } catch (parseError) {
+                        console.error("OSS: 解析 JSON 响应体失败:", parseError);
                         const textContent = await response.text();
-                        console.log("OSS: 响应体文本内容:", textContent);
-                        // 尝试将文本内容解析为 JSON
-                        try {
-                            data = JSON.parse(textContent);
-                            console.log("OSS: 成功将文本内容解析为 JSON:", data);
-                        } catch (parseError) {
-                            console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
-                            data = null; // 解析失败，设置为 null
-                        }
+                        console.log("OSS: 实际响应体文本内容:", textContent);
+                        data = null;
                     }
-                    // - 结束关键修改 -
+                } else {
+                    console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
+                    const textContent = await response.text();
+                    console.log("OSS: 响应体文本内容:", textContent);
+                    try {
+                        data = JSON.parse(textContent);
+                        console.log("OSS: 成功将文本内容解析为 JSON:", data);
+                    } catch (parseError) {
+                        console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
+                        data = null;
+                    }
+                }
 
-                    if (data && data.pageStatusConfig) {
-                        console.log("✅ 成功从 OSS 读取到配置:", data);
-                        // - 关键修改：更新全局配置变量和密码变量 -
-                        window.pageStatusConfig = data.pageStatusConfig;
-                        window.pagePasswords = data.pagePasswords || {};
-                        window.adminAccounts = data.adminAccounts || {}; // <<<--- 新增：更新全局管理员账号变量
-                        // - 结束关键修改 -
-                        console.log("🔄 已更新全局配置变量");
-                        // - 关键修改：使用从 OSS 读取的最新配置初始化设置面板 UI -
-                        initializeSettingsPanel();
-                        // - 结束关键修改 -
-                    } else {
-                        console.log("OSS: 远程配置为空或格式不正确");
-                        // 回退到 localStorage
-                        initializeSettingsPanel();
-                    }
-                } catch (fetchError) {
-                    console.error("❌ 从阿里云 OSS 加载配置失败:", fetchError);
+                if (data && data.pageStatusConfig) {
+                    console.log("✅ 成功从 OSS 读取到配置:", data);
+                    // 更新全局配置变量
+                    window.pageStatusConfig = data.pageStatusConfig;
+                    window.pagePasswords = data.pagePasswords || {};
+                    window.adminAccounts = data.adminAccounts || {}; // <<<--- 新增：更新全局管理员账号变量
+                    console.log("🔄 已更新全局配置变量");
+                    // 使用从 OSS 读取的最新配置初始化设置面板 UI
+                    initializeSettingsPanel();
+                } else {
+                    console.log("OSS: 远程配置为空或格式不正确");
                     // 回退到 localStorage
                     initializeSettingsPanel();
                 }
+            } catch (fetchError) {
+                console.error("❌ 从阿里云 OSS 加载配置失败:", fetchError);
+                // 回退到 localStorage
+                initializeSettingsPanel();
+            }
         }
         // --- 结束新增 ---
 
@@ -955,7 +939,6 @@
                 }
                 if (durationInput) {
                     durationInput.value = config[pageId].duration || '';
-                    // 根据状态显示/隐藏时长输入框
                     durationInput.style.display = (config[pageId].status === 'limit') ? 'inline-block' : 'none';
                 }
                 if (currentStatusTextElement) {
@@ -1037,7 +1020,7 @@
             if (duration !== null) {
                 config[pageId].duration = duration;
             } else {
-                delete config[pageId].duration; // 如果不是limit状态，删除duration属性
+                delete config[pageId].duration;
             }
 
             if (passwordInput) {
@@ -1053,7 +1036,7 @@
             // 记录日志
             addLog('修改页面状态', `将页面 "${pageId}" 的状态修改为: ${status}${duration ? ` (${duration}秒)` : ''}`);
 
-            // - 关键修改：准备要同步到阿里云 FC 的完整数据结构 (包含所有管理员数据) -
+            // 准备要同步到阿里云 FC 的完整数据结构 (包含所有管理员数据)
             const configToSync = {
                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig, // 优先使用全局
                 pagePasswords: window.pagePasswords || pagePasswords, // 优先使用全局
@@ -1063,19 +1046,16 @@
                 siteVisits: visits,
                 timestamp: new Date().toISOString()
             };
-            // - 结束关键修改 -
 
-            // - 关键修改：调用阿里云 FC 同步函数 -
+            // 调用阿里云 FC 同步函数
             syncConfigToFC(configToSync).then(() => {
                 console.log('Aliyun FC Sync: 配置已同步');
                 alert(`页面 "${pageId}" 状态已更新并同步到云端！`);
             }).catch((error) => {
                 console.error('Aliyun FC Sync: 同步配置失败:', error);
-                // 即使同步失败，本地设置已生效，可以提示用户
                 addLog('修改页面状态', `将页面 "${pageId}" 的状态修改为: ${status} (本地修改成功，远程同步到阿里云 FC 失败: ${error.message})`);
                 alert(`页面 "${pageId}" 状态已更新(本地)，但同步到云端时出错: ${error.message}`);
             });
-            // - 结束关键修改 -
         }
 
 
@@ -1118,32 +1098,28 @@
 
             alert('密码修改成功！');
 
-            // --- 关键修改：修改密码后也同步所有配置 ---
-            // 准备要同步到阿里云 FC 的完整数据结构
+            // 修改密码后也同步所有配置
             const configToSync = {
-                pageStatusConfig: window.pageStatusConfig || pageStatusConfig, // 优先使用全局
-                pagePasswords: window.pagePasswords || pagePasswords, // 优先使用全局
-                adminAccounts: window.adminAccounts || adminAccounts, // 同步更新后的管理员账号
+                pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
+                pagePasswords: window.pagePasswords || pagePasswords,
+                adminAccounts: window.adminAccounts || adminAccounts,
                 messages: messages,
                 adminLogs: logs,
                 siteVisits: visits,
                 timestamp: new Date().toISOString()
             };
 
-            // 调用同步函数
             syncConfigToFC(configToSync).then(() => {
                 console.log('Aliyun FC Sync: 修改密码后，配置已同步');
             }).catch((error) => {
                 console.error('Aliyun FC Sync: 修改密码后，同步配置失败:', error);
-                // 即使同步失败，本地设置已生效，可以记录日志
                 addLog('修改密码', `修改了管理员密码 (本地修改成功，远程同步到阿里云 FC 失败: ${error.message})`);
                 alert(`密码已修改(本地)，但同步到云端时出错: ${error.message}`);
             });
-            // --- 关键修改结束 ---
         });
 
 
-        // 新增管理员账号
+        // 新增管理员账号 (修复并添加同步)
         document.getElementById('addAdminForm').addEventListener('submit', function(e) {
             e.preventDefault(); // 阻止表单默认提交刷新页面
             if (!isAdminLoggedIn) {
@@ -1410,13 +1386,10 @@
             // 保存到localStorage
             localStorage.setItem('siteVisits', JSON.stringify(visits));
 
-            // - 新增：测试从阿里云 OSS 读取配置 -
+            // 从 OSS 加载配置并初始化
             loadConfigFromOSSAndInitializeSettingsPanel().finally(() => {
-                 // 初始化设置面板 UI (使用从 OSS 加载的配置或回退到默认配置)
-                 // initializeSettingsPanel(); // 这行现在在 loadConfigFromOSSAndInitializeSettingsPanel 内部调用
                  console.log("✅ 页面加载和配置初始化完成");
             });
-            // - 结束新增 -
 
             // 为状态选择器添加事件监听器，以动态显示/隐藏时长输入框
             ['products', 'about', 'contact'].forEach(pageId => {
