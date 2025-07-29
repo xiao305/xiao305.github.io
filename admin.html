@@ -902,6 +902,9 @@
                     window.pageStatusConfig = data.pageStatusConfig;
                     window.pagePasswords = data.pagePasswords || {};
                     window.adminAccounts = data.adminAccounts || {}; // <<<--- 新增：更新全局管理员账号变量
+                    window.messages = data.messages || []; // <<<--- 新增：更新全局留言变量
+                    window.logs = data.adminLogs || []; // <<<--- 新增：更新全局日志变量
+                    window.visits = data.siteVisits || { total: 0, daily: {} }; // <<<--- 新增：更新全局访问量变量
                     // - 结束关键修改 -
                     console.log("🔄 已更新全局配置变量");
                     // - 关键修改：使用从 OSS 读取的最新配置初始化设置面板 UI -
@@ -929,10 +932,17 @@
             const passwords = window.pagePasswords || pagePasswords;
             // 修复：优先使用从 OSS 加载的全局管理员账号
             const accounts = window.adminAccounts || adminAccounts;
+            // 修复：优先使用从 OSS 加载的全局数据
+            messages = window.messages || messages;
+            logs = window.logs || logs;
+            visits = window.visits || visits;
 
             console.log("🔧 使用的配置:", config);
             console.log("🔧 使用的密码:", passwords);
             console.log("🔧 使用的管理员账号:", accounts);
+            console.log("🔧 使用的留言数据:", messages);
+            console.log("🔧 使用的日志数据:", logs);
+            console.log("🔧 使用的访问量数据:", visits);
 
             // 初始化页面状态选择器
             Object.keys(config).forEach(pageId => {
@@ -1444,6 +1454,17 @@
                     addLog('管理员登录', `管理员 ${username} 登录系统`);
                     console.log(`管理员 ${username} 登录成功`);
                     alert(`欢迎，${username}！`);
+                    
+                    // --- 新增：登录成功后，从 OSS 加载最新的配置和数据并更新 UI ---
+                    loadConfigFromOSSAndInitializeSettingsPanel().then(() => {
+                        console.log('✅ 登录后成功从 OSS 加载配置并初始化 UI');
+                    }).catch((error) => {
+                        console.error('❌ 登录后从 OSS 加载配置并初始化 UI 失败:', error);
+                        // 即使加载失败，也使用本地默认值初始化
+                        // initializeSettingsPanel(); // initializeSettingsPanel 已在 loadConfigFromOSSAndInitializeSettingsPanel 内部或其失败回调中被调用
+                    });
+                    // --- 结束新增 ---
+                    
                 } else {
                     alert('管理员账号或密码错误！'); // 保持一致的提示
                     console.log(`管理员 ${username} 登录失败：账号或密码错误`);
