@@ -279,12 +279,14 @@
             border-radius: 6px;
             font-size: 0.95rem;
         }
+        /* --- 优化1：调整输入框宽度 --- */
         .setting-row input[type="number"] {
-            width: 80px;
+            width: 100px; /* 增加宽度 */
         }
         .setting-row input[type="text"] { /* 密码输入框样式 */
             width: 120px;
         }
+        /* --- 结束优化1 --- */
         .current-status {
             margin-top: 10px;
             padding: 8px 12px;
@@ -455,6 +457,9 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.85rem;
+            display: flex; /* 为了图标和文字对齐 */
+            align-items: center;
+            gap: 5px; /* 图标和文字间距 */
         }
         .action-btn:hover {
             background: #e9e9e9;
@@ -564,7 +569,7 @@
         }
         .admin-list th,
         .admin-list td {
-            padding: 10px 15px;
+            padding: 12px 15px; /* 增加内边距 */
             text-align: left;
             border-bottom: 1px solid #eee;
         }
@@ -575,10 +580,37 @@
         .admin-list tr:hover {
             background-color: #f9f9f9;
         }
-        .admin-actions {
+        /* --- 优化2：管理员密码列样式 --- */
+        .password-cell {
             display: flex;
-            gap: 5px;
+            align-items: center;
+            gap: 8px; /* 输入框和按钮间距 */
         }
+        .password-display {
+            flex: 1;
+            padding: 6px 10px; /* 减小内边距以适应按钮 */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            font-family: monospace; /* 使用等宽字体 */
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis; /* 超出部分显示省略号 */
+            white-space: nowrap; /* 不换行 */
+        }
+        .toggle-password-btn {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 6px 8px; /* 减小按钮内边距 */
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .toggle-password-btn:hover {
+            background-color: #e9ecef;
+        }
+        /* --- 结束优化2 --- */
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-container {
@@ -630,6 +662,18 @@
             .action-btn {
                 padding: 4px 8px;
                 font-size: 0.75rem;
+            }
+            /* 响应式下密码列调整 */
+            .password-cell {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .password-display {
+                width: 100%;
+            }
+            .toggle-password-btn {
+               align-self: flex-end; /* 按钮靠右 */
             }
         }
     </style>
@@ -717,6 +761,7 @@
                                 <option value="limit">限制访问</option>
                                 <option value="closed">关闭</option>
                             </select>
+                            <!-- 优化1：调整了输入框宽度 -->
                             <input type="number" id="productsDuration" placeholder="限制秒数" min="1">
                             <!-- 新增：关闭密码输入框 -->
                             <input type="text" id="productsPassword" placeholder="关闭密码">
@@ -737,6 +782,7 @@
                                 <option value="limit">限制访问</option>
                                 <option value="closed">关闭</option>
                             </select>
+                            <!-- 优化1：调整了输入框宽度 -->
                             <input type="number" id="aboutDuration" placeholder="限制秒数" min="1">
                             <!-- 新增：关闭密码输入框 -->
                             <input type="text" id="aboutPassword" placeholder="关闭密码">
@@ -757,6 +803,7 @@
                                 <option value="limit">限制访问</option>
                                 <option value="closed">关闭</option>
                             </select>
+                            <!-- 优化1：调整了输入框宽度 -->
                             <input type="number" id="contactDuration" placeholder="限制秒数" min="1">
                             <!-- 新增：关闭密码输入框 -->
                             <input type="text" id="contactPassword" placeholder="关闭密码">
@@ -791,6 +838,8 @@
                             <thead>
                                 <tr>
                                     <th>用户名</th>
+                                    <!-- 优化2：新增密码列 -->
+                                    <th>密码 (星号显示)</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -1099,7 +1148,7 @@
             console.log("🔧 设置面板 UI 初始化完成");
         }
 
-         // --- 新增：加载并显示管理员列表 ---
+         // --- 新增：加载并显示管理员列表 (包含密码显示功能) ---
         function loadAdminList() {
              const accounts = window.adminAccounts || adminAccounts;
              const listBody = document.getElementById('adminListBody');
@@ -1107,17 +1156,68 @@
 
              Object.keys(accounts).forEach(username => {
                  const row = document.createElement('tr');
+                 
+                 // 解码 Base64 密码
+                 let decodedPassword = '';
+                 try {
+                     decodedPassword = atob(accounts[username]); // Base64 解码
+                 } catch (e) {
+                     console.error(`解码 ${username} 的密码失败:`, e);
+                     decodedPassword = '***'; // 解码失败则显示星号
+                 }
+
+                 // --- 优化2：生成包含密码和眼睛按钮的单元格 ---
+                 const passwordCell = document.createElement('td');
+                 passwordCell.className = 'password-cell'; // 添加类名用于样式
+
+                 const passwordDisplay = document.createElement('div');
+                 passwordDisplay.className = 'password-display';
+                 passwordDisplay.textContent = '••••••'; // 默认显示星号
+                 passwordDisplay.dataset.plaintext = decodedPassword; // 用 data 属性存储明文密码
+                 passwordDisplay.dataset.isMasked = 'true'; // 用 data 属性标记当前状态
+
+                 const toggleButton = document.createElement('button');
+                 toggleButton.className = 'toggle-password-btn';
+                 toggleButton.innerHTML = '<i class="fas fa-eye"></i>'; // 默认显示眼睛图标
+                 toggleButton.title = '显示密码';
+
+                 // 为眼睛按钮添加点击事件
+                 toggleButton.addEventListener('click', function() {
+                     const isMasked = passwordDisplay.dataset.isMasked === 'true';
+                     if (isMasked) {
+                         // 当前是星号，点击后显示明文
+                         passwordDisplay.textContent = decodedPassword;
+                         passwordDisplay.dataset.isMasked = 'false';
+                         toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>'; // 切换为斜线眼睛图标
+                         toggleButton.title = '隐藏密码';
+                     } else {
+                         // 当前是明文，点击后显示星号
+                         passwordDisplay.textContent = '••••••';
+                         passwordDisplay.dataset.isMasked = 'true';
+                         toggleButton.innerHTML = '<i class="fas fa-eye"></i>'; // 切换回眼睛图标
+                         toggleButton.title = '显示密码';
+                     }
+                 });
+
+                 passwordCell.appendChild(passwordDisplay);
+                 passwordCell.appendChild(toggleButton);
+                 // --- 结束优化2 ---
+
                  row.innerHTML = `
                      <td>${username}</td>
+                     <td></td> <!-- 占位，稍后替换 -->
                      <td class="admin-actions">
                          <button class="action-btn" onclick="showChangePasswordModal('${username}')"><i class="fas fa-key"></i> 修改密码</button>
                          ${username !== 'admin' ? `<button class="action-btn delete-btn" onclick="deleteAdmin('${username}')"><i class="fas fa-trash"></i> 删除</button>` : '<span style="color: var(--gray); font-size: 0.85rem;">(主账号)</span>'}
                      </td>
                  `;
+                 // 将密码单元格插入到正确的位置
+                 row.children[1].appendChild(passwordCell); 
                  listBody.appendChild(row);
              });
         }
         // --- 结束新增 ---
+
 
         // --- 新增：显示修改特定管理员密码的模态框 ---
         let targetAdminForPasswordChange = null; // 全局变量，记录要修改密码的管理员用户名
