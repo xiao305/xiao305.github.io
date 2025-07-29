@@ -210,6 +210,15 @@
         .btn i {
             margin-right: 5px;
         }
+        .btn-danger {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #bd2130;
+            border-color: #bd2130;
+        }
         /* 新增：管理员设置区域样式 */
         .admin-settings {
             background: white;
@@ -272,6 +281,9 @@
         }
         .setting-row input[type="number"] {
             width: 80px;
+        }
+        .setting-row input[type="text"] { /* 密码输入框样式 */
+            width: 120px;
         }
         .current-status {
             margin-top: 10px;
@@ -442,6 +454,7 @@
             border: 1px solid #ddd;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 0.85rem;
         }
         .action-btn:hover {
             background: #e9e9e9;
@@ -541,6 +554,31 @@
             font-weight: bold;
             color: var(--primary);
         }
+        /* 管理员列表样式 */
+        .admin-list {
+            margin-top: 20px;
+        }
+        .admin-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-list th,
+        .admin-list td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .admin-list th {
+            background-color: #f1f1f1;
+            font-weight: 500;
+        }
+        .admin-list tr:hover {
+            background-color: #f9f9f9;
+        }
+        .admin-actions {
+            display: flex;
+            gap: 5px;
+        }
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-container {
@@ -581,6 +619,17 @@
                 flex-direction: column;
                 gap: 15px;
                 align-items: flex-start;
+            }
+            .admin-list {
+                font-size: 0.85rem;
+            }
+            .admin-list th,
+            .admin-list td {
+                padding: 8px 10px;
+            }
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -719,9 +768,11 @@
                     </div>
                 </div>
 
-                <!-- 新增管理员 -->
-                <div class="settings-section">
-                    <h3><i class="fas fa-user-plus"></i> 管理员管理</h3>
+                <!-- 新增管理员 & 管理员列表 (仅主账号 admin 可见) -->
+                <div id="adminManagementSection" class="settings-section" style="display: none;">
+                    <h3><i class="fas fa-users-cog"></i> 管理员管理</h3>
+                    
+                    <!-- 创建新管理员 -->
                     <form id="addAdminForm" class="add-admin-form">
                         <h4>创建新管理员账号</h4>
                         <div class="form-row">
@@ -732,9 +783,25 @@
                             <i class="fas fa-info-circle"></i> 新账号默认密码为 <strong>123456</strong>，创建后请及时修改密码。
                         </p>
                     </form>
+
+                    <!-- 管理员列表 -->
+                    <div class="admin-list">
+                        <h4 style="margin-top: 20px;">管理员列表</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminListBody">
+                                <!-- 管理员列表将通过 JavaScript 动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- 修改密码 -->
+                <!-- 修改当前登录管理员密码 -->
                 <div class="settings-section">
                     <h3><i class="fas fa-key"></i> 修改密码</h3>
                     <form id="changePasswordForm" class="add-admin-form">
@@ -804,6 +871,23 @@
         </div>
     </div>
 
+    <!-- 修改管理员密码的模态框 -->
+    <div id="changeAdminPasswordModal" style="display:none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
+        <div style="background-color: white; margin: auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+            <span id="closeChangePasswordModal" style="float: right; cursor: pointer; font-size: 1.5rem;">&times;</span>
+            <h3>修改管理员密码</h3>
+            <p>为管理员 <strong><span id="changePasswordUsername"></span></strong> 修改密码</p>
+            <form id="changeSpecificAdminPasswordForm">
+                <div class="form-group">
+                    <label for="newAdminPassword">新密码:</label>
+                    <input type="password" id="newAdminPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">修改密码</button>
+                <button type="button" id="cancelChangePassword" class="btn btn-outline" style="margin-left: 10px;">取消</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         // 全局变量
         let isAdminLoggedIn = false;
@@ -826,9 +910,9 @@
 
         // --- 新增：阿里云 FC 同步函数 ---
         // 请将 YOUR_FC_ENDPOINT 替换为你实际的阿里云函数触发器 URL
-        const FC_ENDPOINT = 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/'; // <- 例如: 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/'
+        const FC_ENDPOINT = 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/';
         // 请将 YOUR_OSS_CONFIG_URL 替换为你实际的 OSS 文件公开访问 URL
-        const OSS_CONFIG_URL = 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json'; // <- 例如: 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json'
+        const OSS_CONFIG_URL = 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json';
 
         async function syncConfigToFC(configData) {
             console.log("Aliyun FC Sync: 开始同步配置到阿里云 FC", configData);
@@ -954,6 +1038,7 @@
             Object.keys(config).forEach(pageId => {
                 const statusSelect = document.getElementById(`${pageId}Status`);
                 const durationInput = document.getElementById(`${pageId}Duration`);
+                const passwordInput = document.getElementById(`${pageId}Password`); // 获取密码输入框
                 const currentStatusTextElement = document.getElementById(`${pageId}CurrentStatus`);
 
                 if (statusSelect) {
@@ -961,20 +1046,50 @@
                 }
                 if (durationInput) {
                     durationInput.value = config[pageId].duration || '';
+                    // 根据状态显示/隐藏时长输入框
                     durationInput.style.display = (config[pageId].status === 'limit') ? 'inline-block' : 'none';
+                }
+                if (passwordInput) {
+                     // 根据状态显示/隐藏密码输入框
+                    passwordInput.style.display = (config[pageId].status === 'closed') ? 'inline-block' : 'none';
                 }
                 if (currentStatusTextElement) {
                     updateCurrentStatusDisplay(pageId);
                 }
+
+                // --- 新增：为状态选择器添加事件监听器，以动态显示/隐藏时长和密码输入框 ---
+                if (statusSelect) {
+                   statusSelect.addEventListener('change', function() {
+                        if (durationInput) {
+                            durationInput.style.display = (this.value === 'limit') ? 'inline-block' : 'none';
+                        }
+                        if (passwordInput) {
+                             passwordInput.style.display = (this.value === 'closed') ? 'inline-block' : 'none';
+                        }
+                    });
+                }
+                // --- 结束新增 ---
             });
 
-            // 初始化密码输入框
+            // 初始化密码输入框 (从全局 passwords 变量)
             Object.keys(passwords).forEach(pageId => {
                 const passwordInput = document.getElementById(`${pageId}Password`);
                 if (passwordInput) {
                     passwordInput.value = passwords[pageId];
                 }
             });
+
+            // --- 新增：根据当前登录用户显示/隐藏管理员管理分区 ---
+            const adminManagementSection = document.getElementById('adminManagementSection');
+            if (adminManagementSection) {
+                if (currentAdminUser === 'admin') {
+                    adminManagementSection.style.display = 'block';
+                    loadAdminList(); // 加载管理员列表
+                } else {
+                    adminManagementSection.style.display = 'none';
+                }
+            }
+            // --- 结束新增 ---
 
             // 更新统计信息
             updateStats();
@@ -983,6 +1098,146 @@
             drawTrafficChart();
             console.log("🔧 设置面板 UI 初始化完成");
         }
+
+         // --- 新增：加载并显示管理员列表 ---
+        function loadAdminList() {
+             const accounts = window.adminAccounts || adminAccounts;
+             const listBody = document.getElementById('adminListBody');
+             listBody.innerHTML = ''; // 清空现有列表
+
+             Object.keys(accounts).forEach(username => {
+                 const row = document.createElement('tr');
+                 row.innerHTML = `
+                     <td>${username}</td>
+                     <td class="admin-actions">
+                         <button class="action-btn" onclick="showChangePasswordModal('${username}')"><i class="fas fa-key"></i> 修改密码</button>
+                         ${username !== 'admin' ? `<button class="action-btn delete-btn" onclick="deleteAdmin('${username}')"><i class="fas fa-trash"></i> 删除</button>` : '<span style="color: var(--gray); font-size: 0.85rem;">(主账号)</span>'}
+                     </td>
+                 `;
+                 listBody.appendChild(row);
+             });
+        }
+        // --- 结束新增 ---
+
+        // --- 新增：显示修改特定管理员密码的模态框 ---
+        let targetAdminForPasswordChange = null; // 全局变量，记录要修改密码的管理员用户名
+        function showChangePasswordModal(username) {
+            targetAdminForPasswordChange = username;
+            document.getElementById('changePasswordUsername').textContent = username;
+            document.getElementById('newAdminPassword').value = ''; // 清空输入框
+            document.getElementById('changeAdminPasswordModal').style.display = 'flex';
+        }
+
+        // 关闭模态框
+        document.getElementById('closeChangePasswordModal').addEventListener('click', () => {
+            document.getElementById('changeAdminPasswordModal').style.display = 'none';
+        });
+        document.getElementById('cancelChangePassword').addEventListener('click', () => {
+            document.getElementById('changeAdminPasswordModal').style.display = 'none';
+        });
+        // 点击模态框外部区域关闭
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('changeAdminPasswordModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        // --- 结束新增 ---
+
+        // --- 新增：修改特定管理员密码 ---
+        document.getElementById('changeSpecificAdminPasswordForm').addEventListener('submit', function(e) {
+             e.preventDefault();
+             if (!isAdminLoggedIn || !targetAdminForPasswordChange) return;
+
+             const newPassword = document.getElementById('newAdminPassword').value.trim();
+             if (!newPassword) {
+                 alert('请输入新密码！');
+                 return;
+             }
+
+             // 更新内存中的密码
+             const accounts = window.adminAccounts || adminAccounts;
+             accounts[targetAdminForPasswordChange] = btoa(newPassword); // Base64 编码
+             // 同步到 localStorage
+             localStorage.setItem('adminAccounts', JSON.stringify(accounts));
+             // 同步到全局变量 (如果 window.adminAccounts 存在)
+             if (window.adminAccounts) {
+                 window.adminAccounts = accounts;
+             }
+
+             // 记录日志
+             addLog('修改管理员密码', `管理员 ${currentAdminUser} 修改了 ${targetAdminForPasswordChange} 的密码`);
+
+             alert(`管理员 "${targetAdminForPasswordChange}" 的密码已修改！`);
+             document.getElementById('changeAdminPasswordModal').style.display = 'none';
+
+             // 同步到云端
+             const configToSync = {
+                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
+                 pagePasswords: window.pagePasswords || pagePasswords,
+                 adminAccounts: window.adminAccounts || adminAccounts,
+                 messages: messages,
+                 adminLogs: logs,
+                 siteVisits: visits,
+                 timestamp: new Date().toISOString()
+             };
+             syncConfigToFC(configToSync).then(() => {
+                 console.log('Aliyun FC Sync: 修改管理员密码后，配置已同步');
+                 loadAdminList(); // 重新加载列表以反映变化
+             }).catch((error) => {
+                 console.error('Aliyun FC Sync: 修改管理员密码后，同步配置失败:', error);
+                 addLog('修改管理员密码', `管理员 ${currentAdminUser} 修改了 ${targetAdminForPasswordChange} 的密码 (本地修改成功，远程同步到阿里云 FC 失败: ${error.message})`);
+                 alert(`密码已修改(本地)，但同步到云端时出错: ${error.message}`);
+                 loadAdminList(); // 即使同步失败，也重新加载列表
+             });
+        });
+        // --- 结束新增 ---
+
+        // --- 新增：删除管理员 ---
+        function deleteAdmin(username) {
+             if (!isAdminLoggedIn || username === 'admin') return; // 禁止删除主账号
+
+             if (!confirm(`确定要删除管理员账号 "${username}" 吗？此操作不可撤销。`)) {
+                 return;
+             }
+
+             // 更新内存中的账号列表
+             const accounts = window.adminAccounts || adminAccounts;
+             delete accounts[username];
+             // 同步到 localStorage
+             localStorage.setItem('adminAccounts', JSON.stringify(accounts));
+             // 同步到全局变量 (如果 window.adminAccounts 存在)
+             if (window.adminAccounts) {
+                 window.adminAccounts = accounts;
+             }
+
+             // 记录日志
+             addLog('删除管理员', `管理员 ${currentAdminUser} 删除了管理员账号: ${username}`);
+
+             alert(`管理员账号 "${username}" 已删除！`);
+
+             // 同步到云端
+             const configToSync = {
+                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
+                 pagePasswords: window.pagePasswords || pagePasswords,
+                 adminAccounts: window.adminAccounts || adminAccounts,
+                 messages: messages,
+                 adminLogs: logs,
+                 siteVisits: visits,
+                 timestamp: new Date().toISOString()
+             };
+             syncConfigToFC(configToSync).then(() => {
+                 console.log('Aliyun FC Sync: 删除管理员后，配置已同步');
+                 loadAdminList(); // 重新加载列表以反映变化
+             }).catch((error) => {
+                 console.error('Aliyun FC Sync: 删除管理员后，同步配置失败:', error);
+                 addLog('删除管理员', `管理员 ${currentAdminUser} 删除了管理员账号: ${username} (本地删除成功，远程同步到阿里云 FC 失败: ${error.message})`);
+                 alert(`账号已删除(本地)，但同步到云端时出错: ${error.message}`);
+                 loadAdminList(); // 即使同步失败，也重新加载列表
+             });
+        }
+        // --- 结束新增 ---
+
 
         // 更新当前状态显示
         function updateCurrentStatusDisplay(pageId) {
@@ -1061,6 +1316,9 @@
             if (durationInput) {
                 durationInput.style.display = (status === 'limit') ? 'inline-block' : 'none';
             }
+            if(passwordInputForClosed) {
+                 passwordInputForClosed.style.display = (status === 'closed') ? 'inline-block' : 'none';
+            }
 
             // 记录日志
             addLog('修改页面状态', `将页面 "${pageId}" 的状态修改为: ${status}${duration ? ` (${duration}秒)` : ''}${password ? ' (已设置密码)' : ''}`);
@@ -1091,10 +1349,10 @@
         }
 
 
-        // 修改密码
+        // 修改当前登录管理员的密码
         document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            if (!isAdminLoggedIn) {
+            if (!isAdminLoggedIn || !currentAdminUser) {
                 alert('请先登录！');
                 return;
             }
@@ -1122,7 +1380,7 @@
             }
 
             // 记录日志
-            addLog('修改密码', `管理员 ${currentAdminUser} 修改了密码`);
+            addLog('修改密码', `管理员 ${currentAdminUser} 修改了自己的密码`);
 
             // 清空表单
             oldPasswordInput.value = '';
@@ -1148,7 +1406,7 @@
             }).catch((error) => {
                 console.error('Aliyun FC Sync: 修改密码后，同步配置失败:', error);
                 // 即使同步失败，本地设置已生效，可以记录日志
-                addLog('修改密码', `管理员 ${currentAdminUser} 修改了密码 (本地修改成功，远程同步到阿里云 FC 失败: ${error.message})`);
+                addLog('修改密码', `管理员 ${currentAdminUser} 修改了自己的密码 (本地修改成功，远程同步到阿里云 FC 失败: ${error.message})`);
                 alert(`密码已修改(本地)，但同步到云端时出错: ${error.message}`);
             });
             // --- 关键修改结束 ---
@@ -1162,6 +1420,12 @@
                 alert('请先登录！');
                 return;
             }
+            // --- 新增：权限检查 ---
+            if (currentAdminUser !== 'admin') {
+                 alert('只有主管理员 (admin) 可以创建新管理员账号！');
+                 return;
+            }
+            // --- 结束新增 ---
             const newUsername = document.getElementById('newAdminUsername').value.trim();
             if (!newUsername) {
                 alert('请输入新管理员账号！');
@@ -1204,6 +1468,9 @@
                 // 清空表单
                 document.getElementById('addAdminForm').reset();
                 alert(`管理员账号 "${newUsername}" 创建成功并已同步！默认密码为 '${defaultPassword}'，请及时修改。`);
+                // --- 新增：重新加载管理员列表 ---
+                loadAdminList();
+                // --- 结束新增 ---
             }).catch((error) => {
                 console.error('Aliyun FC Sync: 新增管理员后，同步配置失败:', error);
                 // 即使同步失败，本地设置已生效，可以提示用户
@@ -1211,6 +1478,9 @@
                 // 清空表单
                 document.getElementById('addAdminForm').reset();
                 alert(`管理员账号 "${newUsername}" 已创建(本地)，但同步到云端时出错: ${error.message}。请稍后手动同步或检查网络。`);
+                 // --- 新增：即使同步失败，也重新加载管理员列表 ---
+                loadAdminList();
+                // --- 结束新增 ---
             });
             // --- 结束关键修改 ---
         });
@@ -1431,17 +1701,6 @@
                  console.log("✅ 页面加载和配置初始化完成");
             });
             // - 结束新增 -
-
-            // 为状态选择器添加事件监听器，以动态显示/隐藏时长输入框
-            ['products', 'about', 'contact'].forEach(pageId => {
-                const statusSelect = document.getElementById(`${pageId}Status`);
-                const durationInput = document.getElementById(`${pageId}Duration`);
-                if (statusSelect && durationInput) {
-                    statusSelect.addEventListener('change', function() {
-                        durationInput.style.display = (this.value === 'limit') ? 'inline-block' : 'none';
-                    });
-                }
-            });
 
             // 管理员登录 - 修复：确保始终阻止默认提交，并优先使用从 OSS 加载的账号信息
             document.getElementById('adminLogin').addEventListener('submit', function(e) { // 使用正确的表单ID
