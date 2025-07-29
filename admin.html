@@ -826,9 +826,9 @@
 
         // --- 新增：阿里云 FC 同步函数 ---
         // 请将 YOUR_FC_ENDPOINT 替换为你实际的阿里云函数触发器 URL
-        const FC_ENDPOINT = 'YOUR_FC_ENDPOINT'; // <- 例如: 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/'
+        const FC_ENDPOINT = 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/'; // <- 例如: 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/'
         // 请将 YOUR_OSS_CONFIG_URL 替换为你实际的 OSS 文件公开访问 URL
-        const OSS_CONFIG_URL = 'YOUR_OSS_CONFIG_URL'; // <- 例如: 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json'
+        const OSS_CONFIG_URL = 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json'; // <- 例如: 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json'
 
         async function syncConfigToFC(configData) {
             console.log("Aliyun FC Sync: 开始同步配置到阿里云 FC", configData);
