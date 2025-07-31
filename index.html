@@ -7,12 +7,6 @@
     <base href="https://hjsf.uno/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- 新增：固定根字体大小，防止移动端跟随系统缩放 --- */
-        html {
-            font-size: 16px; /* 固定根字体大小为 16px */
-        }
-        /* --- 结束新增 --- */
-
         /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
@@ -139,177 +133,108 @@
             margin: 20px auto;
             line-height: 1.6;
         }
-        /* 页面内容通用样式 */
-        .page {
-            display: none;
-            animation: fadeIn 0.5s ease forwards;
+        /* 卡片网格布局 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
         }
-        .page.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        /* 首页特色 */
-        .hero {
-            text-align: center;
-            padding: 40px 20px;
-            background: var(--secondary);
-            border-radius: 12px;
-            margin-bottom: 40px;
-        }
-        .hero h2 {
-            color: var(--primary);
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--gray);
+        /* 卡片交互优化 */
+        .contact-box {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: visible; /* 修复徽章被截断 */
+            border: 1px solid rgba(228, 57, 60, 0.1);
             margin-bottom: 30px;
         }
-        /* 产品展示区 */
-        .products-section {
-            margin-bottom: 40px;
+        .contact-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(228, 57, 60, 0.12);
         }
-        .section-title {
-            text-align: center;
+        h2 {
             color: var(--primary);
-            margin-bottom: 30px;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+            margin: 0 0 15px;
+            padding-left: 30px;
             position: relative;
         }
-        .section-title::after {
-            content: '';
+        h2::before {
+            content: "";
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
             background: var(--accent);
-            border-radius: 2px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .product-info {
-            padding: 20px;
-        }
-        .product-info h3 {
-            color: var(--dark);
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        .product-info p {
-            color: var(--gray);
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        .product-price {
+        h2::before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            content: "\f07a"; /* 购物袋图标 */
             color: var(--primary);
-            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .contact-section {
+            margin-bottom: 20px;
+        }
+        .contact-section h3 {
+            color: var(--dark);
             font-size: 1.1rem;
-        }
-        /* 关于我们 */
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-        .about-text h2, .contact-info h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-        .about-text p, .contact-details p {
-            color: var(--gray);
-            line-height: 1.8;
-            margin-bottom: 20px;
-        }
-        .about-image {
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-        /* 联系方式 */
-        .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-        }
-        .contact-info, .contact-form {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-        .contact-details {
-            margin-bottom: 30px;
-        }
-        .contact-item {
+            margin: 0 0 10px;
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 8px;
         }
-        .contact-item i {
+        .contact-section h3 i {
             color: var(--primary);
-            font-size: 1.5rem;
-            margin-right: 15px;
-            width: 30px;
         }
-        .contact-text h3 {
+        .contact-info {
+            list-style: none;
+        }
+        .contact-info li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .contact-info li i {
+            color: var(--primary);
+            min-width: 20px; /* 确保图标对齐 */
+        }
+        .contact-info a {
             color: var(--dark);
-            margin-bottom: 5px;
+            text-decoration: none;
+            transition: color 0.3s;
         }
-        .contact-text p {
-            margin: 0;
-            color: var(--gray);
+        .contact-info a:hover {
+            color: var(--primary);
         }
-        .qr-codes {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
+        /* 微信二维码优化 */
+        .qr-section {
+            text-align: center;
+            margin-top: 20px;
         }
         .qr-code {
-            text-align: center;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            width: 150px;
+            height: 150px;
+            border: 3px solid var(--primary);
+            border-radius: 15px;
             padding: 10px;
-            border-radius: 12px;
-        }
-        .qr-code img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            margin-bottom: 10px;
-        }
-        .qr-code p {
-            margin: 0;
-            font-weight: 500;
-            color: var(--dark);
+            background: white;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            display: block;
+            margin: 0 auto 15px;
         }
         .qr-code:hover {
             transform: scale(1.03);
@@ -347,181 +272,57 @@
         .ad-section {
             margin: 40px 0;
             padding: 25px;
-            background: linear-gradient(135deg, #FFF5F5 0%, #FFF 100%);
-            border-radius: 12px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.8);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--secondary);
         }
         .ad-content {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
             gap: 20px;
+            flex-wrap: wrap;
         }
-        .ad-text {
-            flex: 1;
-            min-width: 300px;
+        .ad-icon {
+            font-size: 3rem;
+            color: var(--primary);
         }
         .ad-text h3 {
             color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 1.5rem;
+            margin: 0 0 10px;
         }
         .ad-text p {
             color: var(--gray);
             line-height: 1.6;
-        }
-        .ad-button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor: pointer;
-            text-align: center;
-            font-size: 1rem;
-            white-space: nowrap;
-        }
-        .ad-button:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(228, 57, 60, 0.3);
-        }
-        .ad-button i {
-            margin-right: 5px;
-        }
-        /* 留言表单 */
-        .message-form {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
-        }
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(228, 57, 60, 0.1);
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-        .btn {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor: pointer;
-            text-align: center;
-            font-size: 1rem;
-        }
-        .btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(228, 57, 60, 0.3);
-        }
-        .btn-outline {
-            display: inline-block;
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor: pointer;
-            text-align: center;
-        }
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-        .btn i {
-            margin-right: 5px;
-        }
-        /* 免责声明 */
-        .disclaimer {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid var(--gray);
-        }
-        .disclaimer p {
             margin: 0;
-            font-size: 0.85rem;
-            color: var(--gray);
         }
-        /* 页脚 */
-        .footer {
+        /* 页脚样式 */
+        footer {
             background: var(--dark);
             color: white;
-            padding: 40px 0 20px;
-            margin-top: 60px;
+            padding: 40px 20px 20px;
+            margin-top: 50px;
         }
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            padding: 0 20px;
+            gap: 30px;
         }
         .footer-section h3 {
-            margin-bottom: 20px;
+            color: var(--accent);
+            margin: 0 0 15px;
             font-size: 1.2rem;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        .footer-section h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 30px;
-            height: 2px;
-            background: var(--accent);
-        }
-        .footer-section p {
-            line-height: 1.8;
-            color: #ccc;
         }
         .footer-links {
             list-style: none;
         }
         .footer-links li {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .footer-links a {
-            color: #ccc;
+            color: #ddd;
             text-decoration: none;
             transition: color 0.3s;
             display: flex;
@@ -532,199 +333,60 @@
             color: var(--accent);
         }
         .footer-links a i {
-            color: var(--accent);
+            min-width: 20px;
         }
-        .copyright {
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
             text-align: center;
-            padding-top: 30px;
-            margin-top: 30px;
-            border-top: 1px solid #444;
-            color: #aaa;
             font-size: 0.9rem;
+            color: #aaa;
         }
-        /* 密码弹窗样式 */
-        .password-modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
+        /* 响应式设计 - 桌面端保持不变 */
+        @media (min-width: 769px) {
+            /* 桌面端无需特殊调整，保持原有样式 */
         }
-        .password-modal-content {
-            background-color: white;
-            margin: auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            position: relative;
-            text-align: center;
-        }
-        .password-modal-title {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-        .password-modal-text {
-            color: var(--gray);
-            margin-bottom: 25px;
-            font-size: 1rem;
-        }
-        .password-input {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 25px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        .password-modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .countdown-modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .countdown-modal-content {
-            background-color: white;
-            margin: auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            position: relative;
-            text-align: center;
-        }
-        .countdown-modal-title {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-        .countdown-modal-text {
-            color: var(--gray);
-            margin-bottom: 25px;
-            font-size: 1rem;
-        }
-        .countdown {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 25px;
-        }
-        .modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        /* 响应式设计 */
+
+        /* 响应式设计 - 针对手机等小屏幕设备优化 */
         @media (max-width: 768px) {
+            /* --- 核心优化：锁定字体大小，不随系统缩放 --- */
+            body, h1, h2, h3, h4, h5, h6, p, a, li, div, span, button, input, select, textarea {
+                /* 使用固定单位 px 或较小的 rem，避免使用 inherit 或较大的 rem */
+                font-size: 14px !important; /* 锁定基础字体大小 */
+            }
+            .page-header h1 {
+                font-size: 1.8rem !important; /* 页面主标题 */
+            }
+            h2 {
+                font-size: 1.3rem !important; /* 卡片标题 */
+            }
+            .contact-section h3 {
+                font-size: 1.1rem !important; /* 联系方式小标题 */
+            }
+            .wechat-id {
+                font-size: 1rem !important; /* 微信号字体 */
+            }
+            .nav-links a {
+                font-size: 1rem !important; /* 导航链接 */
+            }
+            .logo {
+                font-size: 1.2rem !important; /* Logo 字体 */
+            }
+            /* --- 结束核心优化 --- */
+
+            /* 调整布局间距，使其更紧凑 */
             .nav-container {
+                padding: 10px 15px;
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
             }
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
-            }
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            .hero h2 {
-                font-size: 1.5rem;
-            }
-            .hero p {
-                font-size: 1rem;
-            }
-            .about-content,
-            .contact-content {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-            .product-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-            }
-            .product-info {
-                padding: 15px;
-            }
-            .product-info h3 {
-                font-size: 1.1rem;
-            }
-            .qr-codes {
                 gap: 15px;
             }
-            .qr-code img {
-                width: 100px;
-                height: 100px;
-            }
-            .ad-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            .ad-button {
-                align-self: center;
-            }
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 30px;
-                padding: 0 15px;
-            }
-            /* --- 新增：移动端进一步优化按钮和输入框 --- */
-            .btn, .btn-outline {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            .form-group input,
-            .form-group textarea,
-            .password-input {
-                padding: 10px 12px;
-                font-size: 0.9rem;
-            }
-            .password-modal-content,
-            .countdown-modal-content {
-                padding: 20px;
-                width: 95%;
-            }
-            .password-modal-title,
-            .countdown-modal-title {
-                font-size: 1.3rem;
-            }
-            .password-modal-text,
-            .countdown-modal-text {
-                font-size: 0.9rem;
-            }
-            .password-modal-buttons,
-            .modal-buttons {
-                flex-direction: column; /* 按钮垂直排列 */
-                gap: 10px;
-            }
-            .password-modal-buttons .btn,
-            .password-modal-buttons .btn-outline,
-            .modal-buttons .btn,
-            .modal-buttons .btn-outline {
-                width: 100%; /* 按钮占满宽度 */
-            }
-            /* --- 结束新增 --- */
-        }
-
-        @media (max-width: 480px) {
             .content-container {
                 padding: 0 15px;
             }
@@ -732,85 +394,93 @@
                 margin: 20px 0;
             }
             .page-header h1 {
-                font-size: 1.8rem;
+                margin-bottom: 8px;
             }
             .page-header h1::after {
                 width: 60px;
+                height: 3px;
                 bottom: -8px;
             }
-            .hero {
-                padding: 20px 15px;
+            .page-header p {
+                font-size: 0.95rem !important;
+                margin: 15px auto;
             }
-            .hero h2 {
-                font-size: 1.3rem;
+            .card-grid {
+                grid-template-columns: 1fr; /* 手机端单列 */
+                gap: 20px;
             }
-            .section-title {
-                font-size: 1.3rem;
-            }
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-            .qr-code img {
-                width: 80px;
-                height: 80px;
-            }
-            .ad-text h3 {
-                font-size: 1.2rem;
-            }
-            .message-form {
+            .contact-box {
                 padding: 20px;
+                border-radius: 15px;
+                margin-bottom: 20px;
             }
-            .form-group {
+            h2 {
+                margin: 0 0 12px;
+                padding-left: 25px;
+            }
+            h2::before {
+                width: 20px;
+                height: 20px;
+                font-size: 0.7rem;
+            }
+            .contact-section {
                 margin-bottom: 15px;
             }
-             /* --- 新增：小屏幕手机上进一步优化 --- */
-            .btn, .btn-outline {
-                padding: 8px 16px;
-                font-size: 0.85rem;
+            .contact-info li {
+                margin-bottom: 6px;
+                gap: 6px;
             }
-            .form-group input,
-            .form-group textarea,
-            .password-input {
-                padding: 8px 10px;
-                font-size: 0.85rem;
+            .qr-section {
+                margin-top: 15px;
             }
-            /* --- 结束新增 --- */
+            .qr-code {
+                width: 120px;
+                height: 120px;
+                border-width: 2px;
+            }
+            .wechat-id {
+                padding: 10px 20px;
+                border-radius: 25px;
+                margin: 15px auto;
+            }
+            .shipping-notice {
+                padding: 10px;
+                margin: 12px 0;
+                gap: 6px;
+            }
+            .ad-section {
+                margin: 30px 0;
+                padding: 20px;
+            }
+            .ad-icon {
+                font-size: 2rem;
+            }
+            footer {
+                padding: 30px 15px 15px;
+                margin-top: 30px;
+            }
+            .footer-content {
+                gap: 20px;
+            }
+            .footer-section h3 {
+                font-size: 1.1rem !important;
+                margin: 0 0 12px;
+            }
+            .footer-bottom {
+                margin: 30px auto 0;
+                padding-top: 15px;
+                font-size: 0.8rem !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 密码输入弹窗 (关闭状态) -->
-    <div id="passwordModal" class="password-modal">
-        <div class="password-modal-content">
-            <h3 class="password-modal-title">页面已关闭</h3>
-            <p class="password-modal-text" id="passwordModalText">该页面已被管理员关闭。如需访问，请输入密码。</p>
-            <input type="password" id="pagePasswordInput" class="password-input" placeholder="请输入页面密码">
-            <div class="password-modal-buttons">
-                <button id="cancelPasswordBtn" class="btn-outline">取消</button>
-                <button id="confirmPasswordBtn" class="btn">确认</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 倒计时弹窗 (限制访问) -->
-    <div id="countdownModal" class="countdown-modal">
-        <div class="countdown-modal-content">
-            <h3 class="countdown-modal-title">页面限时查看</h3>
-            <p class="countdown-modal-text">该页面为限时查看，倒计时结束后将自动返回首页。</p>
-            <div class="countdown">请阅读提示 <span id="countdown">10</span> 秒</div>
-            <div class="modal-buttons">
-                <button id="backToHome" class="btn"><i class="fas fa-home"></i> 返回首页</button>
-                <button id="continueBtn" class="btn-outline" disabled><i class="fas fa-eye"></i> 继续查看 (<span id="timer">10</span>)</button>
-            </div>
-        </div>
-    </div>
-
     <!-- 导航栏 -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
                 <i class="fas fa-utensils"></i>
-                <span>红姐私房</span>
+                <span>红姐私房美食</span>
             </div>
             <div class="nav-links">
                 <a href="#" class="nav-link active" data-page="home"><i class="fas fa-home"></i> 首页</a>
@@ -822,228 +492,152 @@
         </div>
     </nav>
 
-    <!-- 内容容器 -->
+    <!-- 主要内容 -->
     <div class="content-container">
-        
-        <!-- 首页 -->
-        <div id="home" class="page active">
-            <div class="hero">
-                <h2>品味地道孝义美食</h2>
-                <p>红姐私房，传承经典，用心制作每一道佳肴</p>
-                <button class="btn" onclick="switchPage('products')"><i class="fas fa-shopping-bag"></i> 立即选购</button>
-            </div>
+        <div class="page-header">
+            <h1>红姐私房美食</h1>
+            <p>用心做好每一份美食，传承家乡的味道。欢迎选购我们的特色产品！</p>
+        </div>
 
-            <div class="products-section">
-                <h2 class="section-title">特色产品</h2>
-                <div class="product-grid">
-                    <div class="product-card">
-                        <img src="https://img.alicdn.com/bao/uploaded/i4/123456789/O1CN01aBCDEF123456789_!!0-item_pic.jpg_400x400q60.jpg" alt="红姐烧饼" class="product-image">
-                        <div class="product-info">
-                            <h3>红姐烧饼</h3>
-                            <p>外酥里嫩，香气扑鼻，传统工艺制作</p>
-                            <div class="product-price">¥12.80</div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <img src="https://img.alicdn.com/bao/uploaded/i2/987654321/O1CN01GHIJKL987654321_!!0-item_pic.jpg_400x400q60.jpg" alt="秘制酱肉" class="product-image">
-                        <div class="product-info">
-                            <h3>秘制酱肉</h3>
-                            <p>精选五花肉，酱香浓郁，肥而不腻</p>
-                            <div class="product-price">¥38.00</div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <img src="https://img.alicdn.com/bao/uploaded/i3/111111111/O1CN01MNOPQR111111111_!!0-item_pic.jpg_400x400q60.jpg" alt="手工凉粉" class="product-image">
-                        <div class="product-info">
-                            <h3>手工凉粉</h3>
-                            <p>纯手工制作，口感爽滑，夏日必备</p>
-                            <div class="product-price">¥8.80</div>
-                        </div>
-                    </div>
+        <div class="card-grid">
+            <!-- 特产商城 -->
+            <div class="contact-box" id="products-section" style="display: none;">
+                <h2><i class="fas fa-shopping-bag"></i> 特产商城</h2>
+                <div class="contact-section">
+                    <h3><i class="fas fa-box-open"></i> 热销产品</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-cheese"></i> 手工奶酪 (¥88/份)</li>
+                        <li><i class="fas fa-cookie"></i> 传统糕点 (¥68/盒)</li>
+                        <li><i class="fas fa-wine-bottle"></i> 自制果酒 (¥128/瓶)</li>
+                        <li><i class="fas fa-seedling"></i> 有机干货 (¥58/包)</li>
+                    </ul>
+                </div>
+                <div class="contact-section">
+                    <h3><i class="fas fa-tags"></i> 优惠活动</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-gift"></i> 满200减20</li>
+                        <li><i class="fas fa-truck"></i> 包邮门槛 ¥150</li>
+                    </ul>
+                </div>
+                <div class="qr-section">
+                    <img src="https://img.alicdn.com/imgextra/i4/2214351808/O1CN01h0N71P1ZlXsZJZJZJ_!!2214351808.jpg" alt="微信二维码" class="qr-code">
+                    <p>扫码添加微信咨询/购买</p>
+                </div>
+                <div class="wechat-id">
+                    <i class="fab fa-weixin"></i> 微信号: rr66tt8
                 </div>
             </div>
 
-            <div class="ad-section">
-                <div class="ad-content">
-                    <div class="ad-text">
-                        <h3>限时优惠活动</h3>
-                        <p>即日起至本月底，全场商品满100减20，满200减50！还有更多惊喜等着您，赶快行动吧！</p>
-                    </div>
-                    <a href="#" class="ad-button" onclick="switchPage('products')"><i class="fas fa-bolt"></i> 立即抢购</a>
+            <!-- 关于我们 -->
+            <div class="contact-box" id="about-section" style="display: none;">
+                <h2><i class="fas fa-info-circle"></i> 关于我们</h2>
+                <div class="contact-section">
+                    <h3><i class="fas fa-utensils"></i> 品牌故事</h3>
+                    <ul class="contact-info">
+                        <li>红姐私房美食源于对家乡味道的深情回忆。</li>
+                        <li>我们坚持选用优质原料，传承古法手工制作。</li>
+                        <li>每一份产品都饱含着我们对美食的热爱与执着。</li>
+                    </ul>
+                </div>
+                <div class="contact-section">
+                    <h3><i class="fas fa-heart"></i> 我们的理念</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-check-circle"></i> 真材实料，健康美味</li>
+                        <li><i class="fas fa-check-circle"></i> 匠心工艺，品质保证</li>
+                        <li><i class="fas fa-check-circle"></i> 贴心服务，顾客至上</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 联系方式 -->
+            <div class="contact-box" id="contact-section">
+                <h2><i class="fas fa-phone"></i> 联系方式</h2>
+                <div class="contact-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> 地址</h3>
+                    <ul class="contact-info">
+                        <li>浙江省杭州市西湖区文三路123号</li>
+                    </ul>
+                </div>
+                <div class="contact-section">
+                    <h3><i class="fas fa-phone-alt"></i> 电话</h3>
+                    <ul class="contact-info">
+                        <li><a href="tel:13800138000">138-0013-8000</a></li>
+                    </ul>
+                </div>
+                <div class="contact-section">
+                    <h3><i class="fab fa-weixin"></i> 微信</h3>
+                    <ul class="contact-info">
+                        <li>微信号: rr66tt8</li>
+                    </ul>
+                </div>
+                <div class="qr-section">
+                    <img src="https://img.alicdn.com/imgextra/i4/2214351808/O1CN01h0N71P1ZlXsZJZJZJ_!!2214351808.jpg" alt="微信二维码" class="qr-code">
+                    <p>扫码添加微信咨询</p>
+                </div>
+                <div class="wechat-id">
+                    <i class="fab fa-weixin"></i> 微信号: rr66tt8
+                </div>
+                <div class="shipping-notice" onclick="alert('我们默认使用顺丰或中通快递发货，全国大部分地区包邮。特殊地区可能需要补运费。')">
+                    <i class="fas fa-truck"></i>
+                    <span>默认发顺丰/中通快递，大部分地区包邮</span>
+                    <i class="fas fa-info-circle" style="margin-left: auto;"></i>
                 </div>
             </div>
         </div>
 
-        <!-- 特产商城 -->
-        <div id="products" class="page">
-            <div class="page-header">
-                <h1><i class="fas fa-shopping-bag"></i> 特产商城</h1>
-                <p>精选孝义地道特产，品质保证，欢迎选购</p>
-            </div>
-            <div class="product-grid">
-                <div class="product-card">
-                    <img src="https://img.alicdn.com/bao/uploaded/i4/123456789/O1CN01aBCDEF123456789_!!0-item_pic.jpg_400x400q60.jpg" alt="红姐烧饼" class="product-image">
-                    <div class="product-info">
-                        <h3>红姐烧饼</h3>
-                        <p>外酥里嫩，香气扑鼻，传统工艺制作</p>
-                        <div class="product-price">¥12.80</div>
-                    </div>
+        <!-- 广告区 -->
+        <div class="ad-section">
+            <div class="ad-content">
+                <div class="ad-icon">
+                    <i class="fas fa-star"></i>
                 </div>
-                <div class="product-card">
-                    <img src="https://img.alicdn.com/bao/uploaded/i2/987654321/O1CN01GHIJKL987654321_!!0-item_pic.jpg_400x400q60.jpg" alt="秘制酱肉" class="product-image">
-                    <div class="product-info">
-                        <h3>秘制酱肉</h3>
-                        <p>精选五花肉，酱香浓郁，肥而不腻</p>
-                        <div class="product-price">¥38.00</div>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="https://img.alicdn.com/bao/uploaded/i3/111111111/O1CN01MNOPQR111111111_!!0-item_pic.jpg_400x400q60.jpg" alt="手工凉粉" class="product-image">
-                    <div class="product-info">
-                        <h3>手工凉粉</h3>
-                        <p>纯手工制作，口感爽滑，夏日必备</p>
-                        <div class="product-price">¥8.80</div>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="https://img.alicdn.com/bao/uploaded/i1/222222222/O1CN01STUVWX222222222_!!0-item_pic.jpg_400x400q60.jpg" alt="农家土鸡蛋" class="product-image">
-                    <div class="product-info">
-                        <h3>农家土鸡蛋</h3>
-                        <p>散养土鸡产蛋，营养丰富，口感鲜美</p>
-                        <div class="product-price">¥25.00 (10枚)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 关于我们 -->
-        <div id="about" class="page">
-            <div class="page-header">
-                <h1><i class="fas fa-info-circle"></i> 关于我们</h1>
-                <p>了解红姐私房的故事和理念</p>
-            </div>
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>传承美食文化</h2>
-                    <p>红姐私房美食起源于山西省孝义市，由李红女士创立。李红女士秉承着对传统美食的热爱和对品质的执着追求，将祖传的 recipes 与现代工艺相结合，致力于为顾客提供最地道、最健康的孝义特色美食。</p>
-                    <p>我们选用当地优质原料，坚持手工制作，每一道工序都严格把关，确保食品的新鲜与安全。我们的目标不仅是让顾客品尝到美味，更是传递一份家的味道和温暖。</p>
-                    <button class="btn" onclick="switchPage('contact')"><i class="fas fa-phone"></i> 联系我们</button>
-                </div>
-                <img src="https://img.alicdn.com/bao/uploaded/i4/333333333/O1CN01YZABCD333333333_!!0-item_pic.jpg_600x600q60.jpg" alt="红姐私房店铺" class="about-image">
-            </div>
-        </div>
-
-        <!-- 联系方式 -->
-        <div id="contact" class="page">
-            <div class="page-header">
-                <h1><i class="fas fa-phone"></i> 联系方式</h1>
-                <p>欢迎通过以下方式与我们取得联系</p>
-            </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h2>联系我们</h2>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div class="contact-text">
-                                <h3>地址</h3>
-                                <p>山西省孝义市振兴街123号</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <div class="contact-text">
-                                <h3>电话</h3>
-                                <p>138-0000-0000</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-clock"></i>
-                            <div class="contact-text">
-                                <h3>营业时间</h3>
-                                <p>每天 08:00 - 20:00</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="shipping-notice" onclick="alert('我们提供孝义市区内免费配送服务，下单后30分钟内送达。市区外配送需加收运费。')">
-                        <i class="fas fa-truck"></i>
-                        <span>孝义市区内免费配送，30分钟送达！</span>
-                    </div>
-                    <div class="wechat-id">
-                        <i class="fab fa-weixin"></i>
-                        微信号: hongjie123
-                    </div>
-                    <h3>扫码添加微信</h3>
-                    <div class="qr-codes">
-                        <div class="qr-code">
-                            <img src="https://img.alicdn.com/bao/uploaded/i1/444444444/O1CN01EFGHIJ444444444_!!0-content.jpg_300x300q60.jpg" alt="微信二维码">
-                            <p>微信</p>
-                        </div>
-                        <div class="qr-code">
-                            <img src="https://img.alicdn.com/bao/uploaded/i2/555555555/O1CN01KLMNOP555555555_!!0-content.jpg_300x300q60.jpg" alt="支付宝二维码">
-                            <p>支付宝</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-form">
-                    <h2>给我们留言</h2>
-                    <form id="messageForm">
-                        <div class="form-group">
-                            <label for="name">姓名 *</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">电话 *</label>
-                            <input type="tel" id="phone" name="phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">留言内容 *</label>
-                            <textarea id="message" name="message" required></textarea>
-                        </div>
-                        <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> 提交留言</button>
-                    </form>
-                    <div class="disclaimer">
-                        <p><strong>免责声明：</strong>本页面仅为测试展示，联系方式可能不是最新或准确的。实际联系请通过首页二维码添加微信。</p>
-                    </div>
+                <div class="ad-text">
+                    <h3>品质保证</h3>
+                    <p>所有产品均经过严格筛选和手工制作，确保您收到的每一份都是精品。</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 页脚 -->
-    <footer class="footer">
+    <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <h3>关于我们</h3>
-                <p>红姐私房致力于传承和推广孝义美食，用心制作每一道产品，让顾客品尝到最地道的家乡味道。</p>
-            </div>
-            <div class="footer-section">
-                <h3>快速链接</h3>
+                <h3>快速导航</h3>
                 <ul class="footer-links">
-                    <li><a href="#" data-page="home"><i class="fas fa-chevron-right"></i> 首页</a></li>
-                    <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
-                    <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
-                    <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
+                    <li><a href="#" data-page="home"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="#" data-page="products"><i class="fas fa-shopping-bag"></i> 特产商城</a></li>
+                    <li><a href="#" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a></li>
+                    <li><a href="#" data-page="contact"><i class="fas fa-phone"></i> 联系方式</a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>关注我们</h3>
+                <h3>联系方式</h3>
                 <ul class="footer-links">
-                    <li><a href="https://weixin.qq.com/" target="_blank"><i class="fab fa-weixin"></i> 微信公众号</a></li>
-                    <li><a href="#"><i class="fab fa-weibo"></i> 新浪微博</a></li>
+                    <li><a href="tel:13800138000"><i class="fas fa-phone-alt"></i> 138-0013-8000</a></li>
+                    <li><a href="#" class="footer-link"><i class="fab fa-weixin"></i> 微信: rr66tt8</a></li>
+                    <li><a href="#" class="footer-link"><i class="fas fa-envelope"></i> 暂不设置</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>网页说明</h3>
+                <p>该网站为个人测试网站，展示内容仅供参考：</p>
+                <ul class="footer-links">
+                    <li>网站仅用于功能测试和技术展示</li>
+                    <li>商品信息、价格等数据为示例数据</li>
+                    <li>不提供实际购买和交易功能</li>
+                    <li>网站未备案，不涉及商业运营</li>
+                    <li>所有实际交易请通过首页微信联系</li>
                 </ul>
             </div>
         </div>
-        <div class="copyright">
-            <p>&copy; 2023 红姐私房美食. All rights reserved.</p>
+        <div class="footer-bottom">
+            <p>© 2025 红姐私房 版权所有| 本网站为个人测试用途，不用于商业运营</p>
         </div>
     </footer>
 
     <script>
         // 全局变量
-        let messages = JSON.parse(localStorage.getItem('messages')) || [];
-        let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
-        // 修复：使用更安全的默认值和 Base64 编码存储密码
         let pageStatusConfig = {
             products: { status: 'closed' },
             about: { status: 'closed' },
@@ -1055,18 +649,17 @@
             contact: ''
         };
 
-        // --- 新增：从阿里云 OSS 加载配置 ---
-        // 替换为您的实际 OSS Bucket 名称和地域
-        const OSS_BUCKET_NAME = "xiao-config-bucket"; // <- 请修改为您的 Bucket 名称
-        const REGION = "oss-cn-hangzhou"; // <- 请修改为您的 Bucket 所在地域
-        // 注意：确保您的 Bucket 是公共读权限
-        const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json?${new Date().getTime()}`; // <- 修改为您的实际文件名, 添加时间戳防缓存
-
+        // --- 新增：从阿里云 OSS 加载配置并更新全局变量 ---
         async function loadConfigFromOSS() {
-            console.log("开始尝试从 OSS 读取配置...");
+            console.log("🔄 开始从阿里云 OSS 加载配置...");
             try {
+                // 替换为您的实际 OSS Bucket 名称和地域
+                const OSS_BUCKET_NAME = "xiao-config-bucket"; // <- 请修改为您的 Bucket 名称
+                const REGION = "oss-cn-hangzhou"; // <- 请修改为您的 Bucket 所在地域
+                // 注意：确保您的 Bucket 是公共读权限
+                const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json?${new Date().getTime()}`; // <- 修改为您的实际文件名, 添加时间戳防缓存
                 const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' }); // 禁用缓存确保拿到最新
-                console.log("Fetch 响应对象:", response); // 调试日志
+                console.log("Fetch 响应对象:", response);
                 if (!response.ok) {
                     if (response.status === 404) {
                         console.log("OSS: 配置文件未找到");
@@ -1074,379 +667,204 @@
                     }
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
-                // - 关键修改：检查 Content-Type 并安全读取响应体 -
-                const contentType = response.headers.get('content-type');
-                console.log("OSS: 响应 Content-Type:", contentType);
-                let data = null;
-                if (contentType && contentType.includes('application/json')) {
-                    // 如果是 JSON 类型，尝试解析
-                    console.log("OSS: 响应体是 JSON 类型，尝试解析...");
-                    try {
-                        data = await response.json(); // 使用 await 等待解析
-                        console.log("OSS: 成功解析 JSON 响应体:", data);
-                    } catch (parseError) {
-                        console.error("OSS: 解析 JSON 响应体失败:", parseError);
-                        // 即使 Content-Type 声称为 JSON，解析也可能失败
-                        // 我们可以尝试读取文本内容看看实际是什么
-                        const textContent = await response.text();
-                        console.log("OSS: 实际响应体文本内容:", textContent);
-                        data = null; // 解析失败，设置为 null
-                    }
-                } else {
-                    // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
-                    console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
-                    const textContent = await response.text();
-                    console.log("OSS: 响应体文本内容:", textContent);
-                    // 尝试将文本内容解析为 JSON
-                    try {
-                        data = JSON.parse(textContent);
-                        console.log("OSS: 成功将文本内容解析为 JSON:", data);
-                    } catch (parseError) {
-                        console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
-                        data = null; // 解析失败，设置为 null
-                    }
-                }
-                // - 结束关键修改 -
-
+                const data = await response.json();
+                console.log("✅ 成功从 OSS 读取到配置:", data);
                 if (data && data.pageStatusConfig) {
-                    console.log("✅ 成功从 OSS 读取到配置:", data);
                     // 更新全局配置变量
-                    pageStatusConfig = data.pageStatusConfig;
-                    pagePasswords = data.pagePasswords || {};
-                } else {
-                    console.log("OSS: 远程配置为空或格式不正确");
+                    window.pageStatusConfig = data.pageStatusConfig;
+                    window.pagePasswords = data.pagePasswords || {};
+                    console.log("🔄 已更新全局配置变量");
                 }
                 return data;
-            } catch (fetchError) {
-                console.error("❌ 从 OSS 读取配置失败:", fetchError);
-                return null;
-            }
-        }
-        // --- 结束新增 ---
-
-
-        // 页面切换功能
-        function switchPage(pageId) {
-            // 隐藏所有页面
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            // 显示目标页面
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-                // 更新导航栏激活状态
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('data-page') === pageId) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        }
-
-        // 处理页面访问 (根据配置检查状态)
-        function handlePageAccess(pageId) {
-            // 修复：优先使用从 OSS 加载的全局配置
-            const config = pageStatusConfig;
-            const passwords = pagePasswords;
-
-            const pageConfig = config[pageId];
-            if (!pageConfig) {
-                alert('页面配置错误！');
-                return;
-            }
-
-            switch(pageConfig.status) {
-                case 'open':
-                    switchPage(pageId);
-                    break;
-                case 'limit':
-                    showCountdownModal(pageId, pageConfig.duration || 10);
-                    break;
-                case 'closed':
-                    showPasswordModal(pageId);
-                    break;
-                default:
-                    alert('未知的页面状态！');
-            }
-        }
-
-        // 显示倒计时弹窗 (限制访问)
-        function showCountdownModal(pageId, duration = 10) {
-            const modal = document.getElementById('countdownModal');
-            const countdownEl = document.getElementById('countdown');
-            const continueBtn = document.getElementById('continueBtn');
-            const timerSpan = continueBtn.querySelector('#timer'); // 获取按钮内的 span
-
-            if (!modal || !countdownEl || !continueBtn || !timerSpan) {
-                console.error("倒计时弹窗元素未找到");
-                return;
-            }
-
-            // 重置按钮状态
-            continueBtn.disabled = true;
-            continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (<span id="timer">${duration}</span>)`; // 重置按钮HTML
-
-            modal.style.display = 'flex';
-            let seconds = duration;
-            countdownEl.textContent = seconds;
-            timerSpan.textContent = seconds; // 初始化按钮内的时间
-
-            const startTime = Date.now();
-            const countdownInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                seconds = Math.max(0, duration - elapsed); // 使用传入的时长计算剩余时间
-                // 同时更新两个地方的倒计时显示
-                countdownEl.textContent = seconds;
-                // 修复倒计时显示问题：每次更新时重新获取并设置按钮内的 span#timer 元素文本
-                const timerSpan = continueBtn.querySelector('#timer');
-                if (timerSpan) {
-                    timerSpan.textContent = seconds;
-                }
-
-                if(seconds <= 0) {
-                    clearInterval(countdownInterval);
-                    continueBtn.disabled = false;
-                    // 重置按钮文字，移除 (10)
-                    continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
-                }
-            }, 200); // 每200毫秒更新一次
-
-            // 绑定按钮事件
-            document.getElementById('backToHome').onclick = function() {
-                clearInterval(countdownInterval);
-                modal.style.display = 'none';
-                switchPage('home');
-            };
-
-            continueBtn.onclick = function() {
-                if (this.disabled) return; // 防止在倒计时期间点击
-                clearInterval(countdownInterval);
-                modal.style.display = 'none';
-                switchPage(pageId);
-            };
-        }
-
-        // 显示密码输入弹窗 (关闭状态)
-        function showPasswordModal(pageId) {
-            const modal = document.getElementById('passwordModal');
-            const input = document.getElementById('pagePasswordInput');
-            const textElement = document.getElementById('passwordModalText');
-
-            if (!modal || !input || !textElement) {
-                console.error("密码弹窗元素未找到");
-                return;
-            }
-
-            // 设置弹窗文本
-            textElement.textContent = `该页面已被管理员关闭。如需访问，请输入密码。`;
-
-            modal.style.display = 'flex';
-            input.value = ''; // 清空输入框
-            input.focus(); // 聚焦到输入框
-
-            // 绑定按钮事件
-            document.getElementById('cancelPasswordBtn').onclick = function() {
-                modal.style.display = 'none';
-            };
-
-            document.getElementById('confirmPasswordBtn').onclick = function() {
-                const password = input.value.trim();
-                // 修复：优先使用从 OSS 加载的全局密码配置
-                const passwords = pagePasswords;
-                const storedHash = passwords[pageId];
-                // 简单的密码验证 (使用 Base64 解码比较)
-                if(storedHash && storedHash === btoa(password)) {
-                    modal.style.display = 'none';
-                    switchPage(pageId);
-                } else {
-                    alert('密码错误！');
-                }
-            };
-
-            // 允许按回车键确认
-            input.onkeypress = function(e) {
-                if (e.key === 'Enter') {
-                    document.getElementById('confirmPasswordBtn').click();
-                }
-            };
-        }
-
-        // 提交留言
-        document.getElementById('messageForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const message = document.getElementById('message').value.trim();
-
-            if (!name || !phone || !message) {
-                alert('请填写所有必填项！');
-                return;
-            }
-
-            const newMessage = {
-                name: name,
-                phone: phone,
-                message: message,
-                timestamp: new Date().toLocaleString(),
-                read: false // 新留言默认未读
-            };
-
-            messages.push(newMessage);
-            localStorage.setItem('messages', JSON.stringify(messages));
-
-            alert('留言提交成功！');
-            this.reset();
-        });
-
-        // 页面导航功能
-        document.querySelectorAll('.nav-link').forEach(link => {
-            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
-            if (link.getAttribute('data-page') !== 'admin') {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const pageId = this.getAttribute('data-page');
-                    // 如果点击的是非首页链接 (且不是管理员页)
-                    if(pageId !== 'home') {
-                        handlePageAccess(pageId);
-                        return;
-                    }
-                    // 切换页面
-                    switchPage(pageId);
-                });
-            }
-        });
-
-        // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
-        document.querySelectorAll('.footer-links a').forEach(link => {
-            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
-            if (link.getAttribute('data-page') !== 'admin') {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const pageId = this.getAttribute('data-page');
-                    // 如果点击的是非首页链接
-                    if(pageId !== 'home') {
-                        handlePageAccess(pageId);
-                        return;
-                    }
-                    switchPage(pageId);
-                });
-            }
-        });
-
-        // --- 新增：阿里云 FC 同步函数 (用于留言提交) ---
-        const FC_ENDPOINT = 'https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/'; // <- 请修改为您的实际函数触发器 URL
-
-        async function syncMessagesToFC() {
-            console.log("开始尝试同步留言到阿里云 FC...");
-            try {
-                // 准备要同步到阿里云 FC 的完整数据结构
-                const configToSync = {
-                    pageStatusConfig: pageStatusConfig, // 包含页面状态配置
-                    pagePasswords: pagePasswords, // 包含页面密码
-                    adminAccounts: {}, // 留言同步不需要管理员账号，传空对象即可
-                    messages: messages, // 包含最新的留言列表
-                    adminLogs: [], // 留言同步不需要管理员日志，传空数组即可
-                    siteVisits: visits, // 包含访问统计
-                    timestamp: new Date().toISOString()
-                };
-
-                const response = await fetch(FC_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(configToSync)
-                });
-
-                console.log("Aliyun FC Sync: Fetch 响应对象:", response);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-                }
-
-                console.log('Aliyun FC Sync: 留言同步成功');
-                return { message: 'Messages synced successfully' };
             } catch (error) {
-                console.error('Aliyun FC Sync: 留言同步失败:', error);
-                // 注意：这里我们只打印错误，不阻止用户提交留言到本地
-                // 因为同步失败不应该影响基本功能
-                return { error: error.message };
+                console.error("❌ 从阿里云 OSS 加载配置失败:", error);
+                return null; // 加载失败
             }
         }
         // --- 结束新增 ---
 
-        // --- 修改：留言表单提交事件，增加同步到 FC ---
-        document.getElementById('messageForm').addEventListener('submit', async function(e) { // 添加 async
-            e.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const message = document.getElementById('message').value.trim();
 
-            if (!name || !phone || !message) {
-                alert('请填写所有必填项！');
+        // 页面切换逻辑
+        function switchPage(pageId) {
+            console.log(`正在切换到页面: ${pageId}`);
+            // 隐藏所有页面内容
+            document.getElementById('products-section').style.display = 'none';
+            document.getElementById('about-section').style.display = 'none';
+            document.getElementById('contact-section').style.display = 'none';
+
+            // 显示请求的页面内容
+            const targetSection = document.getElementById(`${pageId}-section`);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // 更新导航栏激活状态
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // --- 新增：处理页面访问权限的核心函数 ---
+        async function handlePageAccess(pageId) {
+            console.log(`正在处理页面访问: ${pageId}`);
+            // 1. 首先尝试从 OSS 加载最新配置
+            const ossData = await loadConfigFromOSS();
+            // 2. 使用加载到的配置（如果有的话）或回退到默认配置
+            const config = window.pageStatusConfig || pageStatusConfig;
+            const passwords = window.pagePasswords || pagePasswords;
+            const statusObj = config[pageId];
+            console.log(`页面 "${pageId}" 的配置:`, statusObj);
+
+            if (!statusObj) {
+                console.warn(`未找到页面 "${pageId}" 的配置，默认允许访问。`);
+                switchPage(pageId);
                 return;
             }
 
-            const newMessage = {
-                name: name,
-                phone: phone,
-                message: message,
-                timestamp: new Date().toLocaleString(),
-                read: false // 新留言默认未读
-            };
+            const status = statusObj.status;
+            const duration = statusObj.duration;
 
-            messages.push(newMessage);
-            localStorage.setItem('messages', JSON.stringify(messages));
-
-            alert('留言提交成功！');
-
-            // - 关键修改：提交留言后，调用阿里云 FC 同步函数 -
-            try {
-                await syncMessagesToFC(); // 等待同步完成
-                console.log("留言已成功同步到云端");
-            } catch (syncError) {
-                console.error("留言同步到云端失败:", syncError);
-                // 可以选择性地提示用户同步失败，但本地存储已经成功
-                // alert('留言已保存，但同步到云端时出现问题。');
+            if (status === 'open') {
+                console.log(`页面 "${pageId}" 状态为开放，直接访问。`);
+                switchPage(pageId);
+            } else if (status === 'limit') {
+                console.log(`页面 "${pageId}" 状态为限时查看 (${duration}秒)。`);
+                showCountdownModal(pageId, duration);
+            } else if (status === 'closed') {
+                console.log(`页面 "${pageId}" 状态为关闭，需要密码。`);
+                const correctPasswordHash = passwords[pageId];
+                if (!correctPasswordHash) {
+                    alert(`页面 "${pageId}" 已被管理员关闭，且未设置访问密码。请联系管理员。`);
+                    return;
+                }
+                const userPassword = prompt(`页面 "${pageId}" 已被管理员关闭，请输入密码以继续访问：`);
+                if (userPassword !== null) { // 用户点击了“确定”
+                    const userPasswordHash = btoa(userPassword); // 使用 Base64 编码用户输入的密码
+                    console.log(`用户输入密码哈希: ${userPasswordHash}, 正确密码哈希: ${correctPasswordHash}`);
+                    if (userPasswordHash === correctPasswordHash) {
+                        console.log("密码正确，允许访问。");
+                        switchPage(pageId);
+                    } else {
+                        alert("密码错误，请重试。");
+                        // 可以选择再次调用 handlePageAccess(pageId) 实现输错后重试
+                    }
+                } else {
+                    console.log("用户取消了密码输入。");
+                    // 用户点击了“取消”，不执行任何操作，停留在当前页面
+                }
+            } else {
+                console.warn(`页面 "${pageId}" 状态未知 (${status})，默认允许访问。`);
+                switchPage(pageId);
             }
-            // - 结束关键修改 -
-
-            this.reset();
-        });
-        // --- 结束修改 ---
-
-
-        // --- 新增：阿里云 FC 同步函数 (用于访问统计) ---
-        // (这个函数与 syncMessagesToFC 类似，但用途不同，为未来扩展保留)
+        }
         // --- 结束新增 ---
 
+
+        // 显示限时查看倒计时模态框
+        function showCountdownModal(pageId, duration) {
+            // 创建或获取模态框元素
+            let modal = document.getElementById('countdownModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'countdownModal';
+                modal.style.cssText = `
+                    display: none;
+                    position: fixed;
+                    z-index: 1001;
+                    left: 0; top: 0;
+                    width: 100%; height: 100%;
+                    background-color: rgba(0,0,0,0.4);
+                    justify-content: center;
+                    align-items: center;
+                `;
+                document.body.appendChild(modal);
+            }
+
+            // 创建模态框内容
+            modal.innerHTML = `
+                <div style="background-color: white; margin: auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <h3>限时查看</h3>
+                    <p>该内容限时查看，时长 <span id="countdownValue" style="font-weight: bold;">${duration}</span> 秒</p>
+                    <button id="cancelCountdown" style="margin-top: 15px; padding: 10px 20px; background-color: #ccc; border: none; border-radius: 5px; cursor: pointer;">取消</button>
+                </div>
+            `;
+
+            // 显示模态框
+            modal.style.display = 'flex';
+
+            // 启动倒计时
+            let timeLeft = duration;
+            const countdownElement = document.getElementById('countdownValue');
+            const timer = setInterval(() => {
+                timeLeft--;
+                if (countdownElement) {
+                    countdownElement.textContent = timeLeft;
+                }
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    modal.style.display = 'none';
+                    switchPage(pageId); // 倒计时结束，切换页面
+                }
+            }, 1000);
+
+            // 绑定取消按钮事件
+            document.getElementById('cancelCountdown').onclick = () => {
+                clearInterval(timer);
+                modal.style.display = 'none';
+            };
+
+            // 点击模态框外部区域关闭
+            modal.onclick = (event) => {
+                if (event.target === modal) {
+                    clearInterval(timer);
+                    modal.style.display = 'none';
+                }
+            };
+        }
 
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 更新总访问量
-            visits.total = (visits.total || 0) + 1;
-            // 更新每日访问量
-            const today = new Date().toLocaleDateString();
-            visits.daily[today] = (visits.daily[today] || 0) + 1;
-            // 保存到localStorage
-            localStorage.setItem('siteVisits', JSON.stringify(visits));
+            // 默认显示联系方式页面
+            switchPage('contact');
 
-            // - 新增：测试从阿里云 OSS 读取配置 -
-            loadConfigFromOSS().then((data) => {
-                if (data) {
-                    console.log("✅ 成功从 OSS 加载配置");
-                } else {
-                    console.log("🔙 回退到使用 localStorage 配置 (因错误)");
-                }
-            }).catch((error) => {
-                console.error("❌ 从 OSS 加载配置失败:", error);
-                console.log("🔙 回退到使用 localStorage 配置 (因错误)");
+            // 为所有导航链接添加点击事件监听器
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // --- 修改：阻止默认跳转行为 ---
+                    e.preventDefault();
+                    // --- 结束修改 ---
+                    const pageId = this.getAttribute('data-page');
+                    console.log(`导航链接被点击，目标页面ID: ${pageId}`);
+                    // --- 修改：调用新的处理函数 ---
+                    if (pageId && pageId !== 'admin') {
+                        handlePageAccess(pageId);
+                    } else if (pageId === 'admin') {
+                         window.location.href = 'admin.html'; // 管理员页面直接跳转
+                    } else {
+                         switchPage(pageId); // fallback
+                    }
+                    // --- 结束修改 ---
+                });
             });
-            // - 结束新增 -
+
+            // 为页脚链接添加点击事件监听器
+            document.querySelectorAll('.footer-links a[data-page]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // --- 修改：阻止默认跳转行为 ---
+                    e.preventDefault();
+                    // --- 结束修改 ---
+                    const pageId = this.getAttribute('data-page');
+                    console.log(`页脚链接被点击，目标页面ID: ${pageId}`);
+                    // --- 修改：调用新的处理函数 ---
+                    if (pageId) {
+                        handlePageAccess(pageId);
+                    }
+                    // --- 结束修改 ---
+                });
+            });
         });
     </script>
 </body>
