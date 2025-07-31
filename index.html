@@ -2,11 +2,17 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 确保 viewport 设置正确 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>红姐私房美食官网</title>
-    <base href="https://hjsf.uno/"> <!-- 确保 base href 是新域名 -->
+    <base href="https://hjsf.uno/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* --- 新增：固定根字体大小，防止移动端跟随系统缩放 --- */
+        html {
+            font-size: 16px; /* 固定根字体大小为 16px */
+        }
+        /* --- 结束新增 --- */
+
         /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
@@ -16,11 +22,6 @@
             --light: #f8f9fa;
             --gray: #6c757d;
             --shadow: 0 4px 12px rgba(0,0,0,0.1);
-            /* --- 新增：为移动端定义更小的基础尺寸 --- */
-            --font-size-base: 16px; /* 基础字体大小 */
-            --spacing-unit: 15px; /* 基础间距单位 */
-            --border-radius: 8px; /* 基础圆角 */
-            /* --- 结束新增 --- */
         }
         * {
             margin: 0;
@@ -32,29 +33,11 @@
             background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
             margin: 0;
             padding: 0;
-            /* --- 优化：使用 CSS 变量并为移动端调整字体大小 --- */
-            font-size: var(--font-size-base); 
             min-height: 100vh;
             color: var(--dark);
             display: flex;
             flex-direction: column;
         }
-        /* --- 优化：为移动端调整基础字体大小 --- */
-        @media (max-width: 768px) {
-            :root {
-                --font-size-base: 14px; /* 手机上更小的字体 */
-                --spacing-unit: 12px; /* 手机上更紧凑的间距 */
-            }
-        }
-        @media (max-width: 480px) {
-            :root {
-                --font-size-base: 13px; /* 小屏幕手机上更小的字体 */
-                --spacing-unit: 10px;
-            }
-        }
-        /* --- 结束优化 --- */
-
-
         /* 导航栏样式 */
         .navbar {
             background: rgba(255,255,255,0.95);
@@ -63,8 +46,6 @@
             top: 0;
             z-index: 1000;
             border-bottom: 2px solid var(--secondary);
-            /* --- 优化：移动端调整导航栏内边距 --- */
-            padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit); 
         }
         .nav-container {
             max-width: 1200px;
@@ -72,15 +53,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            /* --- 优化：移动端调整容器内边距 --- */
-            padding: 0 calc(var(--spacing-unit) * 0.5); 
+            padding: 15px 20px;
         }
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            /* --- 优化：移动端调整 Logo 字体大小 --- */
-            font-size: 1.2rem; 
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary);
         }
@@ -89,13 +68,10 @@
         }
         .nav-links {
             display: flex;
-            /* --- 优化：移动端调整链接间距 --- */
-            gap: calc(var(--spacing-unit) * 0.8); 
+            gap: 25px;
         }
         .nav-links a {
             text-decoration: none;
-            /* --- 优化：移动端调整链接字体大小和内边距 --- */
-            font-size: 0.9rem; 
             color: var(--dark);
             font-weight: 500;
             position: relative;
@@ -128,23 +104,20 @@
         /* 内容容器 */
         .content-container {
             max-width: 1200px;
-            /* --- 优化：移动端调整内容容器左右内边距 --- */
-            margin: calc(var(--spacing-unit) * 1.3) auto; 
-            padding: 0 var(--spacing-unit);
+            margin: 20px auto;
+            padding: 0 20px;
             flex: 1;
         }
         /* 页面标题样式 */
         .page-header {
             text-align: center;
-            /* --- 优化：移动端调整标题上下边距 --- */
-            margin: calc(var(--spacing-unit) * 2) 0; 
+            margin: 30px 0;
             position: relative;
         }
         .page-header h1 {
             color: var(--primary);
-            /* --- 优化：移动端调整标题字体大小 --- */
-            font-size: 1.8rem; 
-            margin-bottom: calc(var(--spacing-unit) * 0.7);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
             position: relative;
             display: inline-block;
         }
@@ -161,11 +134,9 @@
         }
         .page-header p {
             color: var(--gray);
-            /* --- 优化：移动端调整副标题字体大小 --- */
-            font-size: 1rem; 
+            font-size: 1.1rem;
             max-width: 800px;
-            /* --- 优化：移动端调整副标题上下边距 --- */
-            margin: var(--spacing-unit) auto calc(var(--spacing-unit) * 1.3);
+            margin: 20px auto;
             line-height: 1.6;
         }
         /* 页面内容通用样式 */
@@ -185,7 +156,7 @@
             text-align: center;
             padding: 40px 20px;
             background: var(--secondary);
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             margin-bottom: 40px;
         }
         .hero h2 {
@@ -227,7 +198,7 @@
         }
         .product-card {
             background: white;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: transform 0.3s, box-shadow 0.3s;
@@ -279,7 +250,7 @@
         }
         .about-image {
             width: 100%;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             box-shadow: var(--shadow);
         }
         /* 联系方式 */
@@ -291,7 +262,7 @@
         .contact-info, .contact-form {
             background: white;
             padding: 30px;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             box-shadow: var(--shadow);
         }
         .contact-details {
@@ -327,7 +298,7 @@
             transition: all 0.3s;
             border: 2px solid transparent;
             padding: 10px;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
         }
         .qr-code img {
             width: 120px;
@@ -377,7 +348,7 @@
             margin: 40px 0;
             padding: 25px;
             background: linear-gradient(135deg, #FFF5F5 0%, #FFF 100%);
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
         .ad-content {
@@ -426,7 +397,7 @@
         .message-form {
             background: white;
             padding: 30px;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             box-shadow: var(--shadow);
         }
         .form-group {
@@ -443,7 +414,7 @@
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
@@ -462,8 +433,7 @@
             background: var(--primary);
             color: white;
             border: none;
-            /* --- 优化：移动端调整按钮内边距和字体大小 --- */
-            padding: calc(var(--spacing-unit) * 0.8) calc(var(--spacing-unit) * 1.5); 
+            padding: 12px 30px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
@@ -482,8 +452,7 @@
             background: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
-            /* --- 优化：移动端调整按钮内边距 --- */
-            padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1.3); 
+            padding: 10px 20px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
@@ -502,7 +471,7 @@
         .disclaimer {
             background: #f8f9fa;
             padding: 15px;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             margin-top: 20px;
             border-left: 4px solid var(--gray);
         }
@@ -590,7 +559,7 @@
             background-color: white;
             margin: auto;
             padding: 30px;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             width: 90%;
             max-width: 500px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -612,7 +581,7 @@
             padding: 12px 15px;
             margin-bottom: 25px;
             border: 1px solid #ddd;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             font-size: 1rem;
         }
         .password-modal-buttons {
@@ -636,7 +605,7 @@
             background-color: white;
             margin: auto;
             padding: 30px;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             width: 90%;
             max-width: 500px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -668,15 +637,14 @@
         @media (max-width: 768px) {
             .nav-container {
                 flex-direction: column;
-                gap: calc(var(--spacing-unit) * 0.8);
+                gap: 15px;
             }
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: calc(var(--spacing-unit) * 0.6);
             }
             .page-header h1 {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
             .hero h2 {
                 font-size: 1.5rem;
@@ -687,20 +655,20 @@
             .about-content,
             .contact-content {
                 grid-template-columns: 1fr;
-                gap: calc(var(--spacing-unit) * 1.5);
+                gap: 30px;
             }
             .product-grid {
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: calc(var(--spacing-unit) * 1.2);
+                gap: 20px;
             }
             .product-info {
-                padding: calc(var(--spacing-unit) * 1.2);
+                padding: 15px;
             }
             .product-info h3 {
                 font-size: 1.1rem;
             }
             .qr-codes {
-                gap: calc(var(--spacing-unit) * 1.2);
+                gap: 15px;
             }
             .qr-code img {
                 width: 100px;
@@ -715,12 +683,12 @@
             }
             .footer-content {
                 grid-template-columns: 1fr;
-                gap: calc(var(--spacing-unit) * 1.5);
-                padding: 0 var(--spacing-unit);
+                gap: 30px;
+                padding: 0 15px;
             }
-            /* --- 优化：移动端进一步调整按钮和输入框 --- */
+            /* --- 新增：移动端进一步优化按钮和输入框 --- */
             .btn, .btn-outline {
-                padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1.2);
+                padding: 10px 20px;
                 font-size: 0.9rem;
             }
             .form-group input,
@@ -753,17 +721,18 @@
             .modal-buttons .btn-outline {
                 width: 100%; /* 按钮占满宽度 */
             }
+            /* --- 结束新增 --- */
         }
 
         @media (max-width: 480px) {
             .content-container {
-                padding: 0 calc(var(--spacing-unit) * 0.7);
+                padding: 0 15px;
             }
             .page-header {
-                margin: calc(var(--spacing-unit) * 1.5) 0;
+                margin: 20px 0;
             }
             .page-header h1 {
-                font-size: 1.3rem;
+                font-size: 1.8rem;
             }
             .page-header h1::after {
                 width: 60px;
@@ -794,9 +763,9 @@
             .form-group {
                 margin-bottom: 15px;
             }
-             /* --- 优化：小屏幕手机上进一步调整 --- */
+             /* --- 新增：小屏幕手机上进一步优化 --- */
             .btn, .btn-outline {
-                padding: calc(var(--spacing-unit) * 0.6) calc(var(--spacing-unit) * 1);
+                padding: 8px 16px;
                 font-size: 0.85rem;
             }
             .form-group input,
@@ -805,6 +774,7 @@
                 padding: 8px 10px;
                 font-size: 0.85rem;
             }
+            /* --- 结束新增 --- */
         }
     </style>
 </head>
