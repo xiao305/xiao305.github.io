@@ -7,12 +7,6 @@
     <base href="https://hjsf.uno/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- 新增：固定根字体大小，防止移动端跟随系统缩放 --- */
-        html {
-            font-size: 16px; /* 固定根字体大小为 16px */
-        }
-        /* --- 结束新增 --- */
-
         /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
@@ -216,6 +210,15 @@
         .btn i {
             margin-right: 5px;
         }
+        .btn-danger {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #bd2130;
+            border-color: #bd2130;
+        }
         /* 新增：管理员设置区域样式 */
         .admin-settings {
             background: white;
@@ -276,14 +279,14 @@
             border-radius: 6px;
             font-size: 0.95rem;
         }
-        /* - 优化1：调整输入框宽度 - */
+        /* --- 优化1：调整输入框宽度 --- */
         .setting-row input[type="number"] {
             width: 100px; /* 增加宽度 */
         }
         .setting-row input[type="text"] { /* 密码输入框样式 */
             width: 120px;
         }
-        /* - 结束优化1 - */
+        /* --- 结束优化1 --- */
         .current-status {
             margin-top: 10px;
             padding: 8px 12px;
@@ -577,7 +580,7 @@
         .admin-list tr:hover {
             background-color: #f9f9f9;
         }
-        /* - 优化2：管理员密码列样式 - */
+        /* --- 优化2：管理员密码列样式 --- */
         .password-cell {
             display: flex;
             align-items: center;
@@ -607,60 +610,224 @@
         .toggle-password-btn:hover {
             background-color: #e9ecef;
         }
-        /* - 结束优化2 - */
-        /* 响应式设计 */
+        /* --- 结束优化2 --- */
+        /* 响应式设计 - 桌面端保持不变 */
+        @media (min-width: 769px) {
+            /* 桌面端无需特殊调整，保持原有样式 */
+        }
+
+        /* 响应式设计 - 针对手机等小屏幕设备优化 */
         @media (max-width: 768px) {
+            /* --- 核心优化：锁定字体大小，不随系统缩放 --- */
+            body, h1, h2, h3, h4, h5, h6, p, a, li, div, span, button, input, select, textarea, .stat-number, .stat-label, .log-action, .log-details, .log-time, .tag, .status-tag, .password-display {
+                font-size: 14px !important; /* 锁定基础字体大小 */
+            }
+            .page-header h1 {
+                font-size: 1.8rem !important; /* 页面主标题 */
+            }
+            .settings-section h3 {
+                font-size: 1.3rem !important; /* 设置区域标题 */
+            }
+            .page-setting h4 {
+                font-size: 1.1rem !important; /* 页面设置标题 */
+            }
+            .admin-header h2 {
+                font-size: 1.5rem !important; /* 仪表盘标题 */
+            }
+            .stat-number {
+                font-size: 1.5rem !important; /* 统计数字 */
+            }
+            .btn {
+                font-size: 0.9rem !important; /* 按钮字体 */
+                padding: 10px 20px; /* 稍微减小按钮内边距 */
+            }
+            .btn i {
+                margin-right: 3px; /* 减小按钮图标间距 */
+            }
+            .action-btn {
+                font-size: 0.75rem !important; /* 操作按钮字体 */
+                padding: 4px 8px; /* 减小操作按钮内边距 */
+            }
+            /* --- 结束核心优化 --- */
+
+            /* 调整布局间距，使其更紧凑 */
             .nav-container {
+                padding: 10px 15px;
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
             }
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
+                gap: 15px;
             }
             .content-container {
                 padding: 0 15px;
             }
+            .page-header {
+                margin: 20px 0;
+            }
+            .page-header h1 {
+                margin-bottom: 8px;
+            }
+            .page-header h1::after {
+                width: 60px;
+                height: 3px;
+                bottom: -8px;
+            }
+            .page-header p {
+                font-size: 0.95rem !important;
+                margin: 15px auto;
+            }
             .login-container {
-                margin: 20px auto;
+                margin: 30px auto;
                 padding: 30px 20px;
+                max-width: 90%;
             }
-            .setting-row {
-                flex-direction: column;
-                align-items: flex-start;
+            .login-container h2 {
+                font-size: 1.5rem !important;
+                margin-bottom: 20px;
             }
-            .setting-row select, .setting-row input {
-                width: 100%;
-            }
-            .form-row {
-                flex-direction: column;
-            }
-            .message-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            .message-stats {
-                width: 100%;
-                justify-content: space-around;
+            .admin-panel {
+                padding: 20px;
             }
             .admin-header {
                 flex-direction: column;
                 gap: 15px;
                 align-items: flex-start;
+                margin-bottom: 20px;
             }
+            .admin-stats {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            .stat-card {
+                padding: 15px;
+            }
+            .stat-value {
+                font-size: 1.5rem !important;
+                margin: 8px 0;
+            }
+            .stat-label {
+                font-size: 0.8rem !important;
+            }
+            .admin-settings {
+                padding: 20px;
+                margin-top: 20px;
+            }
+            .settings-section {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            .settings-section h3 {
+                margin-bottom: 15px;
+            }
+            .page-setting {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+            .page-setting h4 {
+                margin: 0 0 12px 0;
+            }
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .setting-row label {
+                min-width: auto;
+            }
+            .setting-row select, .setting-row input {
+                width: 100%;
+            }
+            .current-status {
+                font-size: 0.85rem !important;
+                padding: 6px 10px;
+            }
+            .add-admin-form {
+                padding: 15px;
+                margin-top: 15px;
+            }
+            .add-admin-form h4 {
+                margin: 0 0 12px 0;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .form-row input {
+                min-width: auto;
+                padding: 8px 12px;
+            }
+            .form-row button {
+                padding: 8px 16px;
+            }
+            .messages-container {
+                padding: 20px;
+                margin-top: 20px;
+            }
+            .message-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+                margin-bottom: 15px;
+            }
+            .message-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+            .stat-item {
+                text-align: center;
+            }
+            .search-box {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .search-box input {
+                padding: 8px 12px;
+            }
+            .message-table {
+                font-size: 0.85rem !important;
+            }
+            .message-table th,
+            .message-table td {
+                padding: 8px 10px;
+            }
+            .logs-container {
+                margin-top: 30px;
+                padding: 15px;
+            }
+            .log-item {
+                padding: 8px 10px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .traffic-chart {
+                height: 150px;
+                padding: 10px;
+                margin: 15px 0;
+            }
+            .traffic-bar {
+                width: 20px;
+            }
+            .traffic-bar-label {
+                font-size: 0.7rem !important;
+                bottom: -20px;
+            }
+            .traffic-value {
+                font-size: 0.7rem !important;
+                top: -20px;
+            }
+            /* 管理员列表响应式调整 */
             .admin-list {
-                font-size: 0.85rem;
+                font-size: 0.85rem !important;
             }
             .admin-list th,
             .admin-list td {
                 padding: 8px 10px;
             }
-            .action-btn {
-                padding: 4px 8px;
-                font-size: 0.75rem;
-            }
-            /* 响应式下密码列调整 */
             .password-cell {
                 flex-direction: column;
                 align-items: flex-start;
@@ -668,54 +835,13 @@
             }
             .password-display {
                 width: 100%;
+                font-size: 0.8rem !important;
             }
             .toggle-password-btn {
-               align-self: flex-end; /* 按钮靠右 */
+                align-self: flex-end; /* 按钮靠右 */
+                padding: 4px 6px;
+                font-size: 0.8rem !important;
             }
-             /* --- 新增：移动端进一步优化按钮和输入框 --- */
-            .btn, .btn-outline {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            .form-group input,
-            .search-box input,
-            .form-row input {
-                padding: 10px 12px;
-                font-size: 0.9rem;
-            }
-            .message-table {
-                font-size: 0.85rem; /* 表格字体更小 */
-            }
-            .log-item, .log-time {
-                font-size: 0.8rem; /* 日志字体更小 */
-            }
-            /* --- 结束新增 --- */
-        }
-
-        @media (max-width: 480px) {
-             /* --- 新增：小屏幕手机上进一步优化 --- */
-            .btn, .btn-outline {
-                padding: 8px 16px;
-                font-size: 0.85rem;
-            }
-            .form-group input,
-            .search-box input,
-            .form-row input {
-                padding: 8px 10px;
-                font-size: 0.85rem;
-            }
-            .setting-row label {
-                min-width: 80px; /* 标签更窄 */
-            }
-            .page-header h1 {
-                font-size: 2rem; /* 标题更小 */
-            }
-             /* 确保模态框在小屏幕上也能适应 */
-            #changeAdminPasswordModal > div {
-                width: 95%;
-                padding: 15px;
-            }
-            /* --- 结束新增 --- */
         }
     </style>
 </head>
