@@ -74,13 +74,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px; /* 减小内边距 */
+            padding: 15px 20px;
         }
         .logo {
             display: flex;
             align-items: center;
-            gap: 8px; /* 减小间距 */
-            font-size: 1.2rem; /* 减小字体 */
+            gap: 10px;
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary);
             flex-shrink: 0; /* logo 不收缩 */
@@ -90,7 +90,7 @@
         }
         .nav-links {
             display: flex;
-            gap: 15px; /* 减小间距 */
+            gap: 25px;
             align-items: center;
             /* --- 新增：优化移动端显示 --- */
             flex-wrap: nowrap; /* 强制不换行 */
@@ -103,7 +103,7 @@
             position: relative;
             padding: 5px 0;
             transition: all 0.3s;
-            font-size: 0.95rem; /* 减小字体 */
+            font-size: 1rem; /* 固定字体 */
             white-space: nowrap; /* 链接文字不换行 */
             flex-shrink: 0; /* 链接不收缩 */
         }
@@ -134,39 +134,39 @@
         .content-container {
             max-width: 1200px;
             margin: 20px auto;
-            padding: 0 15px; /* 减小内边距 */
+            padding: 0 20px;
             flex: 1;
         }
         /* 页面标题样式 */
         .page-header {
             text-align: center;
-            margin: 25px 0; /* 减小外边距 */
+            margin: 30px 0;
             position: relative;
         }
         .page-header h1 {
             color: var(--primary);
-            font-size: 2rem; /* 减小字体 */
-            margin-bottom: 8px; /* 减小外边距 */
+            font-size: 2.5rem;
+            margin-bottom: 10px;
             position: relative;
             display: inline-block;
         }
         .page-header h1::after {
             content: '';
             position: absolute;
-            bottom: -8px; /* 调整位置 */
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px; /* 减小宽度 */
-            height: 3px; /* 减小高度 */
+            width: 80px;
+            height: 4px;
             background: linear-gradient(to right, var(--primary), var(--accent));
             border-radius: 2px;
         }
         .page-header p {
             color: var(--gray);
-            font-size: 1rem; /* 减小字体 */
+            font-size: 1.1rem;
             max-width: 800px;
-            margin: 15px auto; /* 减小外边距 */
-            line-height: 1.5; /* 调整行高 */
+            margin: 20px auto;
+            line-height: 1.6;
         }
         /* 页面切换效果 */
         .page {
@@ -183,7 +183,7 @@
         /* 首页内容 */
         .hero {
             text-align: center;
-            padding: 40px 20px; /* 调整内边距 */
+            padding: 50px 20px;
             background: white;
             border-radius: 15px;
             box-shadow: var(--shadow);
@@ -191,20 +191,20 @@
         }
         .hero h2 {
             color: var(--primary);
-            font-size: 2rem; /* 减小字体 */
-            margin-bottom: 15px;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
         }
         .hero p {
             color: var(--gray);
-            font-size: 1.1rem; /* 减小字体 */
-            margin-bottom: 20px;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
         }
         .btn {
             display: inline-block;
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 25px; /* 调整内边距 */
+            padding: 12px 30px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
@@ -223,7 +223,7 @@
             background: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
-            padding: 8px 20px; /* 调整内边距 */
+            padding: 10px 20px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
@@ -284,7 +284,7 @@
         /* 关于我们 */
         .about-content {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 12px;
             box-shadow: var(--shadow);
             line-height: 1.7;
@@ -310,7 +310,7 @@
         /* 联系方式 */
         .contact-info {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 12px;
             box-shadow: var(--shadow);
         }
@@ -378,24 +378,24 @@
         .wechat-id {
             background: var(--secondary);
             color: var(--primary);
-            padding: 10px 20px; /* 调整内边距 */
+            padding: 10px 20px;
             border-radius: 30px;
             font-weight: 600;
-            margin: 15px auto; /* 调整外边距 */
+            margin: 15px auto;
             width: fit-content;
             font-size: 1rem; /* 固定字体 */
             display: flex;
             align-items: center;
-            gap: 8px; /* 调整间距 */
+            gap: 8px;
         }
         /* 提示信息优化 */
         .shipping-notice {
             background: #FFF8E0;
             color: #856404;
-            padding: 10px; /* 调整内边距 */
+            padding: 10px;
             border-radius: 8px;
             border-left: 4px solid var(--accent);
-            margin: 15px 0; /* 调整外边距 */
+            margin: 15px 0;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -405,8 +405,8 @@
         }
         /* 广告区重构 */
         .ad-section {
-            margin: 30px 0; /* 调整外边距 */
-            padding: 20px; /* 调整内边距 */
+            margin: 30px 0;
+            padding: 20px;
             background: white;
             border-radius: 12px;
             box-shadow: var(--shadow);
@@ -447,7 +447,7 @@
         /* 留言表单 */
         .message-form {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 12px;
             box-shadow: var(--shadow);
             margin-top: 30px;
@@ -490,7 +490,7 @@
             background: var(--dark);
             color: white;
             text-align: center;
-            padding: 25px 0; /* 调整内边距 */
+            padding: 30px 0;
             margin-top: 40px;
         }
         .footer-content {
@@ -513,7 +513,7 @@
             position: absolute;
             bottom: -8px;
             left: 0;
-            width: 40px;
+            width: 50px;
             height: 2px;
             background: var(--accent);
         }
@@ -521,37 +521,28 @@
             list-style: none;
         }
         .footer-links li {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .footer-links a {
-            color: #ccc;
+            color: #ddd;
             text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.95rem; /* 固定字体 */
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 0.95rem; /* 固定字体 */
         }
         .footer-links a:hover {
-            color: white;
-        }
-        .footer-links a i {
             color: var(--accent);
+            padding-left: 5px;
         }
-        .copyright {
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #444;
+            border-top: 1px solid rgba(255,255,255,0.1);
             font-size: 0.9rem; /* 固定字体 */
             color: #aaa;
-        }
-        .copyright a {
-            color: #ccc;
-            text-decoration: none;
-        }
-        .copyright a:hover {
-            color: white;
-            text-decoration: underline;
         }
         /* 警告弹窗样式 */
         .warning-modal {
@@ -741,35 +732,92 @@
             font-size: 0.9rem;
             color: var(--gray);
         }
+        /* 密码弹窗样式 */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none; /* 默认隐藏 */
+            align-items: center;
+            justify-content: center;
+            z-index: 2001; /* 确保在警告弹窗之上 */
+            padding: 20px;
+        }
+        .password-modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .password-modal-title {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .password-modal-text {
+            margin-bottom: 20px;
+            color: #444;
+        }
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .password-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .password-modal-buttons .btn {
+            flex: 1;
+        }
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-container {
                 /* flex-direction: column; */ /* 移除这行，保持水平排列 */
-                gap: 10px; /* 减小间距 */
-                padding: 8px 10px; /* 进一步减小内边距 */
+                gap: 15px;
+                padding: 12px 15px;
             }
             .nav-links {
-                gap: 10px; /* 进一步减小链接间距 */
+                gap: 15px;
             }
             .nav-links a {
-                font-size: 0.85rem; /* 进一步减小链接字体 */
-                padding: 4px 6px; /* 减小链接内边距 */
+                font-size: 0.9rem; /* 减小链接字体 */
+                padding: 3px 5px; /* 减小链接内边距 */
             }
             .logo {
-                font-size: 1.1rem; /* 进一步减小logo字体 */
-                gap: 5px; /* 进一步减小logo内间距 */
+                font-size: 1.3rem; /* 减小logo字体 */
+                gap: 8px; /* 减小logo内间距 */
             }
             .logo i {
-                font-size: 1rem; /* 调整logo图标大小 */
+                font-size: 1.2rem; /* 调整logo图标大小 */
             }
             .page-header h1 {
-                font-size: 1.8rem; /* 调整标题字体 */
+                font-size: 2rem; /* 调整标题字体 */
+            }
+            .page-header h1::after {
+                width: 60px; /* 调整下划线宽度 */
+                height: 3px; /* 调整下划线高度 */
+                bottom: -8px; /* 调整下划线位置 */
+            }
+            .page-header p {
+                font-size: 1rem; /* 调整段落字体 */
             }
             .hero {
                 padding: 30px 15px; /* 调整内边距 */
             }
             .hero h2 {
-                font-size: 1.8rem; /* 调整标题字体 */
+                font-size: 2rem; /* 调整标题字体 */
             }
             .hero p {
                 font-size: 1rem; /* 调整段落字体 */
@@ -778,6 +826,17 @@
                 grid-template-columns: 1fr; /* 移动端单列 */
                 gap: 20px; /* 调整间距 */
                 padding: 0 15px; /* 调整内边距 */
+            }
+            .footer-section h3 {
+                font-size: 1.1rem; /* 调整标题字体 */
+            }
+            .footer-links a {
+                font-size: 0.9rem; /* 调整链接字体 */
+            }
+            .footer-bottom {
+                font-size: 0.8rem; /* 调整版权字体 */
+                padding-top: 20px; /* 调整内边距 */
+                margin-top: 20px; /* 调整外边距 */
             }
             .qr-code img {
                 width: 100px; /* 调整二维码大小 */
@@ -802,21 +861,20 @@
             .highlight p {
                 font-size: 0.85rem;
             }
-        }
-        /* 更小屏幕优化 */
-        @media (max-width: 480px) {
-            .nav-links a {
-                font-size: 0.8rem; /* 进一步减小链接字体 */
+            .message-form {
+                padding: 20px;
             }
-            .logo {
-                font-size: 1rem; /* 进一步减小logo字体 */
+            .form-group input,
+            .form-group textarea {
+                padding: 10px 12px;
             }
-             .qr-code img {
-                width: 90px; /* 进一步调整二维码大小 */
-                height: 90px;
+            .shipping-notice {
+                padding: 8px;
+                font-size: 0.8rem;
             }
-            .qr-code p {
-                font-size: 0.8rem; /* 进一步调整二维码文字 */
+            .wechat-id {
+                padding: 8px 16px;
+                font-size: 0.9rem;
             }
             .ad-title {
                 font-size: 1.2rem;
@@ -828,20 +886,30 @@
                 padding: 8px 16px;
                 font-size: 0.9rem;
             }
-            .shipping-notice {
-                padding: 8px;
-                font-size: 0.8rem;
+        }
+        /* 更小屏幕优化 */
+        @media (max-width: 480px) {
+            .nav-links a {
+                font-size: 0.85rem; /* 进一步减小链接字体 */
             }
-            .wechat-id {
-                padding: 8px 16px;
-                font-size: 0.9rem;
+            .logo {
+                font-size: 1.2rem; /* 进一步减小logo字体 */
             }
-            .message-form {
-                padding: 20px;
+            .qr-code img {
+                width: 90px; /* 进一步调整二维码大小 */
+                height: 90px;
             }
-            .form-group input,
-            .form-group textarea {
-                padding: 10px 12px;
+            .qr-code p {
+                font-size: 0.8rem; /* 进一步调整二维码文字 */
+            }
+            .footer-section h3 {
+                font-size: 1rem; /* 进一步调整标题字体 */
+            }
+            .footer-links a {
+                font-size: 0.85rem; /* 进一步调整链接字体 */
+            }
+            .footer-bottom {
+                font-size: 0.75rem; /* 进一步调整版权字体 */
             }
         }
     </style>
@@ -868,6 +936,19 @@
             <div class="modal-actions">
                 <button class="btn" onclick="enterPage()">立即进入</button>
                 <button class="btn btn-outline" onclick="closeModal()">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 密码弹窗 (关闭状态) -->
+    <div id="passwordModal" class="password-modal" style="display: none;">
+        <div class="password-modal-content">
+            <h2 class="password-modal-title">页面访问密码</h2>
+            <p id="passwordModalText" class="password-modal-text">页面 "特产商城" 已被管理员关闭。如需访问，请输入密码。</p>
+            <input type="password" id="pagePasswordInput" class="password-input" placeholder="请输入密码">
+            <div class="password-modal-buttons">
+                <button class="btn" id="confirmPasswordBtn">确认</button>
+                <button class="btn btn-outline" id="cancelPasswordBtn">取消</button>
             </div>
         </div>
     </div>
@@ -1104,7 +1185,7 @@
                 </ul>
             </div>
         </div>
-        <div class="copyright">
+        <div class="footer-bottom">
             <p>&copy; 2025 红姐私房美食. 保留所有权利. <a href="https://beian.miit.gov.cn/" target="_blank">晋ICP备XXXXXXXX号-X</a></p> <!-- 示例备案号 -->
         </div>
     </footer>
@@ -1242,7 +1323,7 @@
                     showCountdownModal(pageId, pageConfig.duration || 10);
                     break;
                 case 'closed':
-                    promptForPassword(pageId, passwords[pageId] || '');
+                    showPasswordModal(pageId);
                     break;
                 default:
                     console.warn(`页面 "${pageId}" 的状态 "${status}" 未知，默认允许访问。`);
@@ -1311,20 +1392,73 @@
             targetPageId = null; // 清除目标ID
         }
 
-        // 提示输入密码
-        function promptForPassword(pageId, correctPasswordHash) {
-            const password = prompt(`"${pageId}" 版块已被管理员关闭。\n请输入密码以继续访问:`);
-            if (password !== null) { // 用户点击了“确定”
-                if (btoa(password) === correctPasswordHash) { // 使用 Base64 编码比较
+        // 显示密码弹窗
+        function showPasswordModal(pageId) {
+            const modal = document.getElementById('passwordModal');
+            const textElement = document.getElementById('passwordModalText');
+            const inputElement = document.getElementById('pagePasswordInput');
+
+            // 设置提示文本
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            textElement.textContent = `页面 "${pageName}" 已被管理员关闭。如需访问，请输入密码。`;
+
+            // 清空输入框
+            inputElement.value = '';
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+
+            // 为确认按钮添加一次性事件监听器
+            const handleConfirm = function() {
+                const enteredPassword = inputElement.value.trim();
+                // - 修改：优先使用从 OSS 读取并更新的全局 window.pagePasswords -
+                const requiredPassword = (window.pagePasswords && window.pagePasswords[pageId]) || (pagePasswords && pagePasswords[pageId]);
+                // - 结束修改 -
+                if (enteredPassword === requiredPassword && requiredPassword !== '') {
+                    // 密码正确，关闭弹窗并切换页面
+                    modal.style.display = 'none';
                     switchPage(pageId);
                 } else {
-                    alert('密码错误！');
-                    // 密码错误后可以选择再次提示或返回
-                    // 这里选择再次提示
-                    promptForPassword(pageId, correctPasswordHash);
+                    // 密码错误或未设置
+                    alert('密码错误或页面未设置密码，请联系管理员。');
                 }
-            }
-            // 如果用户点击“取消”，则不执行任何操作，停留在当前页面
+            };
+
+            // 为取消按钮添加一次性事件监听器
+            const handleCancel = function() {
+                modal.style.display = 'none';
+            };
+
+            // 添加事件监听器
+            document.getElementById('confirmPasswordBtn').addEventListener('click', handleConfirm, { once: true });
+            document.getElementById('cancelPasswordBtn').addEventListener('click', handleCancel, { once: true });
+
+            // 为输入框添加回车事件监听器
+            const handleEnterKey = function(event) {
+                if (event.key === 'Enter') {
+                    handleConfirm();
+                }
+            };
+            inputElement.addEventListener('keydown', handleEnterKey);
+
+            // 移除事件监听器的函数
+            const removeEventListeners = function() {
+                document.getElementById('confirmPasswordBtn').removeEventListener('click', handleConfirm);
+                document.getElementById('cancelPasswordBtn').removeEventListener('click', handleCancel);
+                inputElement.removeEventListener('keydown', handleEnterKey);
+            };
+
+            // 在弹窗关闭时移除事件监听器
+            modal.addEventListener('transitionend', function() {
+                if (modal.style.display === 'none') {
+                    removeEventListeners();
+                }
+            });
         }
 
         // 页面加载完成后初始化
