@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 确保 viewport 设置正确 -->
     <title>红姐私房美食 - 管理员控制台</title>
-    <base href="https://hjsf.uno/"> <!-- 添加 base 标签 -->
+    <base href="https://hjsf.uno/"> <!-- 确保 base href 是新域名 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* 优化后的样式系统 */
@@ -16,6 +16,11 @@
             --light: #f8f9fa;
             --gray: #6c757d;
             --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            /* --- 新增：为移动端定义更小的基础尺寸 --- */
+            --font-size-base: 16px; /* 基础字体大小 */
+            --spacing-unit: 15px; /* 基础间距单位 */
+            --border-radius: 8px; /* 基础圆角 */
+            /* --- 结束新增 --- */
         }
         * {
             margin: 0;
@@ -27,11 +32,29 @@
             background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
             margin: 0;
             padding: 0;
+            /* --- 优化：使用 CSS 变量并为移动端调整字体大小 --- */
+            font-size: var(--font-size-base);
             min-height: 100vh;
             color: var(--dark);
             display: flex;
             flex-direction: column;
         }
+        /* --- 优化：为移动端调整基础字体大小 --- */
+        @media (max-width: 768px) {
+            :root {
+                --font-size-base: 14px; /* 手机上更小的字体 */
+                --spacing-unit: 12px; /* 手机上更紧凑的间距 */
+            }
+        }
+        @media (max-width: 480px) {
+            :root {
+                --font-size-base: 13px; /* 小屏幕手机上更小的字体 */
+                --spacing-unit: 10px;
+            }
+        }
+        /* --- 结束优化 --- */
+
+
         /* 导航栏样式 */
         .navbar {
             background: rgba(255,255,255,0.95);
@@ -40,6 +63,8 @@
             top: 0;
             z-index: 1000;
             border-bottom: 2px solid var(--secondary);
+            /* --- 优化：移动端调整导航栏内边距 --- */
+            padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
         }
         .nav-container {
             max-width: 1200px;
@@ -47,13 +72,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            /* --- 优化：移动端调整容器内边距 --- */
+            padding: 0 calc(var(--spacing-unit) * 0.5);
         }
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.5rem;
+            /* --- 优化：移动端调整 Logo 字体大小 --- */
+            font-size: 1.2rem;
             font-weight: bold;
             color: var(--primary);
         }
@@ -62,10 +89,13 @@
         }
         .nav-links {
             display: flex;
-            gap: 25px;
+            /* --- 优化：移动端调整链接间距 --- */
+            gap: calc(var(--spacing-unit) * 0.8);
         }
         .nav-links a {
             text-decoration: none;
+            /* --- 优化：移动端调整链接字体大小和内边距 --- */
+            font-size: 0.9rem;
             color: var(--dark);
             font-weight: 500;
             position: relative;
@@ -98,20 +128,23 @@
         /* 内容容器 */
         .content-container {
             max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
+            /* --- 优化：移动端调整内容容器左右内边距 --- */
+            margin: calc(var(--spacing-unit) * 1.3) auto;
+            padding: 0 var(--spacing-unit);
             flex: 1;
         }
         /* 页面标题样式 */
         .page-header {
             text-align: center;
-            margin: 30px 0;
+            /* --- 优化：移动端调整标题上下边距 --- */
+            margin: calc(var(--spacing-unit) * 2) 0;
             position: relative;
         }
         .page-header h1 {
             color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            /* --- 优化：移动端调整标题字体大小 --- */
+            font-size: 1.8rem;
+            margin-bottom: calc(var(--spacing-unit) * 0.7);
             position: relative;
             display: inline-block;
         }
@@ -128,25 +161,29 @@
         }
         .page-header p {
             color: var(--gray);
-            font-size: 1.1rem;
+            /* --- 优化：移动端调整副标题字体大小 --- */
+            font-size: 1rem;
             max-width: 800px;
-            margin: 20px auto;
+            /* --- 优化：移动端调整副标题上下边距 --- */
+            margin: var(--spacing-unit) auto calc(var(--spacing-unit) * 1.3);
             line-height: 1.6;
         }
         /* 登录表单样式 */
         .login-container {
             max-width: 400px;
-            margin: 50px auto;
+            /* --- 优化：移动端调整登录框边距 --- */
+            margin: calc(var(--spacing-unit) * 3) auto;
             background: white;
             padding: 40px;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             text-align: center;
         }
         .login-container h2 {
             color: var(--primary);
+            /* --- 优化：移动端调整登录标题字体大小 --- */
+            font-size: 1.5rem;
             margin-bottom: 30px;
-            font-size: 1.8rem;
         }
         .form-group {
             margin-bottom: 20px;
@@ -160,9 +197,10 @@
         }
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            /* --- 优化：移动端调整输入框内边距 --- */
+            padding: calc(var(--spacing-unit) * 0.8) calc(var(--spacing-unit) * 1);
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 1rem;
             transition: border-color 0.3s;
         }
@@ -176,7 +214,8 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 30px;
+            /* --- 优化：移动端调整按钮内边距 --- */
+            padding: calc(var(--spacing-unit) * 0.8) calc(var(--spacing-unit) * 1.5);
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
@@ -195,7 +234,8 @@
             background: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
-            padding: 10px 20px;
+            /* --- 优化：移动端调整按钮内边距 --- */
+            padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1.3);
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
@@ -210,19 +250,10 @@
         .btn i {
             margin-right: 5px;
         }
-        .btn-danger {
-            background: #dc3545;
-            border-color: #dc3545;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #bd2130;
-            border-color: #bd2130;
-        }
         /* 新增：管理员设置区域样式 */
         .admin-settings {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 25px;
             margin-top: 30px;
             box-shadow: var(--shadow);
@@ -333,18 +364,20 @@
         .form-row input {
             flex: 1;
             min-width: 200px;
-            padding: 10px 15px;
+            /* --- 优化：移动端调整输入框内边距 --- */
+            padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1);
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 1rem;
         }
         .form-row button {
-            padding: 10px 20px;
+            /* --- 优化：移动端调整按钮内边距 --- */
+            padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1.3);
         }
         /* 留言管理样式 */
         .messages-container {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 25px;
             margin-top: 30px;
             box-shadow: var(--shadow);
@@ -375,6 +408,8 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            /* --- 优化：移动端调整表格字体大小 --- */
+            font-size: 0.9rem;
         }
         .message-table th,
         .message-table td {
@@ -411,7 +446,7 @@
         }
         .stat-card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 20px;
             box-shadow: var(--shadow);
             text-align: center;
@@ -439,9 +474,10 @@
         }
         .search-box input {
             flex: 1;
-            padding: 10px 15px;
+            /* --- 优化：移动端调整搜索框内边距 --- */
+            padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1);
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 1rem;
         }
         .action-buttons {
@@ -450,7 +486,8 @@
             margin-top: 10px;
         }
         .action-btn {
-            padding: 6px 12px;
+            /* --- 优化：移动端调整操作按钮内边距和字体大小 --- */
+            padding: calc(var(--spacing-unit) * 0.4) calc(var(--spacing-unit) * 0.8);
             border-radius: 4px;
             background: #f5f5f5;
             border: 1px solid #ddd;
@@ -476,7 +513,7 @@
         .logs-container {
             margin-top: 40px;
             background: white;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 20px;
             box-shadow: var(--shadow);
         }
@@ -485,6 +522,8 @@
             border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
+            /* --- 优化：移动端调整日志项字体大小 --- */
+            font-size: 0.85rem;
         }
         .log-item:last-child {
             border-bottom: none;
@@ -528,7 +567,7 @@
         .traffic-chart {
             height: 200px;
             background: #f9f9f9;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             margin: 20px 0;
             display: flex;
             align-items: flex-end;
@@ -611,6 +650,8 @@
             background-color: #e9ecef;
         }
         /* --- 结束优化2 --- */
+
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-container {
@@ -674,6 +715,48 @@
             }
             .toggle-password-btn {
                align-self: flex-end; /* 按钮靠右 */
+            }
+             /* --- 优化：移动端进一步调整按钮和输入框 --- */
+            .btn, .btn-outline {
+                padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1.2);
+                font-size: 0.9rem;
+            }
+            .form-group input,
+            .search-box input,
+            .form-row input {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            .message-table {
+                font-size: 0.85rem; /* 表格字体更小 */
+            }
+            .log-item, .log-time {
+                font-size: 0.8rem; /* 日志字体更小 */
+            }
+        }
+
+        @media (max-width: 480px) {
+             /* --- 优化：小屏幕手机上进一步调整 --- */
+            .btn, .btn-outline {
+                padding: calc(var(--spacing-unit) * 0.6) calc(var(--spacing-unit) * 1);
+                font-size: 0.85rem;
+            }
+            .form-group input,
+            .search-box input,
+            .form-row input {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            .setting-row label {
+                min-width: 80px; /* 标签更窄 */
+            }
+            .page-header h1 {
+                font-size: 1.5rem; /* 标题更小 */
+            }
+             /* 确保模态框在小屏幕上也能适应 */
+            #changeAdminPasswordModal > div {
+                width: 95%;
+                padding: 15px;
             }
         }
     </style>
