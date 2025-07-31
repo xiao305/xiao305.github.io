@@ -2,12 +2,12 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>红姐私房美食 - 家的味道</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- 禁止用户缩放 -->
+    <title>红姐私房美食</title>
     <base href="https://hjsf.uno/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 核心样式 */
+        /* 优化后的样式系统 */
         :root {
             --primary: #e4393c;
             --secondary: #FFF0F0;
@@ -22,8 +22,19 @@
             padding: 0;
             box-sizing: border-box;
         }
+        /* --- 新增：锁定字体大小，防止移动端缩放 --- */
+        html {
+            /* 禁止用户缩放 */
+            touch-action: manipulation;
+        }
         body {
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            /* 使用固定字体大小，不随系统设置变化 */
+            font-size: 16px; /* 设置基准字体大小 */
+            /* 禁止文本大小调整 */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
             background: linear-gradient(145deg, #FFF8F8 0%, #FFF 100%);
             margin: 0;
             padding: 0;
@@ -32,11 +43,8 @@
             display: flex;
             flex-direction: column;
         }
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        /* 导航栏 */
+        /* --- 结束新增 --- */
+        /* 导航栏样式 - 添加移动端隐藏功能 */
         .navbar {
             background: rgba(255,255,255,0.95);
             box-shadow: var(--shadow);
@@ -44,6 +52,21 @@
             top: 0;
             z-index: 1000;
             border-bottom: 2px solid var(--secondary);
+            transition: transform 0.3s ease;
+            /* --- 新增：优化移动端显示 --- */
+            white-space: nowrap; /* 防止内部元素换行 */
+            overflow-x: auto; /* 如果内容过宽，允许水平滚动 */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            /* --- 结束新增 --- */
+        }
+        /* --- 新增：隐藏滚动条 --- */
+        .navbar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera*/
+        }
+        /* --- 结束新增 --- */
+        .navbar.hide-nav {
+            transform: translateY(-100%);
         }
         .nav-container {
             max-width: 1200px;
@@ -51,29 +74,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 10px 15px; /* 减小内边距 */
         }
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
+            gap: 8px; /* 减小间距 */
+            font-size: 1.2rem; /* 减小字体 */
             font-weight: bold;
             color: var(--primary);
+            flex-shrink: 0; /* logo 不收缩 */
         }
         .logo i {
             color: var(--accent);
         }
         .nav-links {
             display: flex;
-            gap: 25px;
+            gap: 15px; /* 减小间距 */
+            align-items: center;
+            /* --- 新增：优化移动端显示 --- */
+            flex-wrap: nowrap; /* 强制不换行 */
+            /* --- 结束新增 --- */
         }
         .nav-links a {
+            text-decoration: none;
             color: var(--dark);
             font-weight: 500;
             position: relative;
             padding: 5px 0;
             transition: all 0.3s;
+            font-size: 0.95rem; /* 减小字体 */
+            white-space: nowrap; /* 链接文字不换行 */
+            flex-shrink: 0; /* 链接不收缩 */
         }
         .nav-links a:hover {
             color: var(--primary);
@@ -98,272 +130,57 @@
         .nav-links a.active::after {
             width: 100%;
         }
-        /* 主要内容容器 */
+        /* 内容容器 */
         .content-container {
             max-width: 1200px;
             margin: 20px auto;
-            padding: 0 20px;
+            padding: 0 15px; /* 减小内边距 */
             flex: 1;
         }
-        /* 页面 */
+        /* 页面切换效果 */
         .page {
             display: none;
+            animation: fadeIn 0.5s ease forwards;
         }
         .page.active {
             display: block;
         }
-        /* 首页英雄区 */
-        .home-hero {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 首页内容 */
+        .hero {
             text-align: center;
-            padding: 60px 20px;
-            background: linear-gradient(135deg, var(--secondary) 0%, #ffffff 100%);
-            border-radius: 20px;
-            margin-bottom: 40px;
-            box-shadow: var(--shadow);
-        }
-        .home-hero h1 {
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        .home-hero p {
-            color: var(--gray);
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto 30px;
-            line-height: 1.6;
-        }
-        /* 特色功能网格 */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        .feature-card {
+            padding: 40px 20px; /* 调整内边距 */
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            text-align: center;
             box-shadow: var(--shadow);
-            transition: all 0.3s;
-            border-top: 4px solid var(--primary);
+            margin-bottom: 30px;
         }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
-        }
-        .feature-card i {
-            font-size: 2.5rem;
+        .hero h2 {
             color: var(--primary);
-            margin-bottom: 20px;
-        }
-        .feature-card h3 {
-            color: var(--dark);
+            font-size: 2rem; /* 减小字体 */
             margin-bottom: 15px;
         }
-        .feature-card p {
+        .hero p {
             color: var(--gray);
-            line-height: 1.6;
-        }
-        /* 产品网格 */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-        .product-image {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .product-card h3 {
-            color: var(--dark);
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        .product-price {
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-        .product-description {
-            color: var(--gray);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        /* 关于我们 & 联系我们 */
-        .about-section, .contact-section {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
-        h2 {
-            color: var(--primary);
-            margin-bottom: 25px;
-            padding-left: 30px;
-            position: relative;
-            font-size: 1.8rem;
-        }
-        h2 i {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent);
-        }
-        .about-content {
-            line-height: 1.8;
-            color: var(--gray);
-        }
-        .contact-box {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .contact-info {
+            font-size: 1.1rem; /* 减小字体 */
             margin-bottom: 20px;
         }
-        .contact-info p, .contact-info a {
-            margin: 10px 0;
-            color: var(--gray);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .contact-info a:hover {
-            color: var(--primary);
-        }
-        .contact-info i {
-            color: var(--primary);
-            width: 20px;
-        }
-        .qr-section {
-            text-align: center;
-        }
-        .qr-code {
-            width: 180px;
-            height: auto;
-            max-width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: contain;
-            margin: 20px auto;
-            border: 3px solid var(--primary);
-            border-radius: 16px;
-            padding: 10px;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        .qr-code:hover {
-            transform: scale(1.05);
-        }
-        .qr-tip {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-        .wechat-id {
-            background: var(--secondary);
-            color: var(--primary);
-            padding: 12px 25px;
-            border-radius: 30px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-            box-shadow: 0 2px 5px rgba(228, 57, 60, 0.2);
-        }
-        /* 页脚 */
-        .footer {
-            background: var(--dark);
-            color: white;
-            margin-top: 50px;
-        }
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
-        .footer-section h3 {
-            color: var(--accent);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-        }
-        .footer-links {
-            list-style: none;
-        }
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-        .footer-links a {
-            color: #ccc;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .footer-links a:hover {
-            color: var(--accent);
-            transform: translateX(5px);
-        }
-        .footer-links a i {
-            font-size: 0.8rem;
-        }
-        .footer-bottom {
-            text-align: center;
-            padding: 20px;
-            border-top: 1px solid #444;
-            background: rgba(0,0,0,0.2);
-        }
-        .footer-bottom p {
-            margin: 5px 0;
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-        /* 按钮样式 */
         .btn {
             display: inline-block;
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 10px 25px; /* 调整内边距 */
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
             transition: all 0.3s;
             cursor: pointer;
             text-align: center;
+            font-size: 1rem; /* 固定字体 */
         }
         .btn:hover {
             background: #c0392b;
@@ -375,58 +192,242 @@
             background: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
-            padding: 10px 20px;
+            padding: 8px 20px; /* 调整内边距 */
             border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
             transition: all 0.3s;
             cursor: pointer;
             text-align: center;
+            font-size: 1rem; /* 固定字体 */
         }
         .btn-outline:hover {
             background: var(--primary);
             color: white;
         }
-        /* 密码模态框 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
+        .btn i {
+            margin-right: 5px;
+        }
+        /* 产品展示区 */
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .product-image {
             width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
+            height: 200px;
+            object-fit: cover;
         }
-        .modal-content {
-            background-color: white;
-            margin: auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            text-align: center;
-            position: relative;
+        .product-info {
+            padding: 15px;
         }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            cursor: pointer;
+        .product-info h3 {
+            margin: 0 0 10px 0;
+            color: var(--dark);
+            font-size: 1.2rem; /* 固定字体 */
         }
-        .close:hover {
+        .product-info p {
+            color: var(--gray);
+            font-size: 0.9rem; /* 固定字体 */
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .product-price {
             color: var(--primary);
+            font-weight: bold;
+            font-size: 1.1rem; /* 固定字体 */
+        }
+        /* 关于我们 */
+        .about-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            line-height: 1.7;
+        }
+        .about-content h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .about-content p {
+            margin-bottom: 15px;
+            font-size: 1rem; /* 固定字体 */
+        }
+        .owner-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 20px auto;
+            display: block;
+            border: 3px solid var(--secondary);
+        }
+        /* 联系方式 */
+        .contact-info {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        .contact-info h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        .contact-item i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            width: 30px;
+            text-align: center;
+        }
+        .contact-details h3 {
+            margin: 0 0 5px 0;
+            color: var(--dark);
+            font-size: 1.1rem; /* 固定字体 */
+        }
+        .contact-details p, .contact-details a {
+            margin: 0;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 1rem; /* 固定字体 */
+        }
+        .contact-details a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        .qr-codes {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .qr-code {
+            text-align: center;
+            transition: all 0.3s;
+            display: block;
+        }
+        .qr-code:hover {
+            transform: scale(1.03);
+            border-color: var(--accent);
+        }
+        .qr-code img {
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--light);
+            border-radius: 10px;
+        }
+        .qr-code p {
+            margin-top: 10px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem; /* 固定字体 */
+        }
+        /* 微信号展示优化 */
+        .wechat-id {
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 10px 20px; /* 调整内边距 */
+            border-radius: 30px;
+            font-weight: 600;
+            margin: 15px auto; /* 调整外边距 */
+            width: fit-content;
+            font-size: 1rem; /* 固定字体 */
+            display: flex;
+            align-items: center;
+            gap: 8px; /* 调整间距 */
+        }
+        /* 提示信息优化 */
+        .shipping-notice {
+            background: #FFF8E0;
+            color: #856404;
+            padding: 10px; /* 调整内边距 */
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            margin: 15px 0; /* 调整外边距 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            cursor: pointer;
+            font-size: 0.9rem; /* 固定字体 */
+        }
+        /* 广告区重构 */
+        .ad-section {
+            margin: 30px 0; /* 调整外边距 */
+            padding: 20px; /* 调整内边距 */
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        .ad-section h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem; /* 固定字体 */
+        }
+        .ad-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .ad-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        .ad-item i {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+        .ad-text h3 {
+            margin: 0 0 5px 0;
+            color: var(--dark);
+            font-size: 1.1rem; /* 固定字体 */
+        }
+        .ad-text p {
+            margin: 0;
+            color: var(--gray);
+            font-size: 0.95rem; /* 固定字体 */
+        }
+        /* 留言表单 */
+        .message-form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+        .message-form h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
         }
         .form-group {
             margin-bottom: 20px;
-            text-align: left;
         }
         .form-group label {
             display: block;
@@ -434,185 +435,156 @@
             font-weight: 500;
             color: var(--dark);
         }
-        .form-group input {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1rem; /* 固定字体 */
+            transition: border-color 0.3s;
         }
-        /* 倒计时模态框 */
-        .countdown-modal-content {
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(228, 57, 60, 0.1);
+        }
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        /* 页脚 */
+        .footer {
+            background: var(--dark);
+            color: white;
             text-align: center;
+            padding: 25px 0; /* 调整内边距 */
+            margin-top: 40px;
         }
-        .countdown-timer {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 20px 0;
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            text-align: left;
+            padding: 0 20px;
         }
-        /* --- 新增：移动端深度优化 --- */
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem; /* 固定字体 */
+            position: relative;
+            display: inline-block;
+        }
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--accent);
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem; /* 固定字体 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .footer-links a:hover {
+            color: white;
+        }
+        .footer-links a i {
+            color: var(--accent);
+        }
+        .copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 0.9rem; /* 固定字体 */
+            color: #aaa;
+        }
+        .copyright a {
+            color: #ccc;
+            text-decoration: none;
+        }
+        .copyright a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        /* 响应式设计 */
         @media (max-width: 768px) {
-            /* 锁定文本大小调整，防止系统放大 */
-            html {
-                -webkit-text-size-adjust: 100%;
-                text-size-adjust: 100%;
-            }
-
-            /* 调整基础字体大小 */
-            body {
-                font-size: 14px; /* 从默认可能的 16px 或系统字体减小 */
-            }
-
-            /* 调整页面标题 */
-            .page-header h1 {
-                font-size: 1.8rem; /* 原为 2.5rem */
-                margin-bottom: 8px;
-            }
-            .page-header p {
-                font-size: 0.95rem; /* 原为 1.1rem */
-                max-width: 100%;
-                margin: 15px auto;
-                line-height: 1.5; /* 稍微减小行高 */
-            }
-
-            /* 调整导航栏 */
             .nav-container {
-                padding: 10px 15px; /* 减小内边距 */
-                flex-direction: column; /* 垂直排列 */
+                /* flex-direction: column; */ /* 移除这行，保持水平排列 */
                 gap: 10px; /* 减小间距 */
-            }
-            .logo {
-                font-size: 1.3rem; /* 减小 Logo 字体 */
-                gap: 8px;
+                padding: 8px 10px; /* 进一步减小内边距 */
             }
             .nav-links {
-                flex-wrap: wrap; /* 换行显示 */
-                justify-content: center; /* 居中对齐 */
-                gap: 15px; /* 减小链接间距 */
+                gap: 10px; /* 进一步减小链接间距 */
             }
             .nav-links a {
-                font-size: 0.95rem; /* 减小导航链接字体 */
-                padding: 4px 0; /* 减小内边距 */
+                font-size: 0.85rem; /* 进一步减小链接字体 */
+                padding: 4px 6px; /* 减小链接内边距 */
             }
-
-            /* 调整内容容器 */
-            .content-container {
-                padding: 0 15px; /* 减小左右内边距 */
+            .logo {
+                font-size: 1.1rem; /* 进一步减小logo字体 */
+                gap: 5px; /* 进一步减小logo内间距 */
             }
-            .home-hero {
-                padding: 30px 20px; /* 减小内边距 */
+            .logo i {
+                font-size: 1rem; /* 调整logo图标大小 */
             }
-            .home-hero h1 {
-                font-size: 1.6rem; /* 减小主标题 */
+            .hero {
+                padding: 30px 15px; /* 调整内边距 */
             }
-            .home-hero p {
-                font-size: 0.95rem; /* 减小描述 */
+            .hero h2 {
+                font-size: 1.8rem; /* 调整标题字体 */
             }
-            .features-grid {
-                grid-template-columns: 1fr; /* 在小屏幕上变为单列 */
-                gap: 20px; /* 减小卡片间距 */
+            .hero p {
+                font-size: 1rem; /* 调整段落字体 */
             }
-            .feature-card {
-                padding: 20px 15px; /* 减小卡片内边距 */
-            }
-            .feature-card h3 {
-                font-size: 1.2rem; /* 减小卡片标题 */
-            }
-            .feature-card p {
-                font-size: 0.9rem; /* 减小卡片描述 */
-            }
-
-            /* 调整产品卡片 */
-            .product-grid {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* 更小的最小宽度 */
-                gap: 15px; /* 减小间距 */
-            }
-            .product-card {
-                padding: 12px; /* 减小内边距 */
-            }
-            .product-card h3 {
-                font-size: 1rem; /* 减小产品名称 */
-            }
-            .product-price {
-                font-size: 1rem; /* 减小价格 */
-            }
-            .product-description {
-                font-size: 0.85rem; /* 减小描述 */
-            }
-
-            /* 调整关于/联系页面 */
-            .about-section, .contact-section {
-                padding: 20px 15px; /* 减小内边距 */
-            }
-            h2 {
-                font-size: 1.3rem; /* 减小二级标题 */
-                margin-bottom: 12px;
-                padding-left: 25px; /* 减小图标间距 */
-            }
-            .contact-box {
-                padding: 20px 15px; /* 减小内边距 */
-                margin-bottom: 20px; /* 减小底部间距 */
-            }
-            .contact-info p, .contact-info a {
-                font-size: 0.9rem; /* 减小联系信息字体 */
-            }
-            .qr-code {
-                width: 120px; /* 减小二维码尺寸 */
-                height: 120px;
-            }
-            .wechat-id {
-                font-size: 1rem; /* 减小微信号字体 */
-                padding: 10px 20px; /* 减小内边距 */
-                gap: 8px;
-            }
-
-            /* 调整页脚 */
             .footer-content {
-                grid-template-columns: 1fr; /* 单列 */
-                gap: 20px; /* 减小区块间距 */
-                padding: 20px 15px; /* 减小内边距 */
+                grid-template-columns: 1fr; /* 移动端单列 */
+                gap: 20px; /* 调整间距 */
+                padding: 0 15px; /* 调整内边距 */
             }
-            .footer-section h3 {
-                font-size: 1.1rem; /* 减小页脚标题 */
+            .qr-code img {
+                width: 100px; /* 调整二维码大小 */
+                height: 100px;
             }
-            .footer-links li, .footer-links a {
-                font-size: 0.9rem; /* 减小页脚链接字体 */
+            .qr-code p {
+                font-size: 0.85rem; /* 调整二维码文字 */
             }
-            .footer-bottom {
-                padding: 15px; /* 减小底部内边距 */
-                font-size: 0.8rem; /* 减小版权信息字体 */
-            }
-
-            /* 调整按钮 */
-            .btn, .btn-outline {
-                padding: 10px 20px; /* 稍微减小按钮内边距 */
-                font-size: 0.95rem; /* 减小按钮字体 */
-            }
-
-            /* 调整模态框 */
-            .modal-content {
-                padding: 20px; /* 减小内边距 */
-                width: 95%; /* 增加宽度 */
-            }
-            .modal-content h2 {
-                font-size: 1.4rem; /* 减小模态框标题 */
-            }
-            .modal-content p {
-                font-size: 0.95rem; /* 减小模态框描述 */
-            }
-            .form-group label {
-                font-size: 0.95rem; /* 减小表单标签 */
-            }
-            .form-group input {
-                font-size: 0.95rem; /* 减小表单输入框 */
-                padding: 10px 12px; /* 减小内边距 */
-            }
-            .countdown-timer {
-                font-size: 2rem; /* 减小倒计时字体 */
+            .ad-item {
+                flex-direction: column;
+                text-align: center;
             }
         }
-        /* --- 结束新增 --- */
+        /* 更小屏幕优化 */
+        @media (max-width: 480px) {
+            .nav-links a {
+                font-size: 0.8rem; /* 进一步减小链接字体 */
+            }
+            .logo {
+                font-size: 1rem; /* 进一步减小logo字体 */
+            }
+             .qr-code img {
+                width: 90px; /* 进一步调整二维码大小 */
+                height: 90px;
+            }
+            .qr-code p {
+                font-size: 0.8rem; /* 进一步调整二维码文字 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -635,138 +607,229 @@
 
     <!-- 主要内容 -->
     <div class="content-container">
-        <!-- 首页内容 -->
+        <!-- 首页 -->
         <div id="home" class="page active">
-            <div class="home-hero">
-                <h1><i class="fas fa-heart"></i> 品味家的味道</h1>
-                <p>红姐私房美食，传承经典工艺，用心制作每一份特产。选用优质原料，带给您最纯正的家乡风味。</p>
-                <a href="#" class="btn" data-page="products"><i class="fas fa-shopping-bag"></i> 立即选购</a>
+            <div class="hero">
+                <h2>欢迎来到红姐私房美食</h2>
+                <p>传承地道风味，用心做好每一份美食</p>
+                <a href="#" class="btn" onclick="switchPage('products')"><i class="fas fa-shopping-bag"></i> 立即选购</a>
             </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-leaf"></i>
-                    <h3>精选原料</h3>
-                    <p>严格挑选每一份食材，确保品质上乘，为您带来健康美味。</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-cookie-bite"></i>
-                    <h3>传统工艺</h3>
-                    <p>沿用古老配方与手工技艺，保留食物最原始的香味与口感。</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-truck"></i>
-                    <h3>快速配送</h3>
-                    <p>高效物流体系，确保您的美食新鲜送达，享受便捷服务。</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-headset"></i>
-                    <h3>贴心服务</h3>
-                    <p>专业客服团队，随时为您解答疑问，提供周到的购物体验。</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- 特产商城内容 -->
-        <div id="products" class="page">
-            <div class="page-header">
-                <h1><i class="fas fa-shopping-bag"></i> 特产商城</h1>
-                <p>探索我们的精选特产，每一款都承载着家的味道与温暖。</p>
-            </div>
-            
-            <div class="product-grid">
+            <div class="products">
                 <div class="product-card">
                     <img src="https://xiao305.github.io/1.jpg" alt="经典辣条" class="product-image">
-                    <h3>经典辣条</h3>
-                    <div class="product-price">¥15.00</div>
-                    <div class="product-description">香辣过瘾，儿时回忆的味道，独立小包装。</div>
+                    <div class="product-info">
+                        <h3>经典辣条</h3>
+                        <p>香辣过瘾，回味无穷的经典之作</p>
+                        <div class="product-price">¥ 1.50</div>
+                    </div>
                 </div>
                 <div class="product-card">
-                    <img src="https://xiao305.github.io/2.jpg" alt="香辣豆干" class="product-image">
-                    <h3>香辣豆干</h3>
-                    <div class="product-price">¥12.00</div>
-                    <div class="product-description">Q弹有嚼劲，香辣适中，是下酒佐餐的佳品。</div>
+                    <img src="https://xiao305.github.io/2.jpg" alt="烧烤味辣条" class="product-image">
+                    <div class="product-info">
+                        <h3>烧烤味辣条</h3>
+                        <p>浓郁烧烤香，满足你的味蕾幻想</p>
+                        <div class="product-price">¥ 1.50</div>
+                    </div>
                 </div>
                 <div class="product-card">
-                    <img src="https://xiao305.github.io/3.jpg" alt="山椒凤爪" class="product-image">
-                    <h3>山椒凤爪</h3>
-                    <div class="product-price">¥18.00</div>
-                    <div class="product-description">酸辣开胃，肉质饱满，富含胶原蛋白。</div>
+                    <img src="https://xiao305.github.io/3.jpg" alt="香干" class="product-image">
+                    <div class="product-info">
+                        <h3>香干</h3>
+                        <p>卤香四溢，口感劲道，营养丰富</p>
+                        <div class="product-price">¥ 2.00</div>
+                    </div>
                 </div>
-                <div class="product-card">
-                    <img src="https://xiao305.github.io/4.jpg" alt="牛肉酱" class="product-image">
-                    <h3>秘制牛肉酱</h3>
-                    <div class="product-price">¥25.00</div>
-                    <div class="product-description">精选牛肉粒，秘制配方，拌饭拌面皆宜。</div>
+            </div>
+
+            <div class="ad-section">
+                <h2><i class="fas fa-bullhorn"></i> 限时优惠</h2>
+                <div class="ad-content">
+                    <div class="ad-item">
+                        <i class="fas fa-gift"></i>
+                        <div class="ad-text">
+                            <h3>买二送一</h3>
+                            <p>购买任意两款辣条，免费赠送一款经典口味！</p>
+                        </div>
+                    </div>
+                    <div class="ad-item">
+                        <i class="fas fa-truck"></i>
+                        <div class="ad-text">
+                            <h3>满额包邮</h3>
+                            <p>单笔订单满30元，全国范围内免费快递到家！</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 关于我们内容 -->
+        <!-- 特产商城 -->
+        <div id="products" class="page">
+            <div class="hero">
+                <h2><i class="fas fa-shopping-bag"></i> 特产商城</h2>
+                <p>精选地道美食，总有一款适合你</p>
+            </div>
+
+            <div class="products">
+                <div class="product-card">
+                    <img src="https://xiao305.github.io/1.jpg" alt="经典辣条" class="product-image">
+                    <div class="product-info">
+                        <h3>经典辣条</h3>
+                        <p>香辣过瘾，回味无穷的经典之作</p>
+                        <div class="product-price">¥ 1.50</div>
+                        <button class="btn" onclick="showPasswordModal('products')"><i class="fas fa-lock"></i> 查看详情</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://xiao305.github.io/2.jpg" alt="烧烤味辣条" class="product-image">
+                    <div class="product-info">
+                        <h3>烧烤味辣条</h3>
+                        <p>浓郁烧烤香，满足你的味蕾幻想</p>
+                        <div class="product-price">¥ 1.50</div>
+                        <button class="btn" onclick="showPasswordModal('products')"><i class="fas fa-lock"></i> 查看详情</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://xiao305.github.io/3.jpg" alt="香干" class="product-image">
+                    <div class="product-info">
+                        <h3>香干</h3>
+                        <p>卤香四溢，口感劲道，营养丰富</p>
+                        <div class="product-price">¥ 2.00</div>
+                        <button class="btn" onclick="showPasswordModal('products')"><i class="fas fa-lock"></i> 查看详情</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://xiao305.github.io/4.jpg" alt="大面筋" class="product-image">
+                    <div class="product-info">
+                        <h3>大面筋</h3>
+                        <p>Q弹爽滑，酱香浓郁，大块满足</p>
+                        <div class="product-price">¥ 2.00</div>
+                        <button class="btn" onclick="showPasswordModal('products')"><i class="fas fa-lock"></i> 查看详情</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://xiao305.github.io/5.jpg" alt="小面筋" class="product-image">
+                    <div class="product-info">
+                        <h3>小面筋</h3>
+                        <p>小巧精致，一口一个，方便美味</p>
+                        <div class="product-price">¥ 1.50</div>
+                        <button class="btn" onclick="showPasswordModal('products')"><i class="fas fa-lock"></i> 查看详情</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://xiao305.github.io/6.jpg" alt="海带丝" class="product-image">
+                    <div class="product-info">
+                        <h3>海带丝</h3>
+                        <p>清爽解腻，富含膳食纤维</p>
+                        <div class="product-price">¥ 1.50</div>
+                        <button class="btn" onclick="showPasswordModal('products')"><i class="fas fa-lock"></i> 查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关于我们 -->
         <div id="about" class="page">
-            <div class="page-header">
-                <h1><i class="fas fa-info-circle"></i> 关于我们</h1>
-                <p>了解红姐私房美食的故事与坚持。</p>
+            <div class="hero">
+                <h2><i class="fas fa-info-circle"></i> 关于我们</h2>
+                <p>了解红姐私房美食的故事</p>
             </div>
-            
-            <div class="about-section">
-                <h2><i class="fas fa-utensils"></i> 品牌故事</h2>
-                <div class="about-content">
-                    <p>红姐私房美食源于一个简单的愿望：将家的味道分享给更多的人。创始人红姐，凭借对传统美食的热爱和几十年的厨艺经验，精心研制出一系列深受喜爱的特色小吃。</p>
-                    <p>我们坚持选用天然、优质的原材料，遵循古法工艺，不添加任何人工香精和防腐剂，只为保留食物最本真的味道。每一份产品都倾注了我们的心血与热情，希望能让您在品尝时，感受到那份来自厨房的温暖与诚意。</p>
-                </div>
-            </div>
-            
-            <div class="about-section">
-                <h2><i class="fas fa-bullseye"></i> 我们的理念</h2>
-                <div class="about-content">
-                    <p><strong>品质至上：</strong>从源头把控食材质量，严格遵守生产标准，确保每一份产品都安全、健康。</p>
-                    <p><strong>传承经典：</strong>尊重并传承传统美食文化，让经典的味道得以延续。</p>
-                    <p><strong>顾客为本：</strong>以顾客满意为核心，提供真诚、热情的服务，不断优化购物体验。</p>
-                </div>
+
+            <div class="about-content">
+                <img src="https://xiao305.github.io/hongjie.jpg" alt="红姐" class="owner-image">
+                <h2>红姐的故事</h2>
+                <p>大家好，我是红姐。从年轻时就对美食有着浓厚的兴趣，尤其钟爱那些简单却能带来幸福感的小食。多年前，我开始尝试制作辣条，希望复刻记忆中那熟悉的味道。</p>
+                <p>经过无数次的尝试和配方调整，我的手工辣条终于诞生了。没有机器的轰鸣，只有手工的温度；没有过多的添加剂，只有对食材的精心挑选和对工艺的执着。每一份辣条都饱含着我的用心和对美食的热爱。</p>
+                <p>现在，我希望通过这个小小的窗口，把我这份纯粹的美味分享给大家。无论你是在校学生，还是怀念儿时味道的大朋友，都希望你能在这里找到那份简单的快乐。</p>
+                <p>感谢每一位顾客的支持，你们的喜爱是我前进的最大动力！</p>
+                <p style="text-align: right; font-style: italic;">—— 红姐</p>
             </div>
         </div>
 
-        <!-- 联系方式内容 -->
+        <!-- 联系方式 -->
         <div id="contact" class="page">
-            <div class="page-header">
-                <h1><i class="fas fa-phone"></i> 联系方式</h1>
-                <p>如有任何疑问或需要帮助，请随时与我们联系。</p>
+            <div class="hero">
+                <h2><i class="fas fa-phone"></i> 联系我们</h2>
+                <p>有任何问题，欢迎随时联系我们</p>
             </div>
-            
-            <div class="contact-section">
-                <div class="contact-box">
-                    <h2>在线订购微信</h2>
-                    <p>📱 添加下方微信即可在线咨询与下单</p>
-                    <div class="contact-info">
-                        <p><i class="fas fa-user-circle"></i> 微信号: <strong>rr66tt8</strong></p>
-                        <p><i class="fas fa-clock"></i> 在线时间: 09:00 - 22:00</p>
-                    </div>
-                    <div class="qr-section">
-                        <img src="https://xiao305.github.io/xiao.jpg" alt="在线订购微信二维码" class="qr-code">
-                        <p class="qr-tip"><i class="fas fa-qrcode"></i> 扫码添加微信</p>
-                        <div class="wechat-id">
-                            <i class="fab fa-weixin"></i> 微信号: rr66tt8
-                        </div>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="contact-details">
+                        <h3>地址</h3>
+                        <p>湖南省岳阳市汨罗市红姐私房美食</p>
                     </div>
                 </div>
-                
-                <div class="contact-box">
-                    <h2>快递订单微信</h2>
-                    <p>📦 需要快递邮寄购买请添加该微信</p>
-                    <p style="background:#FFF3F3; padding:10px; border-radius:8px; color:#666;">【添加请备注"辣条订购" 优先处理】</p>
-                    <div class="contact-info">
-                        <p><i class="fas fa-user-circle"></i> 微信号: <strong>rr66tt8</strong></p>
-                        <p><i class="fas fa-clock"></i> 在线时间: 09:00 - 22:00</p>
-                    </div>
-                    <div class="qr-section">
-                        <img src="https://xiao305.github.io/xiao.jpg" alt="快递服务微信二维码" class="qr-code">
-                        <p class="qr-tip"><i class="fas fa-qrcode"></i> 扫码添加微信</p>
-                        <div class="wechat-id">
-                            <i class="fab fa-weixin"></i> 微信号: rr66tt8
-                        </div>
+
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <div class="contact-details">
+                        <h3>电话</h3>
+                        <p>19176603305</p>
                     </div>
                 </div>
+
+                <div class="contact-item">
+                    <i class="fas fa-weixin"></i>
+                    <div class="contact-details">
+                        <h3>微信</h3>
+                        <div class="wechat-id">
+                            <i class="fab fa-weixin"></i> rr66tt8
+                        </div>
+                        <p>添加微信好友，了解更多优惠信息</p>
+                    </div>
+                </div>
+
+                <div class="qr-codes">
+                    <div class="qr-code">
+                        <img src="https://xiao305.github.io/xiao.jpg" alt="微信二维码">
+                        <p>微信二维码</p>
+                    </div>
+                    <div class="qr-code">
+                        <img src="https://xiao305.github.io/zhifubao.jpg" alt="支付宝二维码">
+                        <p>支付宝二维码</p>
+                    </div>
+                </div>
+
+                <div class="shipping-notice" onclick="toggleShippingInfo()">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>📦 点击查看快递与自提须知</span>
+                </div>
+                <div id="shippingInfo" style="display: none; background: #f0f8ff; padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem;">
+                    <p><strong>🚚 快递服务:</strong></p>
+                    <ul style="padding-left: 20px;">
+                        <li>默认使用圆通快递，其他快递请联系协商。</li>
+                        <li>单笔订单满30元包邮，未满30元需付6元运费。</li>
+                        <li>下单后48小时内发货，偏远地区可能略有延迟。</li>
+                    </ul>
+                    <p><strong>🚶 自提服务:</strong></p>
+                    <ul style="padding-left: 20px;">
+                        <li>支持汨罗市内自提，地址：湖南省岳阳市汨罗市XXX路XXX号。</li>
+                        <li>自提前请先微信联系 <strong>rr66tt8</strong> 确认时间和库存。</li>
+                        <li>自提可享受部分商品优惠，详情请咨询。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 留言表单 -->
+            <div class="message-form">
+                <h2><i class="fas fa-comment-dots"></i> 给我们留言</h2>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label for="name">姓名 *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">电话 *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">留言内容 *</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> 发送留言</button>
+                </form>
             </div>
         </div>
     </div>
@@ -775,70 +838,59 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
+                <h3><i class="fas fa-utensils"></i> 关于我们</h3>
+                <p style="color: #ccc; font-size: 0.95rem; line-height: 1.6;">
+                    红姐私房美食，专注于手工制作地道风味小吃。用心选料，传统工艺，只为给您带来最纯正的味觉享受。
+                </p>
+            </div>
+            <div class="footer-section">
                 <h3><i class="fas fa-link"></i> 快速链接</h3>
                 <ul class="footer-links">
-                    <li><a href="#" data-page="home"><i class="fas fa-chevron-right"></i> 首页</a></li>
-                    <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
-                    <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
-                    <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
+                    <li><a href="#" onclick="switchPage('home')"><i class="fas fa-chevron-right"></i> 首页</a></li>
+                    <li><a href="#" onclick="switchPage('products')"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
+                    <li><a href="#" onclick="switchPage('about')"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
+                    <li><a href="#" onclick="switchPage('contact')"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h3><i class="fas fa-shopping-bag"></i> 热门产品</h3>
-                <ul class="footer-links">
-                    <li><a href="#"><i class="fas fa-star"></i> 经典辣条</a></li>
-                    <li><a href="#"><i class="fas fa-star"></i> 香辣豆干</a></li>
-                    <li><a href="#"><i class="fas fa-star"></i> 山椒凤爪</a></li>
-                    <li><a href="#"><i class="fas fa-star"></i> 秘制牛肉酱</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3><i class="fas fa-phone-alt"></i> 联系我们</h3>
-                <ul class="footer-links">
-                    <li><i class="fas fa-user-circle"></i> 微信号: rr66tt8</li>
-                    <li><i class="fas fa-clock"></i> 服务时间: 09:00 - 22:00</li>
-                    <li><i class="fas fa-map-marker-alt"></i> 地址: 湖南省长沙市</li>
-                </ul>
+                <h3><i class="fas fa-qrcode"></i> 微信联系</h3>
+                <div style="text-align: center; margin-top: 10px;">
+                    <img src="https://xiao305.github.io/xiao.jpg" alt="微信二维码" style="width: 100px; height: 100px; border: 2px solid #444; border-radius: 8px;">
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: #ccc;">微信号: rr66tt8</p>
+                </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 红姐私房美食. 保留所有权利.</p>
-            <p>用心做好每一份美食，传递家的温暖。</p>
+        <div class="copyright">
+            &copy; 2024 红姐私房美食. 保留所有权利. | 
+            <a href="https://beian.miit.gov.cn/" target="_blank">湘ICP备2024032011号-1</a>
         </div>
     </footer>
 
-    <!-- 密码输入模态框 -->
-    <div id="passwordModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2><i class="fas fa-lock"></i> 页面受密码保护</h2>
-            <p>此页面已被管理员关闭，请输入密码以继续访问。</p>
-            <form id="passwordForm">
-                <div class="form-group">
-                    <label for="pagePassword"><i class="fas fa-key"></i> 访问密码:</label>
-                    <input type="password" id="pagePassword" required>
-                </div>
-                <button type="submit" class="btn"><i class="fas fa-unlock"></i> 解锁</button>
-            </form>
+    <!-- 密码模态框 -->
+    <div id="passwordModal" style="display:none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
+        <div style="background-color: white; margin: auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+            <span onclick="closePasswordModal()" style="float: right; cursor: pointer; font-size: 1.5rem;">&times;</span>
+            <h3>请输入密码</h3>
+            <p id="passwordModalText">访问此内容需要密码:</p>
+            <input type="password" id="passwordInput" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">
+            <button onclick="checkPassword()" class="btn">确定</button>
+            <button onclick="closePasswordModal()" class="btn btn-outline" style="margin-left: 10px;">取消</button>
         </div>
     </div>
 
-    <!-- 倒计时模态框 -->
-    <div id="countdownModal" class="modal">
-        <div class="modal-content countdown-modal-content">
-            <span class="close">&times;</span>
-            <h2><i class="fas fa-clock"></i> 限时访问</h2>
-            <p>此页面处于限时访问模式，您可以浏览 <span id="limitDurationDisplay">N</span> 秒。</p>
-            <div class="countdown-timer" id="countdownTimer">N</div>
-            <p>倒计时结束后，页面将自动关闭。</p>
+    <!-- 限时查看模态框 -->
+    <div id="countdownModal" style="display:none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
+        <div style="background-color: white; margin: auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+            <h3><i class="fas fa-clock"></i> 限时查看</h3>
+            <p id="countdownText">此内容限时查看，剩余时间:</p>
+            <div id="countdownTimer" style="font-size: 2rem; font-weight: bold; color: var(--primary); margin: 20px 0;"></div>
+            <button onclick="closeCountdownModal()" class="btn">我知道了</button>
         </div>
     </div>
 
     <script>
-        // --- 新增：从阿里云 OSS 加载配置并初始化页面状态 ---
-        // 请将 YOUR_OSS_CONFIG_URL 替换为你实际的 OSS 文件公开访问 URL
-        const OSS_CONFIG_URL = 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json';
-
+        // 全局变量
+        let currentPage = 'home';
         let pageStatusConfig = {
             products: { status: 'closed' },
             about: { status: 'closed' },
@@ -849,6 +901,11 @@
             about: '999',
             contact: ''
         };
+        let messages = JSON.parse(localStorage.getItem('messages')) || [];
+        let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
+
+        // --- 新增：阿里云 OSS 配置加载 ---
+        const OSS_CONFIG_URL = 'https://xiao-config-bucket.oss-cn-hangzhou.aliyuncs.com/test-config.json';
 
         async function loadConfigFromOSS() {
             console.log("🔄 开始从阿里云 OSS 加载配置...");
@@ -895,256 +952,207 @@
 
                 if (data && data.pageStatusConfig) {
                     console.log("✅ 成功从 OSS 读取到配置:", data);
-                    // - 关键修改：更新全局配置变量和密码变量 -
-                    window.pageStatusConfig = data.pageStatusConfig;
-                    window.pagePasswords = data.pagePasswords || {};
-                    // - 结束关键修改 -
+                    pageStatusConfig = data.pageStatusConfig;
+                    pagePasswords = data.pagePasswords || {};
                     console.log("🔄 已更新全局配置变量");
-                    // - 关键修改：使用从 OSS 读取的最新配置初始化设置面板 UI -
-                    // initializeSettingsPanel(); // 如果有设置面板需要初始化
-                    // - 结束关键修改 -
                 } else {
                     console.log("OSS: 远程配置为空或格式不正确");
-                    // 回退到 localStorage
-                    // initializeSettingsPanel(); // 如果有设置面板需要初始化
                 }
             } catch (fetchError) {
                 console.error("❌ 从阿里云 OSS 加载配置失败:", fetchError);
-                // 回退到 localStorage
-                // initializeSettingsPanel(); // 如果有设置面板需要初始化
             }
         }
         // --- 结束新增 ---
 
-
-        // --- 新增：留言提交功能 ---
-        document.addEventListener('DOMContentLoaded', function() {
-            const messageForm = document.getElementById('messageForm');
-            if (messageForm) {
-                messageForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const name = document.getElementById('messageName').value.trim();
-                    const phone = document.getElementById('messagePhone').value.trim();
-                    const message = document.getElementById('messageContent').value.trim();
-
-                    if (!name || !phone || !message) {
-                        alert('请填写所有必填项！');
-                        return;
-                    }
-
-                    // 获取现有的留言
-                    let messages = JSON.parse(localStorage.getItem('messages')) || [];
-                    // 创建新留言对象
-                    const newMessage = {
-                        name: name,
-                        phone: phone,
-                        message: message,
-                        timestamp: new Date().toLocaleString(),
-                        read: false // 默认未读
-                    };
-                    // 添加到数组开头
-                    messages.unshift(newMessage);
-                    // 保存回 localStorage
-                    localStorage.setItem('messages', JSON.stringify(messages));
-
-                    alert('留言提交成功！我们会尽快回复您。');
-                    messageForm.reset();
-                });
-            }
-        });
-        // --- 结束新增 ---
-
-
-        // 页面切换逻辑
+        // 页面切换函数
         function switchPage(pageId) {
-            console.log("切换到页面:", pageId);
             // 隐藏所有页面
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             // 显示目标页面
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
+            document.getElementById(pageId).classList.add('active');
+            currentPage = pageId;
+
             // 更新导航栏激活状态
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('data-page') === pageId) {
+                if(link.getAttribute('data-page') === pageId) {
                     link.classList.add('active');
                 }
             });
-            // 更新页脚链接激活状态
-            document.querySelectorAll('.footer-links a[data-page]').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('data-page') === pageId) {
-                    link.classList.add('active');
-                }
-            });
+
             // 滚动到顶部
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo(0, 0);
         }
 
-        // --- 新增：处理页面访问控制逻辑 ---
-        async function handlePageAccess(pageId) {
-            console.log("处理页面访问:", pageId);
-            // 确保配置已加载
-            if (!window.pageStatusConfig) {
-                console.log("配置未加载，尝试加载...");
-                await loadConfigFromOSS();
-                if (!window.pageStatusConfig) {
-                    console.log("加载配置失败，使用默认配置");
-                    window.pageStatusConfig = pageStatusConfig;
-                    window.pagePasswords = pagePasswords;
-                }
-            }
+        // 处理页面访问权限
+        function handlePageAccess(pageId) {
+            const config = pageStatusConfig;
+            const status = config[pageId]?.status || 'closed';
 
-            const config = window.pageStatusConfig || pageStatusConfig; // 优先使用全局
-            const passwords = window.pagePasswords || pagePasswords; // 优先使用全局
-            const pageConfig = config[pageId];
-
-            if (!pageConfig) {
-                console.log(`页面 ${pageId} 配置未找到，默认允许访问`);
+            if (status === 'open') {
                 switchPage(pageId);
-                return;
-            }
-
-            const status = pageConfig.status;
-            console.log(`页面 ${pageId} 状态:`, status);
-
-            if (status === 'closed') {
-                console.log("页面已关闭，需要密码");
-                showPasswordModal(pageId, passwords[pageId]);
             } else if (status === 'limit') {
-                console.log("页面限时访问");
-                const duration = pageConfig.duration || 10;
-                showCountdownModal(pageId, duration);
-            } else {
-                console.log("页面开启，直接访问");
-                switchPage(pageId);
+                showCountdownModal(pageId, config[pageId].duration);
+            } else if (status === 'closed') {
+                showPasswordModal(pageId);
             }
         }
 
         // 显示密码模态框
-        function showPasswordModal(pageId, correctPassword) {
+        function showPasswordModal(pageId) {
             const modal = document.getElementById('passwordModal');
-            const span = modal.querySelector('.close');
-            const form = document.getElementById('passwordForm');
-            const passwordInput = document.getElementById('pagePassword');
-
-            form.onsubmit = function(e) {
-                e.preventDefault();
-                const enteredPassword = passwordInput.value;
-                if (enteredPassword === correctPassword) {
-                    modal.style.display = 'none';
-                    switchPage(pageId);
-                } else {
-                    alert('密码错误，请重试！');
-                    passwordInput.value = '';
-                }
-            };
-
-            span.onclick = function() {
-                modal.style.display = 'none';
-            };
-
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            };
-
-            passwordInput.value = '';
+            const input = document.getElementById('passwordInput');
+            const text = document.getElementById('passwordModalText');
+            text.textContent = `访问 "${getPageTitle(pageId)}" 页面需要密码:`;
+            input.value = '';
+            input.dataset.pageId = pageId; // 将页面ID存储在输入框的dataset中
             modal.style.display = 'flex';
-            passwordInput.focus();
+            input.focus(); // 自动聚焦到密码输入框
         }
 
-        // 显示倒计时模态框
+        // 关闭密码模态框
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+        }
+
+        // 检查密码
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const pageId = input.dataset.pageId; // 从dataset中获取页面ID
+            const password = input.value;
+            const correctPassword = pagePasswords[pageId];
+
+            if (password === correctPassword) {
+                closePasswordModal();
+                switchPage(pageId);
+            } else {
+                alert('密码错误！');
+            }
+        }
+
+        // 显示限时查看模态框
         function showCountdownModal(pageId, duration) {
             const modal = document.getElementById('countdownModal');
-            const span = modal.querySelector('.close');
-            const timerDisplay = document.getElementById('countdownTimer');
-            const durationDisplay = document.getElementById('limitDurationDisplay');
-            
-            durationDisplay.textContent = duration;
-            timerDisplay.textContent = duration;
-
+            const timerElement = document.getElementById('countdownTimer');
             let timeLeft = duration;
+
+            timerElement.textContent = formatTime(timeLeft);
+
             const countdownInterval = setInterval(() => {
                 timeLeft--;
-                timerDisplay.textContent = timeLeft;
+                timerElement.textContent = formatTime(timeLeft);
+
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
-                    modal.style.display = 'none';
+                    closeCountdownModal();
+                    switchPage(pageId);
                 }
             }, 1000);
 
-            span.onclick = function() {
-                clearInterval(countdownInterval);
-                modal.style.display = 'none';
-            };
-
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    clearInterval(countdownInterval);
-                    modal.style.display = 'none';
-                }
-            };
-
+            // 将interval ID存储在模态框上，方便关闭时清理
+            modal.dataset.intervalId = countdownInterval;
             modal.style.display = 'flex';
-
-            // 倒计时结束后自动跳转到首页
-            setTimeout(() => {
-                modal.style.display = 'none';
-                clearInterval(countdownInterval);
-                switchPage('home');
-            }, duration * 1000);
         }
-        // --- 结束新增 ---
 
+        // 关闭限时查看模态框
+        function closeCountdownModal() {
+            const modal = document.getElementById('countdownModal');
+            if (modal.dataset.intervalId) {
+                clearInterval(parseInt(modal.dataset.intervalId));
+                delete modal.dataset.intervalId;
+            }
+            modal.style.display = 'none';
+        }
 
-        // DOM 加载完成后初始化
+        // 格式化时间 (MM:SS)
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // 获取页面标题 (用于模态框显示)
+        function getPageTitle(pageId) {
+            const titles = {
+                'home': '首页',
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            return titles[pageId] || pageId;
+        }
+
+        // 切换快递与自提信息显示
+        function toggleShippingInfo() {
+            const info = document.getElementById('shippingInfo');
+            if (info.style.display === 'none') {
+                info.style.display = 'block';
+            } else {
+                info.style.display = 'none';
+            }
+        }
+
+        // 提交留言
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !phone || !message) {
+                alert('请填写所有必填项！');
+                return;
+            }
+
+            const newMessage = {
+                name: name,
+                phone: phone,
+                message: message,
+                timestamp: new Date().toLocaleString(),
+                read: false // 默认未读
+            };
+
+            messages.push(newMessage);
+            localStorage.setItem('messages', JSON.stringify(messages));
+
+            alert('留言已发送，我们会尽快回复您！');
+            this.reset();
+        });
+
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log("DOM 加载完成，初始化页面...");
+            // 更新总访问量
+            visits.total = (visits.total || 0) + 1;
+            // 更新每日访问量
+            const today = new Date().toLocaleDateString();
+            visits.daily[today] = (visits.daily[today] || 0) + 1;
+            // 保存到localStorage
+            localStorage.setItem('siteVisits', JSON.stringify(visits));
 
-            // --- 新增：在页面初始化时加载 OSS 配置 ---
-            await loadConfigFromOSS().finally(() => {
-                 console.log("✅ 页面加载和配置初始化完成");
-            });
+            // --- 新增：从阿里云 OSS 加载配置 ---
+            await loadConfigFromOSS();
             // --- 结束新增 ---
 
-            // 默认显示首页
-            switchPage('home');
-
-            // 为导航链接添加点击事件
-            document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+            // 为导航链接添加事件监听器
+            document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const pageId = this.getAttribute('data-page');
                     if (pageId === 'admin') {
-                        // 管理员链接直接跳转
                         window.location.href = 'admin.html';
                     } else {
-                        // 其他链接通过访问控制处理
                         handlePageAccess(pageId);
                     }
                 });
             });
 
-            // 为页脚链接添加点击事件
-            document.querySelectorAll('.footer-links a[data-page]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const pageId = this.getAttribute('data-page');
-                    handlePageAccess(pageId);
-                });
-            });
-
-            // 为首页的“立即选购”按钮添加点击事件
-            document.querySelector('.home-hero .btn[data-page]').addEventListener('click', function(e) {
-                e.preventDefault();
-                const pageId = this.getAttribute('data-page');
-                handlePageAccess(pageId);
+            // 为密码模态框的输入框添加回车事件监听器
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
             });
         });
     </script>
