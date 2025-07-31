@@ -2,23 +2,25 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <!-- --- 修改：添加 user-scalable=no 以进一步锁定缩放和字体大小 --- -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>红姐私房美食</title>
-    <base href="https://hjsf.uno/">
+    <title>红姐私房美食官网</title>
+    <base href="https://hjsf.uno/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* --- 新增：锁定字体大小 --- */
         /* 禁用浏览器根据系统设置调整字体大小 */
         html {
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%; /* Safari/Chrome */
+            -ms-text-size-adjust: 100%;    /* IE */
+            text-size-adjust: 100%;         /* 标准 */
         }
         body {
-            /* 强制使用像素单位，避免使用 rem/em 可能受到根元素字体大小影响 */
-            font-size: 16px; /* 设置一个基础字体大小 */
+            /* 可选：设置基础字体大小，确保一致性 */
+            font-size: 16px; /* 或其他您希望的基础大小 */
         }
         /* --- 结束新增 --- */
+
 
         /* 优化后的样式系统 */
         :root {
@@ -45,7 +47,8 @@
             display: flex;
             flex-direction: column;
         }
-        /* 导航栏样式 - 添加移动端隐藏功能 和 响应式一行显示 */
+        /* --- 修改：优化导航栏以适应移动端一行显示 --- */
+        /* 导航栏样式 - 添加移动端一行显示优化 */
         .navbar {
             background: rgba(255,255,255,0.95);
             box-shadow: var(--shadow);
@@ -53,14 +56,10 @@
             top: 0;
             z-index: 1000;
             border-bottom: 2px solid var(--secondary);
-            transition: transform 0.3s ease;
-            /* --- 新增：移动端一行显示 --- */
+            /* --- 新增：允许水平滚动 --- */
             overflow-x: auto; /* 允许水平滚动 */
             white-space: nowrap; /* 防止子元素换行 */
             /* --- 结束新增 --- */
-        }
-        .navbar.hide-nav {
-            transform: translateY(-100%);
         }
         .nav-container {
             max-width: 1200px;
@@ -69,7 +68,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 20px;
-            /* --- 新增：移动端一行显示 --- */
+            /* --- 新增：防止容器内元素换行 --- */
             flex-wrap: nowrap; /* 防止容器内元素换行 */
             /* --- 结束新增 --- */
         }
@@ -77,30 +76,36 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.5rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.5rem; /* 固定字体大小 */
             font-weight: bold;
-            color: var(--primary);
-            flex-shrink: 0; /* 防止logo被压缩 */
+            /* --- 新增：防止logo被压缩 --- */
+            flex-shrink: 0;
+            /* --- 结束新增 --- */
         }
         .logo i {
             color: var(--accent);
         }
         .nav-links {
             display: flex;
-            gap: 25px;
-            /* --- 新增：移动端一行显示 --- */
-            flex-shrink: 0; /* 防止链接组被压缩导致换行 */
+            /* --- 修改：固定字体大小并优化移动端显示 --- */
+            gap: 25px; /* 保持原有间距 */
+            /* --- 新增：防止链接组被压缩 --- */
+            flex-shrink: 0;
             /* --- 结束新增 --- */
         }
         .nav-links a {
             text-decoration: none;
+            /* --- 修改：固定字体大小 --- */
             color: var(--dark);
             font-weight: 500;
             position: relative;
             padding: 5px 0;
             transition: all 0.3s;
             font-size: 1rem; /* 固定字体大小 */
-            flex-shrink: 0; /* 防止单个链接被压缩 */
+            /* --- 新增：防止单个链接被压缩 --- */
+            flex-shrink: 0;
+            /* --- 结束新增 --- */
         }
         .nav-links a:hover {
             color: var(--primary);
@@ -125,6 +130,9 @@
         .nav-links a.active::after {
             width: 100%;
         }
+        /* --- 结束修改 --- */
+
+
         /* 内容容器 */
         .content-container {
             max-width: 1200px;
@@ -140,7 +148,8 @@
         }
         .page-header h1 {
             color: var(--primary);
-            font-size: 2.5rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 2.5rem; /* 固定字体大小 */
             margin-bottom: 10px;
             position: relative;
             display: inline-block;
@@ -158,7 +167,8 @@
         }
         .page-header p {
             color: var(--gray);
-            font-size: 1.1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.1rem; /* 固定字体大小 */
             max-width: 800px;
             margin: 20px auto;
             line-height: 1.6;
@@ -195,12 +205,14 @@
             max-width: 500px;
         }
         .hero-content h2 {
-            font-size: 2.5rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 2.5rem; /* 固定字体大小 */
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         .hero-content p {
-            font-size: 1.2rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.2rem; /* 固定字体大小 */
             margin-bottom: 30px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
@@ -216,7 +228,8 @@
             transition: all 0.3s;
             cursor: pointer;
             text-align: center;
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .btn:hover {
             background: #c0392b;
@@ -234,7 +247,8 @@
         }
         .section-header h2 {
             color: var(--primary);
-            font-size: 2rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 2rem; /* 固定字体大小 */
             display: inline-block;
             padding: 0 20px;
             background: white;
@@ -278,17 +292,20 @@
         .product-info h3 {
             color: var(--dark);
             margin-bottom: 10px;
-            font-size: 1.3rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.3rem; /* 固定字体大小 */
         }
         .product-info p {
             color: var(--gray);
             margin-bottom: 15px;
-            font-size: 0.95rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 0.95rem; /* 固定字体大小 */
             line-height: 1.5;
         }
         .product-price {
             color: var(--primary);
-            font-size: 1.4rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.4rem; /* 固定字体大小 */
             font-weight: bold;
             margin-bottom: 15px;
         }
@@ -321,13 +338,15 @@
         .about-content h2 {
             color: var(--primary);
             margin-bottom: 20px;
-            font-size: 2rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 2rem; /* 固定字体大小 */
         }
         .about-content p {
             color: var(--gray);
             line-height: 1.8;
             margin-bottom: 20px;
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .features {
             display: grid;
@@ -342,7 +361,8 @@
         }
         .feature i {
             color: var(--accent);
-            font-size: 1.5rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.5rem; /* 固定字体大小 */
         }
         /* 联系我们区域 */
         .contact {
@@ -362,7 +382,8 @@
         .contact-info h3 {
             color: var(--primary);
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.5rem; /* 固定字体大小 */
             display: flex;
             align-items: center;
             gap: 10px;
@@ -373,7 +394,8 @@
             gap: 10px;
             margin-bottom: 15px;
             color: var(--dark);
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .contact-info i {
             color: var(--accent);
@@ -387,7 +409,8 @@
         .contact-form h3 {
             color: var(--primary);
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.5rem; /* 固定字体大小 */
         }
         .form-group {
             margin-bottom: 20px;
@@ -397,7 +420,8 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--dark);
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .form-group input,
         .form-group textarea {
@@ -405,7 +429,8 @@
             padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
             transition: border-color 0.3s;
         }
         .form-group input:focus,
@@ -436,7 +461,8 @@
         .footer-section h3 {
             color: var(--accent);
             margin-bottom: 20px;
-            font-size: 1.3rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.3rem; /* 固定字体大小 */
             display: flex;
             align-items: center;
             gap: 8px;
@@ -454,7 +480,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .footer-links a:hover {
             color: var(--accent);
@@ -464,7 +491,8 @@
             padding-top: 30px;
             margin-top: 30px;
             border-top: 1px solid #444;
-            font-size: 0.9rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 0.9rem; /* 固定字体大小 */
             color: #aaa;
         }
         /* 页面内容样式 */
@@ -482,23 +510,28 @@
         .page-content h2 {
             color: var(--primary);
             margin-bottom: 20px;
-            font-size: 1.8rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.8rem; /* 固定字体大小 */
         }
         .page-content p {
             color: var(--gray);
             line-height: 1.8;
             margin-bottom: 20px;
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .page-content ul {
             color: var(--gray);
             margin-bottom: 20px;
             padding-left: 20px;
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .page-content li {
             margin-bottom: 10px;
             line-height: 1.6;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         /* 密码模态框样式 */
         .modal {
@@ -527,7 +560,8 @@
         .close {
             color: #aaa;
             float: right;
-            font-size: 28px;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 28px; /* 固定字体大小 */
             font-weight: bold;
             position: absolute;
             top: 15px;
@@ -541,7 +575,8 @@
         .modal-content h2 {
             color: var(--primary);
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.5rem; /* 固定字体大小 */
         }
         .modal-content input {
             width: 100%;
@@ -549,14 +584,129 @@
             margin: 20px 0;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
         }
         .countdown {
-            font-size: 1.2rem;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.2rem; /* 固定字体大小 */
             font-weight: bold;
             color: var(--primary);
             margin: 20px 0;
         }
+        /* --- 新增：警告弹窗样式 --- */
+        /* 警告弹窗样式 */
+        .warning-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000; /* 确保在密码弹窗之下 */
+            padding: 20px;
+        }
+        .warning-modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .warning-modal-title {
+            color: var(--primary);
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.8rem; /* 固定字体大小 */
+            margin-bottom: 20px;
+            /* 移除标题前的图标 */
+            padding-left: 0 !important;
+        }
+        .warning-modal-title::before {
+            /* 移除标题前的图标 */
+            display: none !important;
+        }
+        .warning-modal-text {
+            margin-bottom: 20px;
+            color: #444;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
+        }
+        .warning-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .warning-modal-buttons .btn {
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
+        }
+        /* --- 结束新增 --- */
+
+
+        /* --- 新增：密码输入弹窗样式 --- */
+        /* 密码输入弹窗样式 */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2001; /* 确保在警告弹窗之上 */
+            padding: 20px;
+        }
+        .password-modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .password-modal-title {
+            color: var(--primary);
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1.5rem; /* 固定字体大小 */
+            margin-bottom: 20px;
+        }
+        .password-modal-text {
+            margin-bottom: 20px;
+            color: #444;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
+        }
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .password-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .password-modal-buttons .btn {
+            /* --- 修改：固定字体大小 --- */
+            font-size: 1rem; /* 固定字体大小 */
+        }
+        /* --- 结束新增 --- */
+
+
         /* 响应式设计 - 保持原有响应式，但优化导航栏 */
         @media (max-width: 768px) {
             .hero {
@@ -567,10 +717,12 @@
                 max-width: 70%;
             }
             .hero-content h2 {
-                font-size: 1.8rem;
+                /* --- 修改：固定字体大小 --- */
+                font-size: 1.8rem; /* 固定字体大小 */
             }
             .hero-content p {
-                font-size: 1rem;
+                /* --- 修改：固定字体大小 --- */
+                font-size: 1rem; /* 固定字体大小 */
             }
             .about {
                 flex-direction: column;
@@ -586,22 +738,26 @@
                 padding: 10px 15px; /* 减小内边距 */
             }
             .logo {
-                font-size: 1.2rem; /* 减小logo字体 */
+                /* --- 修改：固定字体大小 --- */
+                font-size: 1.2rem; /* 固定字体大小 */
             }
             .nav-links {
                 gap: 15px; /* 减小链接间距 */
             }
             .nav-links a {
-                font-size: 0.9rem; /* 减小链接字体 */
+                /* --- 修改：固定字体大小 --- */
+                font-size: 0.9rem; /* 固定字体大小 */
             }
             /* --- 新增：移动端一行显示优化 --- */
             /* 在非常小的屏幕上，进一步减小字体 */
             @media (max-width: 480px) {
                 .nav-links a {
-                    font-size: 0.8rem;
+                    /* --- 修改：固定字体大小 --- */
+                    font-size: 0.8rem; /* 固定字体大小 */
                 }
                 .logo {
-                    font-size: 1rem;
+                    /* --- 修改：固定字体大小 --- */
+                    font-size: 1rem; /* 固定字体大小 */
                 }
             }
             /* --- 结束新增 --- */
@@ -632,12 +788,12 @@
         <div id="home" class="page-content active">
             <!-- 轮播图 -->
             <div class="hero">
-                <div class="hero-slide active" style="background-image: url('https://img.alicdn.com/imgextra/i3/2213431780441/O1CN01d2Ou1v2LcyfU3Nixk_!!2213431780441.jpg');"></div>
+                <div class="hero-slide active" style="background-image: url('https://img.alicdn.com/imgextra/i4/O1CN014j8GvT1Zs1Q1v2LcyfU3Nixl_!!2213431780441.jpg');"></div>
+                <div class="hero-slide" style="background-image: url('https://img.alicdn.com/imgextra/i3/2213431780441/O1CN01d2Ou1v2LcyfU3Nixk_!!2213431780441.jpg');"></div>
                 <div class="hero-slide" style="background-image: url('https://img.alicdn.com/imgextra/i4/2213431780441/O1CN01nIYVnJ2LcyfTzKzXm_!!2213431780441.jpg');"></div>
-                <div class="hero-slide" style="background-image: url('https://img.alicdn.com/imgextra/i1/2213431780441/O1CN01m7jD9k2LcyfU3Nixi_!!2213431780441.jpg');"></div>
                 <div class="hero-content">
-                    <h2>品味地道美味</h2>
-                    <p>红姐私房美食，传承家乡味道，精选优质食材，用心制作每一份佳肴。</p>
+                    <h2>欢迎来到红姐私房美食</h2>
+                    <p>品味地道山西风味，感受家的温暖。</p>
                     <a href="#" class="btn" onclick="switchPage('products'); document.querySelector('.nav-link[data-page=\'products\']').classList.add('active'); document.querySelector('.nav-link.active:not([data-page=\'products\'])').classList.remove('active');"><i class="fas fa-shopping-bag"></i> 立即选购</a>
                 </div>
             </div>
@@ -649,29 +805,29 @@
                 </div>
                 <div class="product-grid">
                     <div class="product-card">
+                        <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/O1CN014j8GvT1Zs1Q1v2LcyfU3Nixl_!!2213431780441.jpg');"></div>
+                        <div class="product-info">
+                            <h3>红姐私房辣椒面</h3>
+                            <p>精选优质辣椒，传统工艺研磨，香辣过瘾，是您厨房的必备调料。</p>
+                            <div class="product-price">¥19.90</div>
+                            <a href="#" class="btn" onclick="switchPage('products'); document.querySelector('.nav-link[data-page=\'products\']').classList.add('active'); document.querySelector('.nav-link.active:not([data-page=\'products\'])').classList.remove('active');"><i class="fas fa-eye"></i> 查看详情</a>
+                        </div>
+                    </div>
+                    <div class="product-card">
                         <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i3/2213431780441/O1CN01d2Ou1v2LcyfU3Nixk_!!2213431780441.jpg');"></div>
                         <div class="product-info">
-                            <h3>手工牛肉酱</h3>
-                            <p>精选上等牛肉，传统工艺熬制，香辣可口，回味无穷。</p>
-                            <div class="product-price">¥39.90</div>
+                            <h3>红姐私房牛肉酱</h3>
+                            <p>真材实料，慢火熬制，肉香浓郁，拌饭拌面，美味无穷。</p>
+                            <div class="product-price">¥29.90</div>
                             <a href="#" class="btn" onclick="switchPage('products'); document.querySelector('.nav-link[data-page=\'products\']').classList.add('active'); document.querySelector('.nav-link.active:not([data-page=\'products\'])').classList.remove('active');"><i class="fas fa-eye"></i> 查看详情</a>
                         </div>
                     </div>
                     <div class="product-card">
                         <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/2213431780441/O1CN01nIYVnJ2LcyfTzKzXm_!!2213431780441.jpg');"></div>
                         <div class="product-info">
-                            <h3>秘制辣椒油</h3>
-                            <p>多种香料配制，色泽红亮，香气扑鼻，是厨房必备调料。</p>
-                            <div class="product-price">¥29.90</div>
-                            <a href="#" class="btn" onclick="switchPage('products'); document.querySelector('.nav-link[data-page=\'products\']').classList.add('active'); document.querySelector('.nav-link.active:not([data-page=\'products\'])').classList.remove('active');"><i class="fas fa-eye"></i> 查看详情</a>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i1/2213431780441/O1CN01m7jD9k2LcyfU3Nixi_!!2213431780441.jpg');"></div>
-                        <div class="product-info">
-                            <h3>农家风味咸菜</h3>
-                            <p>采用传统腌制方法，口感爽脆，开胃下饭。</p>
-                            <div class="product-price">¥19.90</div>
+                            <h3>红姐私房秘制酱</h3>
+                            <p>多种天然香料秘制而成，风味独特，适用于各种菜肴。</p>
+                            <div class="product-price">¥24.90</div>
                             <a href="#" class="btn" onclick="switchPage('products'); document.querySelector('.nav-link[data-page=\'products\']').classList.add('active'); document.querySelector('.nav-link.active:not([data-page=\'products\'])').classList.remove('active');"><i class="fas fa-eye"></i> 查看详情</a>
                         </div>
                     </div>
@@ -685,8 +841,8 @@
                 </div>
                 <div class="about-content">
                     <h2>关于红姐私房美食</h2>
-                    <p>红姐私房美食始于一个简单的愿望：将家乡最纯正的味道带给每一个人。我们坚持选用天然、健康的食材，秉承传统手工制作工艺，不添加任何防腐剂和人工色素，只为呈现食物最本真的风味。</p>
-                    <p>每一份产品都倾注了我们的心血和对美食的热爱，希望能让你在品尝的同时，感受到家的温暖和幸福。</p>
+                    <p>红姐私房美食，源自山西临汾，是一家专注于传承和发扬地方特色美食的家庭式工坊。我们秉承“用心做好每一份美食”的理念，选用当地优质食材，结合传统手工工艺，致力于为每一位顾客带来最纯正、最健康的味觉享受。</p>
+                    <p>无论是香辣的辣椒面，还是浓郁的牛肉酱，每一款产品都承载着红姐对家乡味道的深情和对品质的坚持。我们相信，美食不仅仅是味蕾的满足，更是情感的传递和文化的延续。</p>
                     <div class="features">
                         <div class="feature">
                             <i class="fas fa-leaf"></i>
@@ -718,10 +874,19 @@
             </div>
             <div class="product-grid">
                 <div class="product-card">
-                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i3/2213431780441/O1CN01d2Ou1v2LcyfU3Nixk_!!2213431780441.jpg');"></div>
+                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/O1CN014j8GvT1Zs1Q1v2LcyfU3Nixl_!!2213431780441.jpg');"></div>
                     <div class="product-info">
-                        <h3>手工牛肉酱 (200g)</h3>
-                        <p>精选上等牛肉，传统工艺熬制，香辣可口，回味无穷。拌面、拌饭、炒菜皆可，是您厨房的好帮手。</p>
+                        <h3>红姐私房辣椒面 (200g)</h3>
+                        <p>精选优质辣椒，传统工艺研磨，香辣过瘾，是您厨房的必备调料。适用于凉拌菜、汤面、炒菜等多种场合。</p>
+                        <div class="product-price">¥19.90</div>
+                        <a href="https://m.tb.cn/h.5qdjX4d?tk=LO7Jd4rx7JM" class="btn" target="_blank"><i class="fas fa-shopping-cart"></i> 立即购买</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/O1CN014j8GvT1Zs1Q1v2LcyfU3Nixl_!!2213431780441.jpg');"></div>
+                    <div class="product-info">
+                        <h3>红姐私房辣椒面 (500g)</h3>
+                        <p>家庭装，分量更足，性价比更高。精选优质辣椒，传统工艺研磨，香辣过瘾。</p>
                         <div class="product-price">¥39.90</div>
                         <a href="https://m.tb.cn/h.5qdjX4d?tk=LO7Jd4rx7JM" class="btn" target="_blank"><i class="fas fa-shopping-cart"></i> 立即购买</a>
                     </div>
@@ -729,44 +894,35 @@
                 <div class="product-card">
                     <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i3/2213431780441/O1CN01d2Ou1v2LcyfU3Nixk_!!2213431780441.jpg');"></div>
                     <div class="product-info">
-                        <h3>手工牛肉酱 (400g)</h3>
-                        <p>分量加倍，更超值！精选上等牛肉，传统工艺熬制，香辣可口，回味无穷。</p>
-                        <div class="product-price">¥69.90</div>
-                        <a href="https://m.tb.cn/h.5qdjX4d?tk=LO7Jd4rx7JM" class="btn" target="_blank"><i class="fas fa-shopping-cart"></i> 立即购买</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/2213431780441/O1CN01nIYVnJ2LcyfTzKzXm_!!2213431780441.jpg');"></div>
-                    <div class="product-info">
-                        <h3>秘制辣椒油 (150ml)</h3>
-                        <p>多种香料配制，色泽红亮，香气扑鼻。无论是凉拌菜、面条还是火锅，都能瞬间提升风味。</p>
+                        <h3>红姐私房牛肉酱 (200g)</h3>
+                        <p>真材实料，慢火熬制，肉香浓郁，拌饭拌面，美味无穷。选用上等牛肉丁，口感丰富。</p>
                         <div class="product-price">¥29.90</div>
                         <a href="https://m.tb.cn/h.5qdjX4d?tk=LO7Jd4rx7JM" class="btn" target="_blank"><i class="fas fa-shopping-cart"></i> 立即购买</a>
                     </div>
                 </div>
                 <div class="product-card">
-                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/2213431780441/O1CN01nIYVnJ2LcyfTzKzXm_!!2213431780441.jpg');"></div>
+                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i3/2213431780441/O1CN01d2Ou1v2LcyfU3Nixk_!!2213431780441.jpg');"></div>
                     <div class="product-info">
-                        <h3>秘制辣椒油 (300ml)</h3>
-                        <p>家庭装，更实惠！多种香料配制，色泽红亮，香气扑鼻，是厨房必备调料。</p>
+                        <h3>红姐私房牛肉酱 (400g)</h3>
+                        <p>分量加倍，更超值！真材实料，慢火熬制，肉香浓郁，拌饭拌面，美味无穷。</p>
                         <div class="product-price">¥49.90</div>
                         <a href="https://m.tb.cn/h.5qdjX4d?tk=LO7Jd4rx7JM" class="btn" target="_blank"><i class="fas fa-shopping-cart"></i> 立即购买</a>
                     </div>
                 </div>
                 <div class="product-card">
-                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i1/2213431780441/O1CN01m7jD9k2LcyfU3Nixi_!!2213431780441.jpg');"></div>
+                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/2213431780441/O1CN01nIYVnJ2LcyfTzKzXm_!!2213431780441.jpg');"></div>
                     <div class="product-info">
-                        <h3>农家风味咸菜 (200g)</h3>
-                        <p>采用传统腌制方法，口感爽脆，开胃下饭。每一口都是记忆中的家乡味道。</p>
-                        <div class="product-price">¥19.90</div>
+                        <h3>红姐私房秘制酱 (150g)</h3>
+                        <p>多种天然香料秘制而成，风味独特，适用于各种菜肴。无论是凉拌、炒菜还是蘸食，都能带来惊喜。</p>
+                        <div class="product-price">¥24.90</div>
                         <a href="https://m.tb.cn/h.5qdjX4d?tk=LO7Jd4rx7JM" class="btn" target="_blank"><i class="fas fa-shopping-cart"></i> 立即购买</a>
                     </div>
                 </div>
                 <div class="product-card">
-                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i1/2213431780441/O1CN01m7jD9k2LcyfU3Nixi_!!2213431780441.jpg');"></div>
+                    <div class="product-image" style="background-image: url('https://img.alicdn.com/imgextra/i4/2213431780441/O1CN01nIYVnJ2LcyfTzKzXm_!!2213431780441.jpg');"></div>
                     <div class="product-info">
-                        <h3>农家风味咸菜 (500g)</h3>
-                        <p>分量足，更划算！采用传统腌制方法，口感爽脆，开胃下饭。</p>
+                        <h3>红姐私房秘制酱 (300g)</h3>
+                        <p>家庭装，分量足，更划算！多种天然香料秘制而成，风味独特，适用于各种菜肴。</p>
                         <div class="product-price">¥39.90</div>
                         <a href="https://m.tb.cn/h.5qdjX4d?tk=LO7Jd4rx7JM" class="btn" target="_blank"><i class="fas fa-shopping-cart"></i> 立即购买</a>
                     </div>
@@ -781,7 +937,7 @@
                 <p>了解红姐私房美食的故事</p>
             </div>
             <div class="about-content">
-                <p>红姐私房美食始于一个简单的愿望：将家乡最纯正的味道带给每一个人。创始人红姐，一位热爱烹饪和家乡美食的普通女性，凭借着对传统手艺的坚持和对食材品质的苛求，开始了这份事业。</p>
+                <p>红姐私房美食，源自山西临汾，是一家专注于传承和发扬地方特色美食的家庭式工坊。创始人红姐，一位热爱烹饪和家乡美食的普通女性，凭借着对传统手艺的坚持和对食材品质的苛求，开始了这份事业。</p>
                 <p>我们坚持选用天然、健康的食材，秉承传统手工制作工艺，不添加任何防腐剂和人工色素，只为呈现食物最本真的风味。每一份产品都倾注了我们的心血和对美食的热爱，希望能让你在品尝的同时，感受到家的温暖和幸福。</p>
                 
                 <h2>我们的理念</h2>
@@ -881,28 +1037,38 @@
         </div>
     </footer>
 
-    <!-- 密码输入模态框 -->
-    <div id="passwordModal" class="modal">
-        <div class="modal-content">
+    <!-- --- 修改：更新警告弹窗 HTML 结构 --- -->
+    <!-- 限时查看警告弹窗 -->
+    <div id="warningModal" class="warning-modal">
+        <div class="warning-modal-content">
             <span class="close">&times;</span>
-            <h2><i class="fas fa-lock"></i> 页面访问密码</h2>
-            <p>此页面已被管理员关闭，请输入密码访问：</p>
-            <input type="password" id="pagePassword" placeholder="请输入密码">
-            <button class="btn" onclick="checkPassword()"><i class="fas fa-unlock"></i> 解锁</button>
-            <p id="passwordError" style="color: red; display: none;">密码错误，请重试。</p>
+            <h2 class="warning-modal-title"><i class="fas fa-exclamation-triangle"></i> 页面访问提醒</h2>
+            <p class="warning-modal-text" id="warningModalText">此页面已被管理员设置为限时查看。</p>
+            <div class="countdown" id="countdown">10</div>
+            <div class="warning-modal-buttons">
+                <button class="btn" id="continueBtn"><i class="fas fa-eye"></i> 继续查看 (10)</button>
+                <button class="btn btn-outline" id="cancelBtn"><i class="fas fa-times"></i> 取消</button>
+            </div>
         </div>
     </div>
+    <!-- --- 结束修改 --- -->
 
-    <!-- 限时查看模态框 -->
-    <div id="countdownModal" class="modal">
-        <div class="modal-content">
+    <!-- --- 新增：密码输入弹窗 HTML 结构 --- -->
+    <!-- 密码输入弹窗 -->
+    <div id="passwordModal" class="password-modal">
+        <div class="password-modal-content">
             <span class="close">&times;</span>
-            <h2><i class="fas fa-clock"></i> 限时查看</h2>
-            <p>此页面已被管理员设置为限时查看。</p>
-            <div class="countdown" id="countdownTimer">00:00</div>
-            <button class="btn" onclick="startCountdown()"><i class="fas fa-play"></i> 开始计时</button>
+            <h2 class="password-modal-title"><i class="fas fa-lock"></i> 页面访问密码</h2>
+            <p class="password-modal-text" id="passwordModalText">页面 "特产商城" 已被管理员关闭。如需访问，请输入密码。</p>
+            <input type="password" id="pagePasswordInput" class="password-input" placeholder="请输入密码">
+            <div class="password-modal-buttons">
+                <button class="btn" id="confirmPasswordBtn"><i class="fas fa-unlock"></i> 确认</button>
+                <button class="btn btn-outline" id="cancelPasswordBtn"><i class="fas fa-times"></i> 取消</button>
+            </div>
         </div>
     </div>
+    <!-- --- 结束新增 --- -->
+
 
     <script>
         // 全局变量
@@ -919,16 +1085,20 @@
         };
         let messages = JSON.parse(localStorage.getItem('messages')) || [];
         let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
+        let countdownInterval = null; // 用于存储倒计时的 interval ID
 
         // --- 新增：从阿里云 OSS 加载配置 ---
         async function loadConfigFromOSS() {
             console.log("🔄 开始从阿里云 OSS 加载配置...");
             try {
-                const OSS_BUCKET_NAME = "xiao-config-bucket";
-                const REGION = "oss-cn-hangzhou";
-                const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json?${new Date().getTime()}`; // 添加时间戳防缓存
-                const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' });
-                console.log("Fetch 响应对象 (OSS Config):", response);
+                // 替换为您的实际 OSS Bucket 名称和地域
+                const OSS_BUCKET_NAME = "xiao-config-bucket"; // <- 请修改为您的 Bucket 名称
+                const REGION = "oss-cn-hangzhou"; // <- 请修改为您的 Bucket 所在地域
+                // 注意：确保您的 Bucket 是公共读权限
+                const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json?${new Date().getTime()}`; // <- 修改为您的实际文件名, 添加时间戳防缓存
+                console.log("开始尝试从 OSS 读取配置...");
+                const response = await fetch(OSS_CONFIG_URL, { cache: 'no-store' }); // 禁用缓存确保拿到最新
+                console.log("Fetch 响应对象:", response); // 调试日志
                 if (!response.ok) {
                     if (response.status === 404) {
                         console.log("OSS: 配置文件未找到");
@@ -936,12 +1106,48 @@
                     }
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const data = await response.json();
-                console.log("✅ 成功从 OSS 读取到配置:", data);
+
+                // - 关键修改：检查 Content-Type 并安全读取响应体 -
+                const contentType = response.headers.get('content-type');
+                console.log("OSS: 响应 Content-Type:", contentType);
+                let data = null;
+                if (contentType && contentType.includes('application/json')) {
+                    // 如果是 JSON 类型，尝试解析
+                    console.log("OSS: 响应体是 JSON 类型，尝试解析...");
+                    try {
+                        data = await response.json(); // 使用 await 等待解析
+                        console.log("OSS: 成功解析 JSON 响应体:", data);
+                    } catch (parseError) {
+                        console.error("OSS: 解析 JSON 响应体失败:", parseError);
+                        // 即使 Content-Type 声称为 JSON，解析也可能失败
+                        // 我们可以尝试读取文本内容看看实际是什么
+                        const textContent = await response.text();
+                        console.log("OSS: 实际响应体文本内容:", textContent);
+                        data = null; // 解析失败，设置为 null
+                    }
+                } else {
+                    // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
+                    console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
+                    const textContent = await response.text();
+                    console.log("OSS: 响应体文本内容:", textContent);
+                    // 尝试将文本内容解析为 JSON
+                    try {
+                        data = JSON.parse(textContent);
+                        console.log("OSS: 成功将文本内容解析为 JSON:", data);
+                    } catch (parseError) {
+                        console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
+                        data = null; // 解析失败，设置为 null
+                    }
+                }
+                // - 结束关键修改 -
+
                 if (data && data.pageStatusConfig) {
+                    console.log("✅ 成功从 OSS 读取到配置:", data);
+                    // - 关键修改：更新所有从 OSS 读取的管理员数据到全局变量 -
                     // 更新全局配置变量
                     window.pageStatusConfig = data.pageStatusConfig;
                     window.pagePasswords = data.pagePasswords || {};
+                    // - 结束关键修改 -
                     console.log("🔄 已更新全局配置变量");
                     return data; // 返回加载的数据
                 } else {
@@ -978,114 +1184,197 @@
             }
         }
 
-        // --- 新增：处理页面访问逻辑 (结合 OSS 配置) ---
-        async function handlePageAccess(pageId) {
-            console.log(`🔐 检查页面 "${pageId}" 的访问权限...`);
-            
-            // 1. 首先尝试从 OSS 加载最新配置
-            const ossData = await loadConfigFromOSS();
-            
-            // 2. 使用加载到的配置或回退到默认配置
-            const configToUse = (ossData && ossData.pageStatusConfig) ? ossData.pageStatusConfig : pageStatusConfig;
-            const passwordsToUse = (ossData && ossData.pagePasswords) ? ossData.pagePasswords : pagePasswords;
-            
-            console.log(`🔧 使用的配置 for ${pageId}:`, configToUse[pageId]);
-            console.log(`🔧 使用的密码 for ${pageId}:`, passwordsToUse[pageId]);
-
-            const pageConfig = configToUse[pageId];
-            if (!pageConfig) {
-                console.warn(`⚠️ 页面 "${pageId}" 的配置未找到，默认允许访问。`);
-                switchPage(pageId);
+        // --- 修改：处理页面访问逻辑 (根据状态决定是否弹窗) ---
+        // 处理页面访问逻辑 (根据状态决定是否弹窗)
+        function handlePageAccess(pageId) {
+            // - 修改：优先使用从 OSS 读取并更新的全局 window.pageStatusConfig -
+            const config = (window.pageStatusConfig && window.pageStatusConfig[pageId]) || (pageStatusConfig && pageStatusConfig[pageId]);
+            // - 结束修改 -
+            if (!config) {
+                // 默认行为：如果配置不存在，则限制访问
+                showWarningModal(pageId);
                 return;
             }
 
-            const status = pageConfig.status;
-            const duration = pageConfig.duration;
-
-            if (status === 'open') {
-                console.log(`🔓 页面 "${pageId}" 状态为 'open'，允许访问。`);
+            if (config.status === 'open') {
+                // 开启状态：直接访问
                 switchPage(pageId);
-            } else if (status === 'limit') {
-                console.log(`⏳ 页面 "${pageId}" 状态为 'limit'，时长 ${duration} 秒。`);
-                showCountdownModal(pageId, duration);
-            } else if (status === 'closed') {
-                console.log(`🔒 页面 "${pageId}" 状态为 'closed'，需要密码。`);
-                showPasswordModal(pageId, passwordsToUse[pageId]);
-            } else {
-                console.warn(`⚠️ 页面 "${pageId}" 状态未知 '${status}'，默认允许访问。`);
-                switchPage(pageId);
+            } else if (config.status === 'limit') {
+                // 限制状态：显示警告弹窗
+                showWarningModal(pageId, config.duration || 10); // 传递强制时长，默认10秒
+            } else if (config.status === 'closed') {
+                // 关闭状态：显示密码输入弹窗
+                showPasswordModal(pageId);
             }
+        }
+        // --- 结束修改 ---
+
+
+        // --- 修改：更新警告弹窗显示逻辑 ---
+        // 显示警告弹窗 (限制状态)
+        function showWarningModal(pageId, duration = 10) { // 接收时长参数，默认10秒
+            const modal = document.getElementById('warningModal');
+            const textElement = document.getElementById('warningModalText');
+            const countdownEl = document.getElementById('countdown');
+            const continueBtn = document.getElementById('continueBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            // 设置提示文本
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            textElement.textContent = `页面 "${pageName}" 已被管理员设置为限时查看。`;
+
+            // 清除之前的倒计时（如果有的话）
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+
+            // 初始化倒计时显示
+            let seconds = duration; // 使用传入的时长
+            const startTime = Date.now();
+            countdownEl.textContent = seconds;
+            continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (${seconds})`; // 使用传入的时长初始化
+            continueBtn.disabled = true; // 禁用按钮
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+
+            // 启动倒计时
+            countdownInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                seconds = Math.max(0, duration - elapsed); // 使用传入的时长计算剩余时间
+
+                // 同时更新两个地方的倒计时显示
+                countdownEl.textContent = seconds;
+                // 修复倒计时显示问题：每次更新时重新获取并设置按钮内的 span#timer 元素文本
+                const timerSpan = continueBtn.querySelector('#timer');
+                if (timerSpan) {
+                    timerSpan.textContent = seconds;
+                } else {
+                    // 如果没有span#timer，则直接更新按钮文本
+                    continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (${seconds})`;
+                }
+
+                if(seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                    continueBtn.disabled = false;
+                    // 重置按钮文字，移除 (10)
+                    continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
+                }
+            }, 200); // 每200毫秒更新一次
+
+            // 为继续按钮添加一次性事件监听器
+            const handleContinue = function() {
+                // 清除倒计时
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+                // 关闭弹窗并切换页面
+                modal.style.display = 'none';
+                switchPage(pageId);
+            };
+
+            // 为取消按钮添加一次性事件监听器
+            const handleCancel = function() {
+                // 清除倒计时
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+                // 关闭弹窗
+                modal.style.display = 'none';
+            };
+
+            // 添加事件监听器
+            continueBtn.addEventListener('click', handleContinue, { once: true });
+            cancelBtn.addEventListener('click', handleCancel, { once: true });
+
+            // 为关闭按钮添加事件监听器
+            modal.querySelector('.close').addEventListener('click', handleCancel, { once: true });
+
+            // 点击弹窗外部区域关闭
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    handleCancel();
+                }
+            }, { once: true });
+        }
+        // --- 结束修改 ---
+
+
+        // --- 新增：显示密码输入弹窗 (关闭状态) ---
+        // 显示密码输入弹窗 (关闭状态)
+        function showPasswordModal(pageId) {
+            const modal = document.getElementById('passwordModal');
+            const textElement = document.getElementById('passwordModalText');
+            const inputElement = document.getElementById('pagePasswordInput');
+
+            // 设置提示文本
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            textElement.textContent = `页面 "${pageName}" 已被管理员关闭。如需访问，请输入密码。`;
+
+            // 清空输入框
+            inputElement.value = '';
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+
+            // 为确认按钮添加一次性事件监听器
+            const handleConfirm = function() {
+                const enteredPassword = inputElement.value.trim();
+                // - 修改：优先使用从 OSS 读取并更新的全局 window.pagePasswords -
+                const requiredPassword = (window.pagePasswords && window.pagePasswords[pageId]) || (pagePasswords && pagePasswords[pageId]);
+                // - 结束修改 -
+                if (enteredPassword === requiredPassword && requiredPassword !== '') {
+                    // 密码正确，关闭弹窗并切换页面
+                    modal.style.display = 'none';
+                    switchPage(pageId);
+                } else {
+                    // 密码错误或未设置
+                    alert('密码错误或页面未设置密码，请联系管理员。');
+                }
+            };
+
+            // 为取消按钮添加一次性事件监听器
+            const handleCancel = function() {
+                modal.style.display = 'none';
+            };
+
+            // 添加事件监听器
+            document.getElementById('confirmPasswordBtn').addEventListener('click', handleConfirm, { once: true });
+            document.getElementById('cancelPasswordBtn').addEventListener('click', handleCancel, { once: true });
+
+            // 为关闭按钮添加事件监听器
+            modal.querySelector('.close').addEventListener('click', handleCancel, { once: true });
+
+            // 点击弹窗外部区域关闭
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    handleCancel();
+                }
+            }, { once: true });
+
+            // 输入框回车确认
+            inputElement.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleConfirm();
+                }
+            }, { once: true });
         }
         // --- 结束新增 ---
 
-        // 显示密码模态框
-        function showPasswordModal(pageId, correctPasswordHash) {
-            const modal = document.getElementById('passwordModal');
-            const passwordInput = document.getElementById('pagePassword');
-            const errorText = document.getElementById('passwordError');
-            
-            passwordInput.dataset.pageId = pageId;
-            passwordInput.dataset.correctHash = correctPasswordHash || '';
-            passwordInput.value = '';
-            errorText.style.display = 'none';
-            
-            modal.style.display = 'flex';
-        }
-
-        // 检查密码
-        function checkPassword() {
-            const passwordInput = document.getElementById('pagePassword');
-            const errorText = document.getElementById('passwordError');
-            const pageId = passwordInput.dataset.pageId;
-            const correctHash = passwordInput.dataset.correctHash;
-            const inputHash = btoa(passwordInput.value); // 简单的 Base64 编码模拟哈希
-
-            if (inputHash === correctHash) {
-                console.log(`✅ 页面 "${pageId}" 密码验证成功。`);
-                document.getElementById('passwordModal').style.display = 'none';
-                switchPage(pageId);
-            } else {
-                console.log(`❌ 页面 "${pageId}" 密码验证失败。`);
-                errorText.style.display = 'block';
-            }
-        }
-
-        // 显示限时查看模态框
-        function showCountdownModal(pageId, duration) {
-            const modal = document.getElementById('countdownModal');
-            const timerDisplay = document.getElementById('countdownTimer');
-            
-            modal.dataset.pageId = pageId;
-            modal.dataset.duration = duration;
-            timerDisplay.textContent = `${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`;
-            
-            modal.style.display = 'flex';
-        }
-
-        // 开始倒计时
-        function startCountdown() {
-            const modal = document.getElementById('countdownModal');
-            const timerDisplay = document.getElementById('countdownTimer');
-            const pageId = modal.dataset.pageId;
-            let timeLeft = parseInt(modal.dataset.duration);
-
-            console.log(`⏱️ 为页面 "${pageId}" 启动 ${timeLeft} 秒倒计时。`);
-            document.querySelector('#countdownModal .btn').disabled = true; // 禁用按钮防止重复点击
-
-            const countdownInterval = setInterval(() => {
-                timeLeft--;
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                timerDisplay.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(countdownInterval);
-                    console.log(`⏱️ 页面 "${pageId}" 倒计时结束，允许访问。`);
-                    modal.style.display = 'none';
-                    switchPage(pageId);
-                }
-            }, 1000);
-        }
 
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -1105,6 +1394,7 @@
             }
         });
 
+        // --- 修改：更新页脚链接点击处理逻辑 ---
         // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
         document.querySelectorAll('.footer-links a').forEach(link => {
             // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
@@ -1112,30 +1402,47 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const pageId = this.getAttribute('data-page');
-                    // 如果点击的是非首页链接 (且不是管理员页)
-                    if(pageId !== 'home') {
+                    // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
+                    if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
                         handlePageAccess(pageId);
                         return;
                     }
-                    // 切换页面
-                    switchPage(pageId);
+                    // 如果是首页，则直接切换页面
+                    if(pageId === 'home') {
+                        switchPage(pageId);
+                    }
+                    // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
                 });
             }
         });
+        // --- 结束修改 ---
 
-        // 模态框关闭功能
-        document.querySelectorAll('.modal .close').forEach(closeBtn => {
+
+        // --- 修改：更新警告弹窗关闭功能 ---
+        // 警告弹窗关闭功能
+        document.querySelectorAll('#warningModal .close, #cancelBtn').forEach(closeBtn => {
             closeBtn.addEventListener('click', function() {
-                this.closest('.modal').style.display = 'none';
+                const modal = document.getElementById('warningModal');
+                // 清除倒计时
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+                modal.style.display = 'none';
             });
         });
+        // --- 结束修改 ---
 
-        // 点击模态框外部区域关闭
-        window.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
+
+        // --- 新增：密码弹窗关闭功能 ---
+        // 密码弹窗关闭功能
+        document.querySelectorAll('#passwordModal .close, #cancelPasswordBtn').forEach(closeBtn => {
+            closeBtn.addEventListener('click', function() {
+                document.getElementById('passwordModal').style.display = 'none';
+            });
         });
+        // --- 结束新增 ---
+
 
         // 轮播图功能
         let currentSlide = 0;
@@ -1196,26 +1503,6 @@
             });
             // --- 结束新增 ---
         });
-
-        // --- 新增：移动端导航栏隐藏逻辑 ---
-        let lastScrollTop = 0;
-        const threshold = 50; // 滚动多少像素后隐藏导航栏
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            // 在大屏幕上不隐藏导航栏
-            if(window.innerWidth > 768) return;
-
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > threshold) {
-                // 向下滚动 - 隐藏导航栏
-                navbar.classList.add('hide-nav');
-            } else if (scrollTop <= threshold) {
-                // 滚动到顶部附近 - 显示导航栏
-                navbar.classList.remove('hide-nav');
-            }
-            lastScrollTop = scrollTop;
-        });
-        // --- 结束新增 ---
     </script>
 </body>
 </html>
