@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面未找到 | 404错误</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+            color: #f8fafc;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            padding: 2rem;
+        }
+        
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 800px;
+            padding: 3rem;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .error-code {
+            font-size: 12rem;
+            font-weight: 800;
+            margin: 2rem 0;
+            position: relative;
+            display: inline-flex;
+            background: linear-gradient(45deg, #818cf8, #60a5fa, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -8px;
+        }
+        
+        .title {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #e2e8f0, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            line-height: 1.7;
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 38px;
+            background: rgba(30, 41, 59, 0.7);
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #4f46e5, #6366f1);
+            color: white;
+            border: 1px solid rgba(99, 102, 241, 0.7);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Background Elements */
+        .bg-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(79, 70, 229, 0.15), rgba(99, 102, 241, 0.1));
+            filter: blur(60px);
+            opacity: 0.8;
+        }
+        
+        .element-1 {
+            width: 400px;
+            height: 400px;
+            top: -150px;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+        
+        .element-2 {
+            width: 300px;
+            height: 300px;
+            bottom: -100px;
+            right: -100px;
+            background: linear-gradient(45deg, rgba(56, 189, 248, 0.15), rgba(96, 165, 250, 0.1));
+            animation: float 15s ease-in-out infinite reverse;
+        }
+        
+        .element-3 {
+            width: 250px;
+            height: 250px;
+            top: 40%;
+            right: 20%;
+            background: linear-gradient(45deg, rgba(129, 140, 248, 0.15), rgba(165, 180, 252, 0.1));
+            animation: float 12s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(20px, -20px); }
+            50% { transform: translate(0, -40px); }
+            75% { transform: translate(-20px, -20px); }
+        }
+        
+        .lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .line {
+            position: absolute;
+            background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.3), transparent);
+            height: 1px;
+            animation: line-anim 8s linear infinite;
+            opacity: 0.5;
+        }
+        
+        @keyframes line-anim {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            opacity: 0.3;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            animation: float-shape 25s linear infinite;
+            opacity: 0.7;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-duration: 20s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            left: 80%;
+            animation-duration: 25s;
+            background: rgba(56, 189, 248, 0.1);
+        }
+        
+        .shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 50%;
+            left: 30%;
+            animation-duration: 30s;
+            background: rgba(129, 140, 248, 0.1);
+        }
+        
+        @keyframes float-shape {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(40px, -30px) rotate(90deg); }
+            50% { transform: translate(0, -60px) rotate(180deg); }
+            75% { transform: translate(-40px, -30px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 8rem;
+                letter-spacing: -5px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .element-1, .element-2, .element-3 {
+                transform: scale(0.7);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 6rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .error-container {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="bg-elements">
+        <div class="element element-1"></div>
+        <div class="element element-2"></div>
+        <div class="element element-3"></div>
+        
+        <div class="lines">
+            <div class="line" style="top: 20%; animation-delay: 0s;"></div>
+            <div class="line" style="top: 40%; animation-delay: -2s;"></div>
+            <div class="line" style="top: 60%; animation-delay: -4s;"></div>
+            <div class="line" style="top: 80%; animation-delay: -6s;"></div>
+        </div>
+        
+        <div class="grid"></div>
+        
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="container">
+        <div class="error-container">
+            <div class="error-code">404</div>
+            
+            <h1 class="title">页面未找到</h1>
+            
+            <p class="subtitle">
+                您访问的页面似乎不存在。可能是链接已更改、页面已被移除，或者您输入了错误的URL。
+            </p>
+            
+            <div class="actions">
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-home"></i> 返回首页
+                </a>
+                <a href="#" class="btn">
+                    <i class="fas fa-envelope"></i> 联系我们
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Floating lines animation
+        document.querySelectorAll('.line').forEach((line, index) => {
+            line.style.width = `${30 + Math.random() * 70}%`;
+            line.style.animationDelay = `${index * 2}s`;
+        });
+        
+        // Floating shapes animation
+        document.querySelectorAll('.shape').forEach(shape => {
+            shape.style.left = `${Math.random() * 90}%`;
+            shape.style.top = `${Math.random() * 90}%`;
+        });
+        
+        // Interactive background effect
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            document.querySelector('.element-1').style.transform = 
+                `translate(${x * 20 - 10}px, ${y * 20 - 10}px)`;
+                
+            document.querySelector('.element-2').style.transform = 
+                `translate(${x * -15 + 5}px, ${y * -15 + 5}px)`;
+                
+            document.querySelector('.element-3').style.transform = 
+                `translate(${x * 10 - 5}px, ${y * 10 - 5}px)`;
+        });
+        
+        // Button ripple effect
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                const rect = btn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size/2;
+                const y = e.clientY - rect.top - size/2;
+                
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                ripple.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.position = 'absolute';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+        
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
