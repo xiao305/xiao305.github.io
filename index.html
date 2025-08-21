@@ -6,8 +6,6 @@
     <title>红姐私房美食官网</title>
     <base href="https://hjsf.uno/"> <!-- 添加 base 标签 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 新增：引入高德地图 JS API -->
-    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=4db0c5e727a23d221684eeabb3bf9998"></script>
     <style>
        /* 优化后的样式系统 */
         :root {
@@ -759,6 +757,7 @@
         .btn i {
             margin-right: 5px;
         }
+
         /* 新增：页面状态密码输入弹窗 */
         .password-modal {
             position: fixed;
@@ -808,13 +807,6 @@
         .password-modal-buttons .btn {
             flex: 1;
         }
-        /* 新增：高德地图容器样式 */
-        #gaodeMapContainer {
-            width: 100%;
-            height: 300px;
-            border-radius: 12px;
-            margin: 20px 0;
-        }
     </style>
 </head>
 <body>
@@ -846,6 +838,7 @@
             </div>
         </div>
     </div>
+
     <!-- 密码输入弹窗 (关闭状态) -->
     <div id="passwordModal" class="password-modal" style="display: none;">
         <div class="password-modal-content">
@@ -858,6 +851,7 @@
             </div>
         </div>
     </div>
+
     <!-- 导航栏 -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -1026,4 +1020,595 @@
                 <p>红姐私房的产品以孝义传统美食为基础，结合现代人口味进行改良。我们的招牌产品包括：</p>
                 <div style="background: var(--secondary); padding: 20px; border-radius: 12px; margin: 20px 0;">
                     <h3>秘制手工辣条</h3>
-                    <p>不同于市面上的工业化辣条，我们的辣条采用传统工艺手工制作，使用优质面粉和非转基因植物油，香辣可口
+                    <p>不同于市面上的工业化辣条，我们的辣条采用传统工艺手工制作，使用优质面粉和非转基因植物油，香辣可口，回味无穷。</p>
+                    <h3>饺子馄饨包子</h3>
+                    <p>选用优质牛羊猪肉，配以二十余种香料，经过慢火熬制包成，肉质鲜嫩，酱香浓郁。</p>
+                    <h3>中式馒头</h3>
+                    <p>传承三代的点心配方，纯手工制作，口感松软，甜而不腻。</p>
+                </div>
+                <h2>加入我们</h2>
+                <p>我们正在寻找热爱美食、有志于传承传统美食文化的合作伙伴。如果您对我们的产品感兴趣，欢迎加入我们的团队！</p>
+                <a href="#" class="btn" style="margin-top: 20px;"><i class="fas fa-handshake"></i> 成为合作伙伴</a>
+                <!-- 免责声明 -->
+                <div class="disclaimer">
+                    <p><strong>免责声明：</strong>本页面内容仅为测试展示，部分信息可能不准确或已过时。实际合作请通过首页联系方式咨询。</p>
+                </div>
+            </div>
+        </div>
+        <!-- 联系方式页面 -->
+        <div id="contact" class="page">
+            <div class="page-header">
+                <h1>联系我们</h1>
+                <p>有任何问题或建议，欢迎随时联系我们</p>
+            </div>
+            <div class="subpage-content">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                    <div class="contact-box">
+                        <h2><i class="fas fa-map-marker-alt"></i> 实体店地址</h2>
+                        <p>山西省孝义市崇文街532号</p>
+                        <p>营业时间：12:00-20:00</p>
+                        <div style="height: 200px; background: #f5f5f5; border-radius: 12px; margin: 20px 0; display: flex; align-items: center; justify-content: center; color: var(--gray);">
+                            地图位置
+                        </div>
+                    </div>
+                    <div class="contact-box">
+                        <h2><i class="fas fa-phone-alt"></i> 联系电话</h2>
+                        <p>客服热线：暂无</p>
+                        <p>红姐手机：131****7346</p>
+                        <div style="margin: 30px 0;">
+                            <h3>微信联系方式</h3>
+                            <img src="https://xiao305.github.io/hong.jpg"
+                                 alt="客服微信二维码"
+                                 class="qr-code" style="width: 150px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-box" style="margin-top: 30px;">
+                    <h2><i class="fas fa-comment-dots"></i> 在线留言</h2>
+                    <form id="messageForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="name">您的姓名</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">联系电话</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">留言内容</label>
+                            <textarea id="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i> 提交留言
+                        </button>
+                    </form>
+                </div>
+                <!-- 免责声明 -->
+                <div class="disclaimer">
+                    <p><strong>免责声明：</strong>本页面仅为测试展示，联系方式可能不是最新或准确的。实际联系请通过首页二维码添加微信。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <p>红姐私房致力于传承和推广孝义美食，用心制作每一道产品，让顾客品尝到最地道的家乡味道。</p>
+            </div>
+            <div class="footer-section">
+                <h3>快速链接</h3>
+                <ul class="footer-links">
+                    <li><a href="#" data-page="home"><i class="fas fa-chevron-right"></i> 首页</a></li>
+                    <li><a href="#" data-page="products"><i class="fas fa-chevron-right"></i> 特产商城</a></li>
+                    <li><a href="#" data-page="about"><i class="fas fa-chevron-right"></i> 关于我们</a></li>
+                    <li><a href="#" data-page="contact"><i class="fas fa-chevron-right"></i> 联系方式</a></li>
+                    <li><a href="http://admin.hjsf.uno" data-page="admin"><i class="fas fa-lock"></i> 管理员</a></li> <!-- 页脚管理员链接保持不变 -->
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link"><i class="fas fa-map-marker-alt"></i> 山西省孝义市崇文街532号</a></li>
+                    <li><a href="#" class="footer-link"><i class="fas fa-phone-alt"></i> 无</a></li>
+                    <li><a href="#" class="footer-link"><i class="fab fa-weixin"></i> 微信: rr66tt8</a></li>
+                    <li><a href="#" class="footer-link"><i class="fas fa-envelope"></i> 暂不设置</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>网页说明</h3>
+                <p>该网站为个人测试网站，展示内容仅供参考：</p>
+                <ul class="footer-links">
+                    <li>网站仅用于功能测试和技术展示</li>
+                    <li>商品信息、价格等数据为示例数据</li>
+                    <li>不提供实际购买和交易功能</li>
+                    <li>网站未备案，不涉及商业运营</li>
+                    <li>所有实际交易请通过首页微信联系</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 红姐私房 版权所有 | 本网站为个人测试用途，不用于商业运营</p>
+        </div>
+    </footer>
+    <script>
+        // 全局变量
+        let countdownInterval = null;
+        let targetPageId = null;
+        let messages = JSON.parse(localStorage.getItem('messages')) || [];
+        let isAdminLoggedIn = false;
+        let logs = JSON.parse(localStorage.getItem('adminLogs')) || [];
+        let visits = JSON.parse(localStorage.getItem('siteVisits')) || { total: 0, daily: {} };
+        // 从 localStorage 获取页面状态配置
+        let pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+            products: { status: 'limit', duration: 10 },
+            about: { status: 'limit', duration: 10 },
+            contact: { status: 'limit', duration: 10 }
+        };
+        // 从 localStorage 获取页面密码 (关闭状态时需要)
+        let pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+            products: '',
+            about: '',
+            contact: ''
+        };
+        // 当前登录的管理员用户名
+        let currentAdminUser = null;
+
+        // --- 新增：阿里云 FC 配置 ---
+        // 替换为您的实际阿里云函数 HTTP 触发器 URL
+        const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/";
+
+        // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
+        async function syncConfigToFC(configData) {
+            console.log("Aliyun FC Sync: 开始同步配置到 FC...", configData);
+
+            try {
+                const response = await fetch(FC_SYNC_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // 由于触发器认证方式为 anonymous，通常不需要额外 Header
+                        // 如果您设置了其他认证，请在此添加相应 Header
+                    },
+                    body: JSON.stringify(configData)
+                });
+
+                console.log("Aliyun FC Sync: Fetch 响应对象:", response);
+
+                // --- 关键修改：检查 HTTP 状态码，而不是尝试解析 JSON ---
+                if (!response.ok) {
+                    // 如果响应不成功，抛出错误
+                    const errorText = await response.text(); // 获取错误文本
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                // 如果响应成功 (2xx)，我们假设同步成功
+                // 注意：我们不再尝试 response.json()，因为 FC 函数现在返回的是纯文本 "Hello World!" 或其他非JSON内容
+                console.log('Aliyun FC Sync: 成功 (状态码 2xx)');
+                return { message: 'Configuration updated successfully' }; // 返回一个模拟的成功对象
+                // --- 结束关键修改 ---
+            } catch (error) {
+                console.error('Aliyun FC Sync: 失败', error);
+                throw error; // 重新抛出错误，让调用者处理
+            }
+        }
+        // --- 结束新增 ---
+
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 更新总访问量
+            visits.total = (visits.total || 0) + 1;
+            // 更新每日访问量
+            const today = new Date().toLocaleDateString();
+            visits.daily[today] = (visits.daily[today] || 0) + 1;
+            // 保存到localStorage
+            localStorage.setItem('siteVisits', JSON.stringify(visits));
+
+            // --- 新增：测试从阿里云 OSS 读取配置 ---
+            // 替换为您的实际 OSS Bucket 名称和地域
+            const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
+            const REGION = "oss-cn-hangzhou"; // <--- 请修改为您的 Bucket 所在地域
+            // 注意：确保您的 Bucket 是公共读权限
+            const OSS_CONFIG_URL = `https://${OSS_BUCKET_NAME}.${REGION}.aliyuncs.com/test-config.json?${new Date().getTime()}`; // <--- 修改为您的实际文件名, 添加时间戳防缓存
+
+            console.log("开始尝试从 OSS 读取配置...");
+            fetch(OSS_CONFIG_URL, { cache: 'no-store' }) // 禁用缓存确保拿到最新
+                .then(async response => { // 使用 async/await 处理
+                    console.log("Fetch 响应对象:", response); // 调试日志
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                             console.log("OSS: 配置文件未找到");
+                             return null; // 文件不存在
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    // --- 关键修改：检查 Content-Type 并安全读取响应体 ---
+                    const contentType = response.headers.get('content-type');
+                    console.log("OSS: 响应 Content-Type:", contentType);
+                    let data = null;
+                    if (contentType && contentType.includes('application/json')) {
+                        // 如果是 JSON 类型，尝试解析
+                        console.log("OSS: 响应体是 JSON 类型，尝试解析...");
+                        try {
+                            data = await response.json(); // 使用 await 等待解析
+                            console.log("OSS: 成功解析 JSON 响应体:", data);
+                        } catch (parseError) {
+                            console.error("OSS: 解析 JSON 响应体失败:", parseError);
+                            // 即使 Content-Type 声称为 JSON，解析也可能失败
+                            // 我们可以尝试读取文本内容看看实际是什么
+                            const textContent = await response.text();
+                            console.log("OSS: 实际响应体文本内容:", textContent);
+                            data = null; // 解析失败，设置为 null
+                        }
+                    } else {
+                        // 如果不是 JSON 类型，或者没有 Content-Type，读取文本
+                        console.log("OSS: 响应体不是 JSON 类型，读取文本内容...");
+                        const textContent = await response.text();
+                        console.log("OSS: 响应体文本内容:", textContent);
+                        // 尝试将文本内容解析为 JSON
+                        try {
+                            data = JSON.parse(textContent);
+                            console.log("OSS: 成功将文本内容解析为 JSON:", data);
+                        } catch (parseError) {
+                            console.error("OSS: 将文本内容解析为 JSON 失败:", parseError);
+                            data = null; // 解析失败，设置为 null
+                        }
+                    }
+                    return data; // 返回解析后的数据或 null
+                    // --- 结束关键修改 ---
+                })
+                .then(data => {
+                    if (data && data.pageStatusConfig) {
+                        console.log("✅ 成功从 OSS 读取到配置:", data);
+                        // --- 关键修改：更新所有从 OSS 读取的管理员数据到全局变量 ---
+                        // 更新全局配置变量
+                        window.pageStatusConfig = data.pageStatusConfig;
+                        window.pagePasswords = data.pagePasswords || {};
+                        // 更新全局留言变量 (如果存在)
+                        if (data.messages && Array.isArray(data.messages)) {
+                            window.messages = data.messages;
+                            localStorage.setItem('messages', JSON.stringify(window.messages)); // 同步到 localStorage
+                        }
+                        // 更新全局操作日志变量 (如果存在)
+                        if (data.adminLogs && Array.isArray(data.adminLogs)) {
+                            window.logs = data.adminLogs;
+                            localStorage.setItem('adminLogs', JSON.stringify(window.logs)); // 同步到 localStorage
+                        }
+                        // 更新全局访问统计变量 (如果存在)
+                        if (data.siteVisits && typeof data.siteVisits === 'object') {
+                            window.visits = data.siteVisits;
+                            localStorage.setItem('siteVisits', JSON.stringify(window.visits)); // 同步到 localStorage
+                        }
+                        // 更新全局管理员账户变量 (如果存在)
+                        if (data.adminAccounts && typeof data.adminAccounts === 'object') {
+                            window.adminAccounts = data.adminAccounts;
+                            localStorage.setItem('adminAccounts', JSON.stringify(window.adminAccounts)); // 同步到 localStorage
+                        }
+                        console.log("🔄 已更新所有全局配置和数据变量");
+                        // --- 结束关键修改 ---
+                    } else {
+                        console.log("OSS: 远程配置为空或格式不正确");
+                        // 回退到 localStorage
+                        window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                            products: { status: 'limit', duration: 10 },
+                            about: { status: 'limit', duration: 10 },
+                            contact: { status: 'limit', duration: 10 }
+                        };
+                        window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                            products: '',
+                            about: '',
+                            contact: ''
+                        };
+                        console.log("🔙 回退到使用 localStorage 配置");
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ 从 OSS 读取配置失败:", error);
+                    // 回退到 localStorage
+                    window.pageStatusConfig = JSON.parse(localStorage.getItem('pageStatusConfig')) || {
+                        products: { status: 'limit', duration: 10 },
+                        about: { status: 'limit', duration: 10 },
+                        contact: { status: 'limit', duration: 10 }
+                    };
+                    window.pagePasswords = JSON.parse(localStorage.getItem('pagePasswords')) || {
+                        products: '',
+                        about: '',
+                        contact: ''
+                    };
+                    console.log("🔙 回退到使用 localStorage 配置 (因错误)");
+                });
+            // --- 结束新增 ---
+        });
+
+        // 页面导航功能
+        document.querySelectorAll('.nav-link').forEach(link => {
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 如果点击的是非首页链接 (且不是管理员页)
+                    if(pageId !== 'home') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 切换页面
+                    switchPage(pageId);
+                });
+            }
+        });
+
+        // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
+        document.querySelectorAll('.footer-links a').forEach(link => {
+            // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
+            if (link.getAttribute('data-page') !== 'admin') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    // 检查是否是需要弹窗的页面 (特产商城、关于我们、联系方式)
+                    if(pageId === 'products' || pageId === 'about' || pageId === 'contact') {
+                        handlePageAccess(pageId);
+                        return;
+                    }
+                    // 如果是首页，则直接切换页面
+                    if(pageId === 'home') {
+                        switchPage(pageId);
+                    }
+                    // 其他页脚链接（如“联系我们”板块下的地址、电话等）不做处理，不弹窗
+                });
+            }
+        });
+
+        // 处理页面访问逻辑 (根据状态决定是否弹窗)
+        function handlePageAccess(pageId) {
+            // --- 修改：优先使用从 OSS 读取并更新的全局 window.pageStatusConfig ---
+            const config = (window.pageStatusConfig && window.pageStatusConfig[pageId]) || (pageStatusConfig && pageStatusConfig[pageId]);
+            // --- 结束修改 ---
+            if (!config) {
+                // 默认行为：如果配置不存在，则限制访问
+                showWarningModal(pageId);
+                return;
+            }
+
+            if (config.status === 'open') {
+                // 开启状态：直接访问
+                switchPage(pageId);
+            } else if (config.status === 'limit') {
+                // 限制状态：显示警告弹窗
+                showWarningModal(pageId, config.duration || 10); // 传递强制时长，默认10秒
+            } else if (config.status === 'closed') {
+                // 关闭状态：显示密码输入弹窗
+                showPasswordModal(pageId);
+            }
+        }
+
+        // 切换页面函数
+        function switchPage(pageId) {
+            // 移除所有active类
+            document.querySelectorAll('.nav-link').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // 添加当前active类 (注意：页脚链接点击时，导航栏链接的active状态可能不会自动更新，因为页脚点击不一定会触发导航栏点击)
+            // 为了保持一致，我们尝试找到对应的导航链接并激活它
+            const navLinkToActivate = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+            if (navLinkToActivate) {
+                 navLinkToActivate.classList.add('active');
+            }
+            const pageElement = document.getElementById(pageId);
+            if (pageElement) {
+                pageElement.classList.add('active');
+            }
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 显示警告弹窗 (限制状态)
+        function showWarningModal(pageId, duration = 10) { // 接收时长参数
+            // 清除之前的倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'flex';
+            // 存储目标页面ID
+            targetPageId = pageId;
+            // 根据点击的页面设置警告信息
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            document.getElementById('warningMessage').textContent =
+                `您正在访问的"${pageName}"版块目前为测试页面，内容仅供展示。`;
+            let seconds = duration; // 使用传入的时长
+            const countdownEl = document.getElementById('countdown');
+            // const timerEl = document.getElementById('timer'); // 不再在开始时获取，而是在循环中重新获取
+            const continueBtn = document.getElementById('continueBtn');
+            // 重置按钮状态
+            continueBtn.disabled = true;
+            continueBtn.innerHTML = `<i class="fas fa-eye"></i> 继续查看 (<span id="timer">${seconds}</span>)`; // 使用传入的时长初始化
+            countdownEl.textContent = seconds;
+            // timerEl.textContent = seconds; // 不再单独设置timerEl，因为按钮HTML已重置
+
+            // 使用高性能计时器
+            const startTime = Date.now();
+            countdownInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                seconds = Math.max(0, duration - elapsed); // 使用传入的时长计算剩余时间
+                // 同时更新两个地方的倒计时显示
+                countdownEl.textContent = seconds;
+                // 修复倒计时显示问题：每次更新时重新获取并设置按钮内的 span#timer 元素文本
+                const timerSpan = continueBtn.querySelector('#timer');
+                if (timerSpan) {
+                   timerSpan.textContent = seconds;
+                }
+
+                if(seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    continueBtn.disabled = false;
+                    // 重置按钮文字，移除 (10)
+                    continueBtn.innerHTML = '<i class="fas fa-eye"></i> 继续查看';
+                }
+            }, 200); // 每200毫秒更新一次
+        }
+
+        // 显示密码输入弹窗 (关闭状态)
+        function showPasswordModal(pageId) {
+            const modal = document.getElementById('passwordModal');
+            const textElement = document.getElementById('passwordModalText');
+            const inputElement = document.getElementById('pagePasswordInput');
+
+            // 设置提示文本
+            const pageNames = {
+                'products': '特产商城',
+                'about': '关于我们',
+                'contact': '联系方式'
+            };
+            const pageName = pageNames[pageId] || '该版块';
+            textElement.textContent = `页面 "${pageName}" 已被管理员关闭。如需访问，请输入密码。`;
+
+            // 清空输入框
+            inputElement.value = '';
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+
+            // 为确认按钮添加一次性事件监听器
+            const handleConfirm = function() {
+                const enteredPassword = inputElement.value.trim();
+                // --- 修改：优先使用从 OSS 读取并更新的全局 window.pagePasswords ---
+                const requiredPassword = (window.pagePasswords && window.pagePasswords[pageId]) || (pagePasswords && pagePasswords[pageId]);
+                // --- 结束修改 ---
+
+                if (enteredPassword === requiredPassword && requiredPassword !== '') {
+                    // 密码正确，关闭弹窗并切换页面
+                    modal.style.display = 'none';
+                    switchPage(pageId);
+                } else {
+                    // 密码错误或未设置
+                    alert('密码错误或页面未设置密码，请联系管理员。');
+                }
+            };
+
+            // 为取消按钮添加一次性事件监听器
+            const handleCancel = function() {
+                modal.style.display = 'none';
+            };
+
+            // 添加事件监听器
+            document.getElementById('confirmPasswordBtn').addEventListener('click', handleConfirm, { once: true });
+            document.getElementById('cancelPasswordBtn').addEventListener('click', handleCancel, { once: true });
+
+            // 允许按回车键确认
+            const handleEnterKey = function(event) {
+                if (event.key === 'Enter') {
+                    handleConfirm();
+                    inputElement.removeEventListener('keydown', handleEnterKey); // 移除监听器
+                }
+            };
+            inputElement.addEventListener('keydown', handleEnterKey);
+        }
+
+
+        // 返回首页按钮 (警告弹窗)
+        document.getElementById('backToHome').addEventListener('click', function() {
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'none';
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            switchPage('home');
+        });
+
+        // 继续查看按钮 (警告弹窗)
+        document.getElementById('continueBtn').addEventListener('click', function() {
+            const modal = document.getElementById('warningModal');
+            modal.style.display = 'none';
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            if (targetPageId) {
+                switchPage(targetPageId);
+            }
+        });
+
+        // 提示框功能
+        document.getElementById('shipping-notice').addEventListener('click', function(e) {
+            const tooltip = this.querySelector('.info-tooltip');
+            const isVisible = tooltip.style.display === 'block';
+            // 隐藏所有提示
+            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+            // 切换当前提示
+            tooltip.style.display = isVisible ? 'none' : 'block';
+            // 点击其他地方关闭
+            if(!isVisible) {
+                setTimeout(() => {
+                    document.addEventListener('click', function closeTooltip() {
+                        tooltip.style.display = 'none';
+                        document.removeEventListener('click', closeTooltip);
+                    }, {once: true});
+                }, 100);
+            }
+            e.stopPropagation();
+        });
+
+        // 确保提示框随页面滚动
+        window.addEventListener('scroll', () => {
+            document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
+        });
+
+        // 移动端导航栏隐藏功能
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        const threshold = 50; // 滚动阈值
+        window.addEventListener('scroll', function() {
+            // 只在移动端生效
+            if(window.innerWidth > 768) return;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > threshold) {
+                // 向下滚动 - 隐藏导航栏
+                navbar.classList.add('hide-nav');
+            } else if (scrollTop <= threshold) {
+                // 滚动到顶部附近 - 显示导航栏
+                navbar.classList.remove('hide-nav');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // 留言表单提交
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+            const timestamp = new Date().toLocaleString();
+            // 创建留言对象
+            const newMessage = {
+                name,
+                phone,
+                message,
+                timestamp,
+                read: false
+            };
+            // 添加到留言数组
+            messages.push(newMessage);
+            // 保存到localStorage
+            localStorage.setItem('messages', JSON.stringify(messages));
+            // 清空表单
+            this.reset();
+            // 显示成功提示
+            alert('留言提交成功！');
+        });
+
+        // 注意：管理员登录逻辑已移至 admin.html
+    </script>
+</body>
+</html>
