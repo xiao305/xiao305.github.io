@@ -850,14 +850,23 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <i class="fas fa-utensils"></i>
-                <span>红姐私房美食</span>
+                <!-- 修改 Logo 链接，指向主站首页 -->
+                <a href="https://hjsf.uno" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-utensils"></i>
+                    <span>红姐私房美食</span>
+                </a>
             </div>
             <div class="nav-links">
-                <a href="index.html"><i class="fas fa-home"></i> 首页</a>
-                <a href="#" data-page="products"><i class="fas fa-shopping-bag"></i> 特产商城</a> <!-- 修改为 # 和 data-page -->
-                <a href="#" data-page="about"><i class="fas fa-info-circle"></i> 关于我们</a> <!-- 修改为 # 和 data-page -->
-                <a href="#" data-page="contact"><i class="fas fa-phone"></i> 联系方式</a> <!-- 修改为 # 和 data-page -->
+                <!-- 修改 首页 链接，指向主站首页 -->
+                <a href="https://hjsf.uno"><i class="fas fa-home"></i> 首页</a>
+                <!-- 修改 特产商城 链接，指向主站特产商城 -->
+                <a href="https://hjsf.uno#products"><i class="fas fa-shopping-bag"></i> 特产商城</a> <!-- 假设主站用锚点或有对应页面 -->
+                 <!-- 或者如果主站有独立的商城页面，可以是 <a href="https://hjsf.uno/products.html"> -->
+                <!-- 修改 关于我们 链接，指向主站关于我们 -->
+                <a href="https://hjsf.uno#about"><i class="fas fa-info-circle"></i> 关于我们</a> <!-- 假设主站用锚点或有对应页面 -->
+                <!-- 修改 联系方式 链接，指向主站联系方式 -->
+                <a href="https://hjsf.uno#contact"><i class="fas fa-phone"></i> 联系方式</a> <!-- 假设主站用锚点或有对应页面 -->
+                <!-- 管理员链接保持不变，因为它就在当前域下 -->
                 <a href="admin.html" class="active"><i class="fas fa-user-shield"></i> 管理员</a>
             </div>
         </div>
@@ -2013,4 +2022,5 @@
     </script>
 </body>
 </html>
+
 
