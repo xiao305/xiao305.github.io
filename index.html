@@ -1082,6 +1082,13 @@
                             <i class="fas fa-paper-plane"></i> 提交留言
                         </button>
                     </form>
+                    <!-- 新增：留言显示区域 -->
+                    <div id="messagesContainer" style="margin-top: 30px;"></div>
+                    <!-- 新增：统计信息区域 -->
+                    <div id="statsContainer" style="margin-top: 15px;">
+                        <div id="totalMessages">总留言数: 0</div>
+                        <div id="unreadMessages">未读: 0</div>
+                    </div>
                 </div>
                 <!-- 免责声明 -->
                 <div class="disclaimer">
@@ -1732,6 +1739,7 @@
             const phone = document.getElementById('phone').value;
             const message = document.getElementById('message').value;
             const timestamp = new Date().toLocaleString();
+            
             // 创建留言对象
             const newMessage = {
                 name,
@@ -1740,16 +1748,30 @@
                 timestamp,
                 read: false
             };
-            // 添加到留言数组
-            messages.push(newMessage);
-            // 保存到localStorage
-            localStorage.setItem('messages', JSON.stringify(messages));
+            
+            // --- 关键修改：确保使用全局 messages 变量 ---
+            // 从全局变量中获取当前留言列表
+            const currentMessages = window.messages || [];
+            
+            // 添加到全局留言数组
+            currentMessages.push(newMessage);
+            
+            // 保存到 localStorage
+            localStorage.setItem('messages', JSON.stringify(currentMessages));
+            
+            // 更新全局变量
+            window.messages = currentMessages;
+            console.log("📝 新留言已添加到全局数组:", newMessage);
+            console.log("💾 新留言已保存到 localStorage");
+            console.log("🔄 当前全局 messages 数组长度:", window.messages.length);
+            // --- 结束关键修改 ---
+            
             // --- 关键修改：添加同步到云端 ---
             syncConfigToFC({
                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
                 pagePasswords: window.pagePasswords || pagePasswords,
                 adminAccounts: window.adminAccounts || adminAccounts,
-                messages: window.messages || messages, // 重要：确保使用的是全局变量
+                messages: window.messages || [], // 确保传递的是全局的messages
                 adminLogs: window.logs || logs,
                 siteVisits: window.visits || visits,
                 timestamp: new Date().toISOString()
@@ -1763,12 +1785,15 @@
                 // alert('留言已保存，但同步到服务器失败，请稍后重试。');
             });
             // --- 结束关键修改 ---
+            
             // 清空表单
             this.reset();
+            
             // --- 关键修改：调用 loadMessages 和 updateStats ---
             loadMessages(); // 更新页面显示
             updateStats();  // 更新统计信息
             // --- 结束关键修改 ---
+            
             // 显示成功提示
             alert('留言提交成功！');
         });
