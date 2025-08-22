@@ -1362,14 +1362,18 @@
             // 延迟执行同步，确保所有数据都已加载完成
             setTimeout(() => {
                 // 修复：在同步前确保所有变量都已正确定义
-                const finalAdminAccounts = window.adminAccounts || adminAccounts || {};
+                const finalVisits = {
+                    total: window.visits?.total || visits.total || 0,
+                    daily: window.visits?.daily || visits.daily || {}
+                };
+                
                 syncConfigToFC({
                     pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
                     pagePasswords: window.pagePasswords || pagePasswords,
-                    adminAccounts: finalAdminAccounts,
+                    adminAccounts: window.adminAccounts || adminAccounts,
                     messages: window.messages || messages,
                     adminLogs: window.logs || logs,
-                    siteVisits: window.visits || visits,
+                    siteVisits: finalVisits, // 重点：使用正确的访问量数据
                     timestamp: new Date().toISOString()
                 }).then(() => {
                     console.log('📊 访问量已同步到阿里云 FC');
