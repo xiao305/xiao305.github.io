@@ -1348,20 +1348,20 @@
             });
             
             // --- 修复：确保访问量数据在所有初始化完成后同步 ---
-            console.log("🔄 准备同步访问量到阿里云 FC...");
-            console.log("准备同步的访问量数据:", {
-                pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
-                pagePasswords: window.pagePasswords || pagePasswords,
-                adminAccounts: window.adminAccounts || adminAccounts,
-                messages: window.messages || messages,
-                adminLogs: window.logs || logs,
-                siteVisits: window.visits || visits,
-                timestamp: new Date().toISOString()
-            });
-            
-            // 延迟执行同步，确保所有数据都已加载完成
+            // 立即同步访问量到阿里云FC
             setTimeout(() => {
-                // 修复：在同步前确保所有变量都已正确定义
+                console.log("🔄 准备同步访问量到阿里云 FC...");
+                console.log("准备同步的访问量数据:", {
+                    pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
+                    pagePasswords: window.pagePasswords || pagePasswords,
+                    adminAccounts: window.adminAccounts || adminAccounts,
+                    messages: window.messages || messages,
+                    adminLogs: window.logs || logs,
+                    siteVisits: window.visits || visits,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // 修复：确保使用正确的访问量数据
                 const finalVisits = {
                     total: window.visits?.total || visits.total || 0,
                     daily: window.visits?.daily || visits.daily || {}
@@ -1373,7 +1373,7 @@
                     adminAccounts: window.adminAccounts || adminAccounts,
                     messages: window.messages || messages,
                     adminLogs: window.logs || logs,
-                    siteVisits: finalVisits, // 重点：使用正确的访问量数据
+                    siteVisits: finalVisits,
                     timestamp: new Date().toISOString()
                 }).then(() => {
                     console.log('📊 访问量已同步到阿里云 FC');
