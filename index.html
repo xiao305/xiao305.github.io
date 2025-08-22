@@ -1310,13 +1310,11 @@
                     console.log("🔙 回退到使用 localStorage 配置 (因错误)");
                 });
             // --- 结束新增 ---
-            
             // 高德地图初始化 - 新增部分
             // 检查是否在联系方式页面，如果是则初始化地图
             if (document.getElementById('contact').classList.contains('active')) {
                 initMap();
             }
-            
             // 添加页面切换事件监听，当切换到联系方式页面时初始化地图
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -1326,7 +1324,6 @@
                     }
                 });
             });
-            
             // 页脚链接点击处理
             document.querySelectorAll('.footer-links a').forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -1337,7 +1334,6 @@
                 });
             });
         });
-        
         // 高德地图初始化函数 - 新增部分
         function initMap() {
             // 创建地图实例
@@ -1346,26 +1342,22 @@
                 center: [111.78728, 37.12687], // 孝义市崇文街坐标（可调整）
                 viewMode: '2D'
             });
-
             // 添加比例尺和工具条
             AMap.plugin(['AMap.Scale', 'AMap.ToolBar'], function() {
                 map.addControl(new AMap.Scale());
                 map.addControl(new AMap.ToolBar());
             });
-
             // 地理编码转换地址为坐标
             var geocoder = new AMap.Geocoder({
                 city: "孝义市", // 城市，默认"全国"
                 radius: 1000 // 范围，默认：500
             });
-
             // 将地址转换为坐标
             geocoder.getLocation('山西省孝义市崇文街532号', function(status, result) {
                 if (status === 'complete' && result.geocodes.length) {
                     var lnglat = result.geocodes[0].location;
                     // 设置地图中心点
                     map.setCenter(lnglat);
-                    
                     // 添加标记
                     var marker = new AMap.Marker({
                         position: lnglat,
@@ -1373,7 +1365,6 @@
                         offset: new AMap.Pixel(-12, -12)
                     });
                     map.add(marker);
-                    
                     // 添加信息窗口
                     var infoWindow = new AMap.InfoWindow({
                         content: '<div style="color:#333;padding:8px 12px;line-height:20px;">' +
@@ -1382,12 +1373,10 @@
                                  '营业时间：12:00-20:00</div>',
                         offset: new AMap.Pixel(0, -30)
                     });
-                    
                     // 点击标记打开信息窗口
                     marker.on('click', function() {
                         infoWindow.open(map, marker.getPosition());
                     });
-                    
                     // 默认打开信息窗口
                     infoWindow.open(map, lnglat);
                 } else {
@@ -1400,13 +1389,11 @@
                     map.add(marker);
                 }
             });
-            
             // 添加点击事件，点击地图关闭信息窗口
             map.on('click', function() {
                 map.clearInfoWindow();
             });
         }
-        
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
             // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
@@ -1486,7 +1473,6 @@
             }
             // 滚动到顶部
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
             // 如果切换到联系方式页面，初始化地图
             if (pageId === 'contact') {
                 setTimeout(initMap, 300);
@@ -1657,22 +1643,47 @@
             const phone = document.getElementById('phone').value;
             const message = document.getElementById('message').value;
             const timestamp = new Date().toLocaleString();
-            // 创建留言对象
+            // 创建新的留言对象
             const newMessage = {
                 name,
                 phone,
                 message,
                 timestamp,
-                read: false
+                read: false // 新留言默认未读
             };
-            // 添加到留言数组
+            // 将新留言添加到 messages 数组
             messages.push(newMessage);
-            // 保存到localStorage
+            console.log("📝 新留言已添加到本地数组:", newMessage);
+            // 保存到 localStorage
             localStorage.setItem('messages', JSON.stringify(messages));
+            console.log("💾 新留言已保存到 localStorage");
+            // --- 关键修改：添加同步到云端 ---
+            syncConfigToFC({
+                pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
+                pagePasswords: window.pagePasswords || pagePasswords,
+                adminAccounts: window.adminAccounts || adminAccounts,
+                messages: window.messages || messages, // 重要：确保使用的是全局变量
+                adminLogs: window.logs || logs,
+                siteVisits: window.visits || visits,
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                console.log('📧 留言已同步到阿里云 FC');
+                // 可选：显示同步成功的提示
+                // alert('留言已提交并同步到服务器！');
+            }).catch((error) => {
+                console.error('❌ 同步留言到阿里云 FC 失败:', error);
+                // 可选：显示同步失败的提示
+                // alert('留言已保存，但同步到服务器失败，请稍后重试。');
+            });
+            // --- 结束关键修改 ---
             // 清空表单
-            this.reset();
-            // 显示成功提示
-            alert('留言提交成功！');
+            document.getElementById('name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('message').value = '';
+            // 更新留言显示
+            loadMessages();
+            // 更新统计信息
+            updateStats();
         });
         // 注意：管理员登录逻辑已移至 admin.html
     </script>
