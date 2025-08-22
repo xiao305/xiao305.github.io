@@ -168,7 +168,7 @@
             transform: translateY(-50%);
             width: 24px;
             height: 24px;
-            background: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
         }
         /* 二维码视觉升级 */
         .qr-code {
@@ -1361,21 +1361,26 @@
                     timestamp: new Date().toISOString()
                 });
                 
-                // 修复：确保使用正确的访问量数据
+                // 修复：确保使用正确的访问量数据进行同步
                 const finalVisits = {
                     total: window.visits?.total || visits.total || 0,
                     daily: window.visits?.daily || visits.daily || {}
                 };
                 
-                syncConfigToFC({
+                // 确保访问量数据被正确合并到配置中
+                const configToSync = {
                     pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
                     pagePasswords: window.pagePasswords || pagePasswords,
                     adminAccounts: window.adminAccounts || adminAccounts,
                     messages: window.messages || messages,
                     adminLogs: window.logs || logs,
-                    siteVisits: finalVisits,
+                    siteVisits: finalVisits, // 关键：使用最终确定的访问量数据
                     timestamp: new Date().toISOString()
-                }).then(() => {
+                };
+                
+                console.log("📋 即将同步的完整配置:", configToSync);
+                
+                syncConfigToFC(configToSync).then(() => {
                     console.log('📊 访问量已同步到阿里云 FC');
                 }).catch((error) => {
                     console.error('❌ 访问量同步到阿里云 FC 失败:', error);
