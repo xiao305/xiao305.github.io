@@ -168,7 +168,7 @@
             transform: translateY(-50%);
             width: 24px;
             height: 24px;
-            background: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
         }
         /* 二维码视觉升级 */
         .qr-code {
@@ -1155,11 +1155,9 @@
         };
         // 当前登录的管理员用户名
         let currentAdminUser = null;
-        
         // --- 新增：阿里云 FC 配置 ---
         // 替换为您的实际阿里云函数 HTTP 触发器 URL
         const FC_SYNC_URL = "https://updatewteconfig-aquxgazwhl.cn-hangzhou.fcapp.run/";
-        
         // --- 新增：调用阿里云 FC 函数同步配置的函数 ---
         async function syncConfigToFC(configData) {
             console.log("Aliyun FC Sync: 开始同步配置到 FC...", configData);
@@ -1190,16 +1188,9 @@
                 throw error; // 重新抛出错误，让调用者处理
             }
         }
-        
         // --- 结束新增 ---
-        
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 修复：确保全局变量定义在所有函数之前
-            if (typeof adminAccounts === 'undefined') {
-                var adminAccounts = JSON.parse(localStorage.getItem('adminAccounts')) || {'admin': btoa('hongjie123')};
-            }
-            
             // 更新总访问量
             visits.total = (visits.total || 0) + 1;
             console.log("📊 更新访问量 - 总访问量:", visits.total);
@@ -1351,7 +1342,7 @@
                 });
             });
             
-            // 同步访问量到阿里云FC - 修复：确保在所有数据加载完成后同步
+            // --- 修复：确保访问量数据在所有初始化完成后同步 ---
             console.log("🔄 准备同步访问量到阿里云 FC...");
             console.log("准备同步的访问量数据:", {
                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
@@ -1363,7 +1354,7 @@
                 timestamp: new Date().toISOString()
             });
             
-            // 确保在数据加载完成后执行同步
+            // 延迟执行同步，确保所有数据都已加载完成
             setTimeout(() => {
                 syncConfigToFC({
                     pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
@@ -1378,9 +1369,8 @@
                 }).catch((error) => {
                     console.error('❌ 访问量同步到阿里云 FC 失败:', error);
                 });
-            }, 1000); // 延迟1秒确保数据加载完成
+            }, 1000);
         });
-        
         // 高德地图初始化函数 - 新增部分
         function initMap() {
             // 创建地图实例
@@ -1441,7 +1431,6 @@
                 map.clearInfoWindow();
             });
         }
-        
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
             // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
@@ -1459,7 +1448,6 @@
                 });
             }
         });
-        
         // 页脚链接点击处理 - 修复bug: 只对特定页面弹窗
         document.querySelectorAll('.footer-links a').forEach(link => {
             // 注意：data-page="admin" 的链接现在会跳转到 admin.html，不再触发此事件
@@ -1480,7 +1468,6 @@
                 });
             }
         });
-        
         // 处理页面访问逻辑 (根据状态决定是否弹窗)
         function handlePageAccess(pageId) {
             // --- 修改：优先使用从 OSS 读取并更新的全局 window.pageStatusConfig ---
@@ -1502,7 +1489,6 @@
                 showPasswordModal(pageId);
             }
         }
-        
         // 切换页面函数
         function switchPage(pageId) {
             // 移除所有active类
@@ -1529,7 +1515,6 @@
                 setTimeout(initMap, 300);
             }
         }
-        
         // 显示警告弹窗 (限制状态)
         function showWarningModal(pageId, duration = 10) { // 接收时长参数
             // 清除之前的倒计时
@@ -1578,7 +1563,6 @@
                 }
             }, 200); // 每200毫秒更新一次
         }
-        
         // 显示密码输入弹窗 (关闭状态)
         function showPasswordModal(pageId) {
             const modal = document.getElementById('passwordModal');
@@ -1627,7 +1611,6 @@
             };
             inputElement.addEventListener('keydown', handleEnterKey);
         }
-        
         // 返回首页按钮 (警告弹窗)
         document.getElementById('backToHome').addEventListener('click', function() {
             const modal = document.getElementById('warningModal');
@@ -1638,7 +1621,6 @@
             }
             switchPage('home');
         });
-        
         // 继续查看按钮 (警告弹窗)
         document.getElementById('continueBtn').addEventListener('click', function() {
             const modal = document.getElementById('warningModal');
@@ -1651,7 +1633,6 @@
                 switchPage(targetPageId);
             }
         });
-        
         // 提示框功能
         document.getElementById('shipping-notice').addEventListener('click', function(e) {
             const tooltip = this.querySelector('.info-tooltip');
@@ -1671,12 +1652,10 @@
             }
             e.stopPropagation();
         });
-        
         // 确保提示框随页面滚动
         window.addEventListener('scroll', () => {
             document.querySelectorAll('.info-tooltip').forEach(t => t.style.display = 'none');
         });
-        
         // 移动端导航栏隐藏功能
         let lastScrollTop = 0;
         const navbar = document.getElementById('navbar');
@@ -1694,7 +1673,6 @@
             }
             lastScrollTop = scrollTop;
         });
-        
         // 留言表单提交
         document.getElementById('messageForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1702,7 +1680,6 @@
             const phone = document.getElementById('phone').value;
             const message = document.getElementById('message').value;
             const timestamp = new Date().toLocaleString();
-            
             // 创建新的留言对象
             const newMessage = {
                 name,
@@ -1711,25 +1688,12 @@
                 timestamp,
                 read: false // 新留言默认未读
             };
-            
             // 将新留言添加到 messages 数组
             messages.push(newMessage);
             console.log("📝 新留言已添加到本地数组:", newMessage);
-            
             // 保存到 localStorage
             localStorage.setItem('messages', JSON.stringify(messages));
             console.log("💾 新留言已保存到 localStorage");
-            
-            // --- 关键修改：确保使用正确的数据合并方式 ---
-            // 从全局变量获取当前消息列表
-            const currentMessages = window.messages || [];
-            // 确保新消息被添加到正确的数组中
-            currentMessages.push(newMessage);
-            // 更新全局变量
-            window.messages = currentMessages;
-            console.log("🔄 更新后的全局 messages 数组长度:", window.messages.length);
-            // --- 结束关键修改 ---
-            
             // --- 关键修改：添加同步到云端 ---
             syncConfigToFC({
                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
@@ -1749,16 +1713,13 @@
                 // alert('留言已保存，但同步到服务器失败，请稍后重试。');
             });
             // --- 结束关键修改 ---
-            
             // 清空表单
             document.getElementById('name').value = '';
             document.getElementById('phone').value = '';
             document.getElementById('message').value = '';
-            
             // 显示成功提示
             alert('留言提交成功！');
         });
-        
         // 注意：管理员登录逻辑已移至 admin.html
     </script>
 </body>
