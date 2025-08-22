@@ -168,7 +168,7 @@
             transform: translateY(-50%);
             width: 24px;
             height: 24px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
+            background: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e4393c" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4l1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>');
         }
         /* 二维码视觉升级 */
         .qr-code {
@@ -1191,6 +1191,11 @@
         // --- 结束新增 ---
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 修复：确保 adminAccounts 变量定义在所有位置都可用
+            if (typeof adminAccounts === 'undefined') {
+                var adminAccounts = JSON.parse(localStorage.getItem('adminAccounts')) || {'admin': btoa('hongjie123')};
+            }
+            
             // 更新总访问量
             visits.total = (visits.total || 0) + 1;
             console.log("📊 更新访问量 - 总访问量:", visits.total);
@@ -1356,10 +1361,12 @@
             
             // 延迟执行同步，确保所有数据都已加载完成
             setTimeout(() => {
+                // 修复：在同步前确保所有变量都已正确定义
+                const finalAdminAccounts = window.adminAccounts || adminAccounts || {};
                 syncConfigToFC({
                     pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
                     pagePasswords: window.pagePasswords || pagePasswords,
-                    adminAccounts: window.adminAccounts || adminAccounts,
+                    adminAccounts: finalAdminAccounts,
                     messages: window.messages || messages,
                     adminLogs: window.logs || logs,
                     siteVisits: window.visits || visits,
@@ -1680,6 +1687,7 @@
             const phone = document.getElementById('phone').value;
             const message = document.getElementById('message').value;
             const timestamp = new Date().toLocaleString();
+            
             // 创建新的留言对象
             const newMessage = {
                 name,
@@ -1688,12 +1696,25 @@
                 timestamp,
                 read: false // 新留言默认未读
             };
+            
             // 将新留言添加到 messages 数组
             messages.push(newMessage);
             console.log("📝 新留言已添加到本地数组:", newMessage);
+            
             // 保存到 localStorage
             localStorage.setItem('messages', JSON.stringify(messages));
             console.log("💾 新留言已保存到 localStorage");
+            
+            // --- 关键修改：确保使用正确的数据合并方式 ---
+            // 从全局变量获取当前消息列表
+            const currentMessages = window.messages || [];
+            // 确保新消息被添加到正确的数组中
+            currentMessages.push(newMessage);
+            // 更新全局变量
+            window.messages = currentMessages;
+            console.log("🔄 更新后的全局 messages 数组长度:", window.messages.length);
+            // --- 结束关键修改 ---
+            
             // --- 关键修改：添加同步到云端 ---
             syncConfigToFC({
                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
@@ -1713,10 +1734,12 @@
                 // alert('留言已保存，但同步到服务器失败，请稍后重试。');
             });
             // --- 结束关键修改 ---
+            
             // 清空表单
             document.getElementById('name').value = '';
             document.getElementById('phone').value = '';
             document.getElementById('message').value = '';
+            
             // 显示成功提示
             alert('留言提交成功！');
         });
