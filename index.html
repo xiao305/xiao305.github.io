@@ -806,6 +806,107 @@
         .password-modal-buttons .btn {
             flex: 1;
         }
+        
+        /* 新增：自定义弹窗样式 */
+        .custom-modal {
+          position: fixed;
+          z-index: 1001; /* 确保在其他元素之上 */
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          /* 防止滚动穿透 */
+          overflow: hidden;
+        }
+
+        .modal-content {
+          background-color: #fefefe;
+          margin: 15px auto;
+          padding: 0;
+          border: none;
+          border-radius: 10px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          width: 90%;
+          max-width: 500px;
+          max-height: 90vh; /* 限制最大高度 */
+          overflow-y: auto; /* 超出时可滚动 */
+          animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+          from { opacity: 0; transform: translateY(-50px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+          padding: 15px 20px;
+          border-bottom: 1px solid #eee;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .modal-header h3 {
+          margin: 0;
+          color: var(--primary); /* 使用你主题色 */
+        }
+        .close {
+          font-size: 28px;
+          font-weight: bold;
+          color: #aaa;
+          cursor: pointer;
+          line-height: 1;
+        }
+        .close:hover {
+          color: #000;
+        }
+
+        .modal-body {
+          padding: 20px;
+        }
+        .modal-body p {
+          margin: 0 0 15px 0;
+          line-height: 1.5;
+        }
+        .modal-footer {
+          padding: 15px 20px;
+          border-top: 1px solid #eee;
+          text-align: right;
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+
+        /* 加载动画 */
+        .loading-spinner {
+          border: 4px solid #f3f3f3; /* Light grey */
+          border-top: 4px solid var(--primary); /* Blue */
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 15px;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        /* 失败结果弹窗 - 底部添加详细说明 */
+        .fail-detail {
+            font-size: 0.8rem;
+            color: var(--gray);
+            text-align: center;
+            margin-top: 10px;
+            opacity: 0.8;
+            padding: 10px;
+            background: #fdf2f2;
+            border-radius: 6px;
+            border-top: 1px solid #fee2e2;
+        }
     </style>
     <!-- 高德地图API - 新增部分 -->
     <script src="https://webapi.amap.com/maps?v=2.0&key=4db0c5e727a23d221684eeabb3bf9998&plugin=AMap.Geocoder,AMap.Scale,AMap.ToolBar"></script>
@@ -852,6 +953,40 @@
             </div>
         </div>
     </div>
+    
+    <!-- 自定义成功弹窗 -->
+    <div id="customSuccessModal" class="custom-modal" style="display:none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <h3>提交成功</h3>
+        </div>
+        <div class="modal-body">
+          <p>留言已成功提交并同步到服务器。</p>
+        </div>
+        <div class="modal-footer">
+          <button id="successOkBtn" class="btn">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自定义失败弹窗 -->
+    <div id="customFailModal" class="custom-modal" style="display:none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <h3>操作失败</h3>
+        </div>
+        <div class="modal-body">
+          <p>密码错误或页面未设置密码，请联系管理员。</p>
+          <div id="failDetail" class="fail-detail"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="failOkBtn" class="btn">确定</button>
+        </div>
+      </div>
+    </div>
+    
     <!-- 导航栏 -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -1195,20 +1330,16 @@
             if (typeof adminAccounts === 'undefined') {
                 var adminAccounts = JSON.parse(localStorage.getItem('adminAccounts')) || {'admin': btoa('hongjie123')};
             }
-            
             // 更新总访问量
             visits.total = (visits.total || 0) + 1;
             console.log("📊 更新访问量 - 总访问量:", visits.total);
-            
             // 更新每日访问量
             const today = new Date().toLocaleDateString();
             visits.daily[today] = (visits.daily[today] || 0) + 1;
             console.log("📊 更新访问量 - 今日访问量:", visits.daily[today]);
-            
             // 保存到localStorage
             localStorage.setItem('siteVisits', JSON.stringify(visits));
             console.log("💾 访问量已保存到localStorage:", visits);
-            
             // --- 新增：测试从阿里云 OSS 读取配置 ---
             // 替换为您的实际 OSS Bucket 名称和地域
             const OSS_BUCKET_NAME = "xiao-config-bucket"; // <--- 请修改为您的 Bucket 名称
@@ -1322,7 +1453,6 @@
                     console.log("🔙 回退到使用 localStorage 配置 (因错误)");
                 });
             // --- 结束新增 ---
-            
             // 高德地图初始化 - 新增部分
             // 检查是否在联系方式页面，如果是则初始化地图
             if (document.getElementById('contact').classList.contains('active')) {
@@ -1346,7 +1476,6 @@
                     }
                 });
             });
-            
             // --- 修复：确保访问量数据在所有初始化完成后同步 ---
             // 立即同步访问量到阿里云FC
             setTimeout(() => {
@@ -1360,13 +1489,11 @@
                     siteVisits: window.visits || visits,
                     timestamp: new Date().toISOString()
                 });
-                
                 // 修复：确保使用正确的访问量数据进行同步
                 const finalVisits = {
                     total: window.visits?.total || visits.total || 0,
                     daily: window.visits?.daily || visits.daily || {}
                 };
-                
                 // 确保访问量数据被正确合并到配置中
                 const configToSync = {
                     pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
@@ -1377,9 +1504,7 @@
                     siteVisits: finalVisits, // 关键：使用最终确定的访问量数据
                     timestamp: new Date().toISOString()
                 };
-                
                 console.log("📋 即将同步的完整配置:", configToSync);
-                
                 syncConfigToFC(configToSync).then(() => {
                     console.log('📊 访问量已同步到阿里云 FC');
                 }).catch((error) => {
@@ -1608,7 +1733,10 @@
                     switchPage(pageId);
                 } else {
                     // 密码错误或未设置
-                    alert('密码错误或页面未设置密码，请联系管理员。');
+                    // 显示自定义失败弹窗
+                    const failModal = document.getElementById('customFailModal');
+                    document.getElementById('failDetail').textContent = '请检查您的密码是否正确。';
+                    failModal.style.display = 'flex';
                 }
             };
             // 为取消按钮添加一次性事件监听器
@@ -1696,7 +1824,6 @@
             const phone = document.getElementById('phone').value;
             const message = document.getElementById('message').value;
             const timestamp = new Date().toLocaleString();
-            
             // 创建新的留言对象
             const newMessage = {
                 name,
@@ -1705,15 +1832,12 @@
                 timestamp,
                 read: false // 新留言默认未读
             };
-            
             // 将新留言添加到 messages 数组
             messages.push(newMessage);
             console.log("📝 新留言已添加到本地数组:", newMessage);
-            
             // 保存到 localStorage
             localStorage.setItem('messages', JSON.stringify(messages));
             console.log("💾 新留言已保存到 localStorage");
-            
             // --- 关键修改：确保使用正确的数据合并方式 ---
             // 从全局变量获取当前消息列表
             const currentMessages = window.messages || [];
@@ -1723,7 +1847,6 @@
             window.messages = currentMessages;
             console.log("🔄 更新后的全局 messages 数组长度:", window.messages.length);
             // --- 结束关键修改 ---
-            
             // --- 关键修改：添加同步到云端 ---
             syncConfigToFC({
                 pageStatusConfig: window.pageStatusConfig || pageStatusConfig,
@@ -1735,23 +1858,50 @@
                 timestamp: new Date().toISOString()
             }).then(() => {
                 console.log('📧 留言已同步到阿里云 FC');
-                // 可选：显示同步成功的提示
-                // alert('留言已提交并同步到服务器！');
+                // 显示自定义成功弹窗
+                const successModal = document.getElementById('customSuccessModal');
+                successModal.style.display = 'flex';
             }).catch((error) => {
                 console.error('❌ 同步留言到阿里云 FC 失败:', error);
                 // 可选：显示同步失败的提示
                 // alert('留言已保存，但同步到服务器失败，请稍后重试。');
             });
             // --- 结束关键修改 ---
-            
             // 清空表单
             document.getElementById('name').value = '';
             document.getElementById('phone').value = '';
             document.getElementById('message').value = '';
-            
-            // 显示成功提示
-            alert('留言提交成功！');
         });
+        
+        // 自定义弹窗关闭功能
+        document.querySelectorAll('.close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', function() {
+                const modal = this.closest('.custom-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.custom-modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        });
+        
+        // 成功弹窗确定按钮
+        document.getElementById('successOkBtn').addEventListener('click', function() {
+            document.getElementById('customSuccessModal').style.display = 'none';
+        });
+        
+        // 失败弹窗确定按钮
+        document.getElementById('failOkBtn').addEventListener('click', function() {
+            document.getElementById('customFailModal').style.display = 'none';
+        });
+        
         // 注意：管理员登录逻辑已移至 admin.html
     </script>
 </body>
